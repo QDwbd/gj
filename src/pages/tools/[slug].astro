@@ -15,7 +15,39 @@ const { tool } = Astro.props;
       <h1>{tool.name}</h1>
       <p>{tool.description}</p>
     </section>
-    <section class="workbench" data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {tool.operation === 'image-editor' && <section id="image-workbench" class="workbench image-workbench" style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>图片编辑工作台</strong></div><span class="privacy-label">图片在本地浏览器处理</span></div>
+      <label class="field-label" for="image-file">选择图片（PNG / JPEG / WebP，最大 25 MB）</label>
+      <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" />
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0">
+        <label>亮度 <input id="image-brightness" type="range" min="0" max="200" value="100" /></label>
+        <label>对比度 <input id="image-contrast" type="range" min="0" max="200" value="100" /></label>
+        <label>旋转 <select id="image-rotation"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>
+        <label>像素化强度 <input id="image-pixelate" type="range" min="1" max="40" value="1" /></label>
+        <label>裁剪宽度（中心裁剪 %） <input id="image-crop-width" type="range" min="10" max="100" value="100" /></label>
+        <label>裁剪高度（中心裁剪 %） <input id="image-crop-height" type="range" min="10" max="100" value="100" /></label>
+        <label>水印文字 <input id="image-watermark" type="text" maxlength="120" placeholder="可选：输入水印文字" /></label>
+        <label>导出格式 <select id="image-format"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></label>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:18px">
+        <label><input id="image-flip-x" type="checkbox" /> 水平翻转</label>
+        <label><input id="image-flip-y" type="checkbox" /> 垂直翻转</label>
+        <label><input id="image-grayscale" type="checkbox" /> 灰度</label>
+        <label><input id="image-sepia" type="checkbox" /> 复古滤镜</label>
+      </div>
+      <div style="background:var(--surface-2,#f4f5f7);padding:12px;border-radius:12px;overflow:auto;text-align:center">
+        <canvas id="image-canvas" hidden style="max-width:100%;height:auto"></canvas>
+        <p id="image-status" role="status">请先选择一张图片。处理过程不会主动上传图片。</p>
+      </div>
+      <div class="action-row" style="margin-top:16px">
+        <button id="image-reset" class="secondary-button" type="button">重置编辑</button>
+        <button id="image-download" class="primary-button" type="button" disabled>导出图片</button>
+      </div>
+      <p class="muted">说明：裁剪采用居中裁剪；GIF 等动图会按浏览器解码后的静态帧处理。复杂透明图像导出为 JPEG 时会由浏览器按其默认方式处理透明区域。</p>
+    </section>}
+
+    <section class="workbench" style={tool.operation === "image-editor" ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
@@ -29,4 +61,5 @@ const { tool } = Astro.props;
     <a class="more-link" href="/">← 浏览更多在线工具</a>
   </div>
   <script type="module" src="/scripts/tool-engine.js"></script>
+  <script type="module" src="/scripts/image-editor.js"></script>
 </BaseLayout>

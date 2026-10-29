@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import { webcrypto } from 'node:crypto';
 
 const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url), 'utf8');
-const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
+const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => op !== 'image-editor');
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const samples = {
   'csv-clean':' a \n b ','html-color-name':'rgb(255, 0, 0)','url-safe-base64':'hello','markdown-preview-text':'# Title\n**bold**','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
@@ -32,7 +32,7 @@ Object.assign(expectedContains, {'ini-to-json':'"database": {','json-to-ini':'[d
 Object.assign(samples, {'list-shuffle':'a\\nb\\nc\\nd'});
 Object.assign(samples, {"cookie-to-json":"session=abc%20123; theme=dark; session=xyz","json-array-dedupe":"[1,1,{\"a\":1},{\"a\":1}]","list-shuffle":"a\nb\nc\nd","list-chunk":"a\nb\nc\nd\ne","json-to-go":"{\"name\":\"Ada\",\"age\":30}","json-to-kotlin":"{\"name\":\"Ada\",\"active\":true}","json-to-sql-table":"[{\"id\":1,\"name\":\"Ada\",\"active\":true}]","json-to-html-table":"[{\"name\":\"Ada\"},{\"name\":\"Lin\",\"age\":30}]"});
 Object.assign(expectedContains, {"cookie-to-json":"\"theme\": \"dark\"","json-array-dedupe":"\"a\": 1","list-chunk":"a\nb\nc\n\nd\ne","json-to-go":"type Root struct","json-to-kotlin":"data class Root","json-to-sql-table":"CREATE TABLE \"items\"","json-to-html-table":"<table>"});
-const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
+const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => op !== 'image-editor');
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
 let passed=0; const failures=[];
