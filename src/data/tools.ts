@@ -983,4 +983,19 @@ export const tools: Tool[] = [
     "description": "格式化常见 SQL 查询语句，突出 SELECT、FROM、WHERE、JOIN 等子句",
     "operation": "sql-format"
   },
+
+  {
+    "slug": "ini-to-json",
+    "name": "INI 转 JSON",
+    "category": "开发者工具",
+    "description": "解析 INI 配置文件中的键值与分组并转换为 JSON",
+    "operation": "ini-to-json"
+  },
+  {
+    "slug": "json-to-ini",
+    "name": "JSON 转 INI",
+    "category": "开发者工具",
+    "description": "将 JSON 对象转换为常见 INI 键值和分组格式",
+    "operation": "json-to-ini"
+  },
 ];
