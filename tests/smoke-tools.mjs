@@ -29,6 +29,7 @@ Object.assign(samples, {"json-to-js-object":"{\"name\":\"Alice\",\"age\":30}","j
 Object.assign(expectedContains, {'json-to-xml':'<root>','xml-to-json':'"root"','xml-format':'<root>','xml-minify':'<root><name>Ada</name></root>','rot47':'w6==@','url-params-to-json':'"a": [\n    "1",\n    "2"','json-to-typescript':'export interface Root','uuid-bulk':'-'});
 Object.assign(expectedContains, {'css-format':'color: red;','sql-format':'SELECT'});
 Object.assign(expectedContains, {'ini-to-json':'"database": {','json-to-ini':'[database]','cookie-to-json':'"theme": "dark"','json-array-dedupe':'"a": 1','list-chunk':'a\\nb\\nc\\n\\nd\\ne','json-to-go':'type Root struct','json-to-kotlin':'data class Root','json-to-sql-table':'CREATE TABLE "items"','json-to-html-table':'<table>'});
+Object.assign(samples, {'list-shuffle':'a\\nb\\nc\\nd'});
 const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
