@@ -341,6 +341,132 @@ if (root) {
         const duplicates = [...counts].filter(([, count]) => count > 1).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
         return duplicates.length ? '重复项目（项目\t出现次数）\n' + duplicates.map(([item, count]) => item + '\t' + count).join('\n') : '未发现重复项目';
       }
+      case 'json-to-xml': {
+        const value = JSON.parse(s);
+        const rootName = (v('xml-root-name') || 'root').trim();
+        if (!/^[A-Za-z_][\w.:-]*$/.test(rootName)) throw Error('根节点名称无效');
+        const escXml = value => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        const tag = key => /^[A-Za-z_][\w.:-]*$/.test(key) ? key : 'item';
+        const emit = (node, name) => {
+          if (Array.isArray(node)) return node.map(item => emit(item, name === rootName ? 'item' : name)).join('');
+          if (node !== null && typeof node === 'object') return '<' + name + '>' + Object.entries(node).map(([key, val]) => emit(val, tag(key))).join('') + '</' + name + '>';
+          return '<' + name + '>' + (node === null ? '' : escXml(node)) + '</' + name + '>';
+        };
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' + emit(value, rootName);
+      }
+      case 'xml-to-json': {
+        const xml = s.trim();
+        if (!xml || !/^<\?xml[\s\S]*?\?>\s*<|^<[\w:.-]+(?:\s|>|\/)/i.test(xml)) throw Error('请输入有效的 XML 文档');
+        if (/<!(?:DOCTYPE|ENTITY)\b/i.test(xml)) throw Error('为避免外部实体风险，不支持 DOCTYPE/ENTITY 声明');
+        const tokens = xml.match(/<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[^>]+>|[^<]+/g) || [];
+        const stack = [];
+        let root = null;
+        const decode = text => text.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (m, e) => {
+          if (e[0] === '#') { const hex = e[1]?.toLowerCase() === 'x'; const n = parseInt(e.slice(hex ? 2 : 1), hex ? 16 : 10); return Number.isFinite(n) && n >= 0 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n) : m; }
+          return ({amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"})[e.toLowerCase()] ?? m;
+        });
+        const attach = (parent, name, value) => {
+          if (Object.prototype.hasOwnProperty.call(parent, name)) parent[name] = Array.isArray(parent[name]) ? [...parent[name], value] : [parent[name], value];
+          else parent[name] = value;
+        };
+        for (const token of tokens) {
+          if (/^<!--|^<\?/.test(token)) continue;
+          if (/^<!\[CDATA\[/.test(token)) { if (!stack.length) throw Error('XML 文本节点位置无效'); stack[stack.length - 1].text += token.slice(9, -3); continue; }
+          if (/^<!/.test(token)) throw Error('不支持的 XML 声明');
+          if (/^<\//.test(token)) {
+            const name = token.slice(2, -1).trim();
+            const node = stack.pop();
+            if (!node || node.name !== name) throw Error('XML 标签不匹配：' + name);
+            let value = node.value;
+            if (Object.keys(value).length === 0) value = decode(node.text.trim());
+            else {
+              if (node.text.trim()) value['#text'] = decode(node.text.trim());
+              if (Object.keys(node.attrs).length) value['@attributes'] = node.attrs;
+            }
+            if (stack.length) attach(stack[stack.length - 1].value, node.name, value);
+            else { if (root !== null) throw Error('XML 只能有一个根节点'); root = { [node.name]: value }; }
+            continue;
+          }
+          if (/^</.test(token)) {
+            const selfClosing = /\/>$/.test(token);
+            const match = token.match(/^<([^\s/>]+)([\s\S]*?)\/?>$/);
+            if (!match) throw Error('XML 标签格式无效');
+            const name = match[1], attrText = match[2];
+            const attrs = {};
+            const attrRe = /([^\s=]+)\s*=\s*("([^"]*)"|'([^']*)')/g;
+            let attr;
+            while ((attr = attrRe.exec(attrText))) attrs[attr[1]] = decode(attr[3] ?? attr[4] ?? '');
+            const node = { name, attrs, text: '', value: {} };
+            if (selfClosing) {
+              let value = Object.keys(attrs).length ? {'@attributes': attrs} : '';
+              if (stack.length) attach(stack[stack.length - 1].value, name, value);
+              else { if (root !== null) throw Error('XML 只能有一个根节点'); root = { [name]: value }; }
+            } else stack.push(node);
+          } else if (stack.length) stack[stack.length - 1].text += token;
+          else if (token.trim()) throw Error('根节点外存在文本');
+        }
+        if (stack.length || root === null) throw Error('XML 标签未闭合或缺少根节点');
+        return JSON.stringify(root, null, 2);
+      }
+      case 'xml-format': {
+        const xml = s.trim();
+        if (!xml) throw Error('请输入 XML');
+        const tokens = xml.match(/<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[^>]+>|[^<]+/g) || [];
+        let depth = 0, out = '';
+        for (const token of tokens) {
+          if (!token.trim() && !/^<!\[CDATA\[/.test(token)) continue;
+          if (/^<\//.test(token)) depth = Math.max(0, depth - 1);
+          const line = '  '.repeat(depth) + token.trim();
+          out += (out ? '\n' : '') + line;
+          if (/^<[^!?/][^>]*[^/]?>$/.test(token.trim()) && !/^<!/.test(token)) depth++;
+        }
+        if (!out || (out.match(/</g) || []).length !== (out.match(/>/g) || []).length) throw Error('XML 标签格式可能无效');
+        return out;
+      }
+      case 'xml-minify': {
+        const xml = s.trim();
+        if (!xml) throw Error('请输入 XML');
+        const min = xml.replace(/>\s+</g, '><').replace(/\s+/g, ' ').replace(/\s+(?=\/?>)/g, '');
+        if ((min.match(/</g) || []).length !== (min.match(/>/g) || []).length) throw Error('XML 标签格式可能无效');
+        return min;
+      }
+      case 'rot47': return [...s].map(ch => { const n = ch.charCodeAt(0); return n >= 33 && n <= 126 ? String.fromCharCode(33 + ((n - 33 + 47) % 94)) : ch; }).join('');
+      case 'url-params-to-json': {
+        let url;
+        try { url = new URL(s.trim(), 'https://example.invalid'); } catch { throw Error('URL 格式无效'); }
+        const out = {};
+        for (const [key, value] of url.searchParams) {
+          if (Object.prototype.hasOwnProperty.call(out, key)) out[key] = Array.isArray(out[key]) ? [...out[key], value] : [out[key], value];
+          else out[key] = value;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-to-typescript': {
+        const data = JSON.parse(s);
+        const rootName = (v('ts-interface-name') || 'Root').trim();
+        if (!/^[A-Za-z_$][\w$]*$/.test(rootName)) throw Error('接口名称无效');
+        const interfaces = [];
+        const nameFor = key => { const n = key.replace(/[^A-Za-z0-9_$]+/g, ' ').trim().split(/\s+/).map((p, i) => i ? p[0].toUpperCase() + p.slice(1) : p).join(''); return /^[A-Za-z_$]/.test(n) ? n : 'Field' + n; };
+        const typeOf = (value, name) => {
+          if (value === null) return 'null';
+          if (Array.isArray(value)) { if (!value.length) return 'unknown[]'; const types = [...new Set(value.map(item => typeOf(item, name + 'Item')))]; return '(' + types.join(' | ') + ')[]'; }
+          if (typeof value === 'object') {
+            const typeName = nameFor(name);
+            const fields = Object.entries(value).map(([key, val]) => '  ' + (/^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)) + (val === null ? '?' : '') + ': ' + typeOf(val, key) + ';');
+            interfaces.push('export interface ' + typeName + ' {\n' + fields.join('\n') + '\n}');
+            return typeName;
+          }
+          return typeof value;
+        };
+        typeOf(data, rootName);
+        return interfaces.reverse().join('\n\n');
+      }
+      case 'uuid-bulk': {
+        const count = Number(v('uuid-count') || 10);
+        if (!Number.isInteger(count) || count < 1 || count > 1000) throw Error('数量必须为 1 到 1000 之间的整数');
+        const makeUuid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+        return Array.from({length: count}, makeUuid).join('\n');
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
