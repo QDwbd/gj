@@ -24,6 +24,7 @@ const expectedContains = {'json-to-js-object':'const data = { name: "Alice", age
   'morse-decode':'SOS', 'roman-numeral':'V', 'date-diff':'绝对天数：364',
   'json-to-csv':'"likes apples, pears"', 'yaml-to-json':'"items": [\n    "alpha",\n    "beta"\n  ]', 'html-color-name':'颜色格式有效', 'csv-clean':'a\nb'
 };
+Object.assign(samples, {'base64url-encode':'hello','base64url-decode':'aGVsbG8','json-flatten':'{"user":{"name":"Ada","tags":["a","b"]}}','json-unflatten':'{"/user/name":"Ada","/user/tags/0":"a","/user/tags/1":"b"}','xml-unescape':'&lt;root&gt;Tom &amp; Jerry&#33;&lt;/root&gt;','list-duplicates':'apple\\nbanana\\napple\\norange\\nbanana'});
 Object.assign(samples, {"json-to-js-object":"{\"name\":\"Alice\",\"age\":30}","json-to-csharp":"{\"name\":\"Alice\",\"age\":30}","json-to-java":"{\"name\":\"Alice\",\"age\":30}","json-to-php":"{\"name\":\"Alice\",\"age\":30}","json-pick-fields":"[{\"id\":1,\"name\":\"Alice\",\"secret\":\"x\"}]","json-merge":"{\"a\":1,\"nested\":{\"x\":1}}","json-lines-merge":"{\"id\":1}\n{\"id\":2}","json-to-array":"{\"a\":1,\"b\":2}","text-filter":"INFO startup\nERROR request failed\nWARN slow response","text-prefix":"apple\nbanana","text-suffix":"apple\nbanana","text-wrap-quotes":"apple\nbanana","substring-extract":"<title>Example Page</title>","text-diff":"apple\nbanana\norange"});
 const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
