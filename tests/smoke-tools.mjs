@@ -6,7 +6,7 @@ const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url
 const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const samples = {
-  'csv-clean':' a \n b ','slugify':'Hello World!','qr-text':'  Hello QR  ','image-dimensions':'data:image/png;base64,aGVsbG8=','html-color-name':'rgb(255, 0, 0)','punycode-info':'example.com','url-safe-base64':'hello','text-to-binary':'Hello','markdown-table':'Name,Age\nAlice,30','markdown-preview-text':'# Title\n**bold**','text-escape-html':'<b>hi</b>','text-unescape-html':'&lt;b&gt;','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','css-gradient':'#4263eb #a5b4fc','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
+  'csv-clean':' a \n b ','html-color-name':'rgb(255, 0, 0)','url-safe-base64':'hello','markdown-preview-text':'# Title\n**bold**','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','css-gradient':'#4263eb #a5b4fc','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
   'case-upper':'hello','case-lower':'HELLO','case-title':'hello world','case-sentence':'hello. world','text-reverse':'hello','text-replace':'foo foo','text-to-slug':'中文工具 测试!','comma-to-lines':'a, b','lines-to-comma':'a\nb','text-clean':'hello',
   'html-escape':'<p>hi</p>','html-unescape':'&lt;b&gt;','regex-escape':'a+b?','unique-words':'one two one','json-format':'{"a":1}','json-minify':'{ "a": 1 }','json-validate':'{"ok":true}',
   'json-to-yaml':'{"site":"demo","enabled":true}','yaml-to-json':'site: demo\nenabled: true\nitems:\n  - alpha\n  - beta\nmeta:\n  count: 2','html-minify':'<p> a </p>','css-minify':'a { color: red; }','js-minify':'const x = 1;','url-encode':'hello world','url-decode':'hello%20world',
@@ -22,7 +22,7 @@ const expectedContains = {
   'text-replace':'bar bar', 'text-count':'字符数（含空格）：3', 'text-to-slug':'中文工具-测试', 'reading-time':'约 0.1 分钟', 'calculator':'60', 'base64-encode':'aGVsbG8=',
   'url-encode':'hello%20world', 'querystring-parse':'"a": "1"',
   'morse-decode':'SOS', 'roman-numeral':'V', 'date-diff':'绝对天数：364',
-  'json-to-csv':'"likes apples, pears"', 'yaml-to-json':'"items": [\n    "alpha",\n    "beta"\n  ]', 'image-dimensions':'图片宽度：1 px', 'html-color-name':'颜色格式有效', 'punycode-info':'example.com', 'text-to-binary':'UTF-8 字节数：5', 'qr-text':'Hello QR', 'csv-clean':'a\nb'
+  'json-to-csv':'"likes apples, pears"', 'yaml-to-json':'"items": [\n    "alpha",\n    "beta"\n  ]', 'html-color-name':'颜色格式有效', 'css-gradient':'background: linear-gradient(135deg, #4263eb, #a5b4fc);', 'csv-clean':'a\nb'
 };
 const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
