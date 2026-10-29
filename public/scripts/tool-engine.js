@@ -14,6 +14,7 @@ if (root) {
   const addTextArea = (id, label, value='') => { const wrap=document.createElement('label'); wrap.textContent=label; const el=document.createElement('textarea'); el.id=id; el.value=value; el.rows=4; wrap.appendChild(el); controls.appendChild(wrap); return el; };
   if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
   if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
+  if (op === 'text-diff') addTextArea('diff-second','对比文本（第二份）','');
   if (op === 'text-filter') { addInput('filter-pattern','正则表达式','error|warn'); addInput('filter-flags','正则标志','i'); }
   if (op === 'text-prefix') addInput('line-prefix','添加的前缀','');
   if (op === 'text-suffix') addInput('line-suffix','添加的后缀','');
