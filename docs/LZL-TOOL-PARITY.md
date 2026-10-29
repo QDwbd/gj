@@ -35,7 +35,8 @@
 - [x] PDF 指定页码转 PNG（缩放、背景、预览与 ZIP 批量下载）
 - [ ] PDF 长图/分页等高级输出模式
 - [x] PDF 页面重排、删除、旋转与多文件合并（浏览器本地处理）
-- [ ] Excel/PPT 内嵌图片提取、Excel 转 HTML/JSON、JSON 转 Excel
+- [x] Excel XLSX 转 HTML/JSON、JSON 转 XLSX
+- [ ] Excel/PPT 内嵌图片提取、复杂单元格样式与公式计算
 - [ ] CSV 编码/中文乱码修复
 - [ ] ZIP 文件打包、文件对比、随机文件抽取
 - [x] SQLite 本地浏览、SQL 执行、修改与数据库导出（WebAssembly）
