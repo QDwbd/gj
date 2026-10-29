@@ -23,6 +23,9 @@ if (root) {
   if (['text-replace'].includes(op)) { addInput('find-text','查找内容'); addInput('replace-text','替换为'); }
   if (['regex-test'].includes(op)) { addInput('regex-pattern','正则表达式','\\w+'); addInput('regex-flags','标志','gi'); }
   if (['caesar'].includes(op)) addInput('shift','偏移量','3','number');
+  if (op === 'json-to-xml') addInput('xml-root-name','XML 根节点名称','root');
+  if (op === 'json-to-typescript') addInput('ts-interface-name','根接口名称','Root');
+  if (op === 'uuid-bulk') addInput('uuid-count','生成数量','10','number');
   if (['random-number'].includes(op)) { addInput('min-number','最小值','1','number'); addInput('max-number','最大值','100','number'); }
   if (['round-number'].includes(op)) addInput('decimal-places','小数位数','2','number');
   if (['unit-convert'].includes(op)) addInput('unit-value','数值','1','number');
