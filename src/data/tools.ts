@@ -813,4 +813,102 @@ export const tools: Tool[] = [
     "description": "按阅读速度估算阅读分钟数",
     "operation": "reading-time"
   },
-  ];
+  {
+    "slug": "json-to-js-object",
+    "name": "JSON 转 JavaScript 对象",
+    "category": "开发者工具",
+    "description": "将 JSON 转换为 JavaScript 对象字面量",
+    "operation": "json-to-js-object"
+  },
+  {
+    "slug": "json-to-csharp",
+    "name": "JSON 转 C# 模型",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 C# 类和属性类型",
+    "operation": "json-to-csharp"
+  },
+  {
+    "slug": "json-to-java",
+    "name": "JSON 转 Java 模型",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 Java DTO 字段和类型",
+    "operation": "json-to-java"
+  },
+  {
+    "slug": "json-to-php",
+    "name": "JSON 转 PHP 数组",
+    "category": "开发者工具",
+    "description": "将 JSON 转换为可用的 PHP 数组表达式",
+    "operation": "json-to-php"
+  },
+  {
+    "slug": "json-pick-fields",
+    "name": "JSON 字段提取",
+    "category": "数据与格式",
+    "description": "按字段名从 JSON 对象或对象数组中提取字段",
+    "operation": "json-pick-fields"
+  },
+  {
+    "slug": "json-merge",
+    "name": "JSON 深度合并",
+    "category": "数据与格式",
+    "description": "深度合并两个 JSON 对象，后一个对象覆盖同名值",
+    "operation": "json-merge"
+  },
+  {
+    "slug": "json-lines-merge",
+    "name": "JSON 行合并",
+    "category": "数据与格式",
+    "description": "将每行一个 JSON 值合并成标准 JSON 数组并定位错误行",
+    "operation": "json-lines-merge"
+  },
+  {
+    "slug": "json-to-array",
+    "name": "JSON 对象转数组",
+    "category": "数据与格式",
+    "description": "提取 JSON 对象的字段值并转换为数组",
+    "operation": "json-to-array"
+  },
+  {
+    "slug": "text-filter",
+    "name": "正则文本过滤",
+    "category": "文本工具",
+    "description": "使用正则表达式筛选匹配的文本行",
+    "operation": "text-filter"
+  },
+  {
+    "slug": "text-prefix",
+    "name": "批量添加前缀",
+    "category": "文本工具",
+    "description": "为每一行批量添加指定前缀",
+    "operation": "text-prefix"
+  },
+  {
+    "slug": "text-suffix",
+    "name": "批量添加后缀",
+    "category": "文本工具",
+    "description": "为每一行批量添加指定后缀",
+    "operation": "text-suffix"
+  },
+  {
+    "slug": "text-wrap-quotes",
+    "name": "逐行添加引号",
+    "category": "文本工具",
+    "description": "为每一行添加指定引号并转义内部引号",
+    "operation": "text-wrap-quotes"
+  },
+  {
+    "slug": "substring-extract",
+    "name": "子字符串提取",
+    "category": "文本工具",
+    "description": "按开始和结束标记提取两者之间的内容",
+    "operation": "substring-extract"
+  },
+  {
+    "slug": "text-diff",
+    "name": "文本差异对比",
+    "category": "文本工具",
+    "description": "逐行比较两段文本并标记新增、删除和相同行",
+    "operation": "text-diff"
+  }
+];
