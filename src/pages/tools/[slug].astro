@@ -72,7 +72,27 @@ const { tool } = Astro.props;
       <p id="media-status" role="status">选择文件或输入内容开始转换。数据不会主动上传到服务器。</p>
     </section>}
 
-    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {['qr-generator', 'barcode-generator'].includes(tool.operation) && <section id="barcode-workbench" class="workbench barcode-workbench" data-barcode-operation={tool.operation} style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>{tool.operation === 'qr-generator' ? '二维码生成工作台' : '条码生成工作台'}</strong></div><span class="privacy-label">浏览器本地生成</span></div>
+      {tool.operation === 'barcode-generator' && <label class="field-label" for="barcode-type">条码标准</label>}
+      {tool.operation === 'barcode-generator' && <select id="barcode-type"><option value="code128">Code 128（通用）</option><option value="code39">Code 39</option><option value="ean13">EAN-13（13 位商品码）</option><option value="ean8">EAN-8（8 位商品码）</option><option value="upca">UPC-A（12 位商品码）</option><option value="itf14">ITF-14（14 位物流码）</option></select>}
+      <label class="field-label" for="barcode-text">编码内容</label>
+      <textarea id="barcode-text" rows="4" spellcheck="false" placeholder="输入网址、文本或符合所选标准的条码数字"></textarea>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:16px 0">
+        <label>缩放倍率 <input id="barcode-scale" type="number" min="1" max="10" value="3" /></label>
+        <label>边距 <input id="barcode-padding" type="number" min="0" max="30" value="10" /></label>
+        {tool.operation === 'barcode-generator' && <label>条码高度（毫米） <input id="barcode-height" type="number" min="5" max="100" value="15" /></label>}
+        <label>前景色 <input id="barcode-foreground" type="color" value="#000000" /></label>
+        <label>背景色 <input id="barcode-background" type="color" value="#ffffff" /></label>
+      </div>
+      {tool.operation === 'barcode-generator' && <label><input id="barcode-human-readable" type="checkbox" checked /> 显示可读数字</label>}
+      <div class="action-row" style="margin-top:16px"><button id="barcode-generate" class="primary-button" type="button">生成</button><button id="barcode-download" class="secondary-button" type="button" disabled>下载 PNG</button><button id="barcode-reset" class="secondary-button" type="button">重置</button></div>
+      <div style="margin-top:18px;overflow:auto;text-align:center"><canvas id="barcode-canvas" hidden style="max-width:100%;height:auto"></canvas></div>
+      <p id="barcode-status" role="status">生成在本地完成；条码数字格式会按所选标准校验。</p>
+    </section>}
+
+    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
@@ -88,4 +108,5 @@ const { tool } = Astro.props;
   <script type="module" src="/scripts/tool-engine.js"></script>
   <script type="module" src="/scripts/image-editor.js"></script>
   <script type="module" src="/scripts/media-tools.js"></script>
+  <script src="../../scripts/barcode-tools.js"></script>
 </BaseLayout>

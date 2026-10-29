@@ -1148,4 +1148,19 @@ export const tools: Tool[] = [
     "description": "根据 JSON 对象生成 C++ struct 字段及常见类型",
     "operation": "json-to-cpp"
   }
+,
+  {
+    "slug": "qr-generator",
+    "name": "二维码生成器",
+    "category": "图片工具",
+    "description": "在浏览器中生成可下载的二维码 PNG，支持前景色、背景色和边距",
+    "operation": "qr-generator"
+  },
+  {
+    "slug": "barcode-generator",
+    "name": "条码生成器",
+    "category": "图片工具",
+    "description": "生成 Code 128、EAN-13、EAN-8、UPC-A、ITF-14 等常见条码并导出 PNG",
+    "operation": "barcode-generator"
+  }
 ];
