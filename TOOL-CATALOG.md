@@ -1,8 +1,8 @@
 # 工具目录
 
-当前目录包含 **130 个实用工具**。重点覆盖文本处理、JSON 数据加工、开发者代码转换与常用格式处理。新增工具均有对应处理器和烟雾测试。
+当前目录包含 **124 个实用工具**。重点覆盖文本处理、JSON 数据加工、开发者代码转换与常用格式处理。每个目录项均对应实际处理器，并由自动冒烟测试覆盖。
 
-## 文本工具（25）
+## 文本工具（24）
 
 - [字数统计](/tools/text-count/)：统计字符、单词、行数和段落数
 - [文本行排序](/tools/line-sort/)：按字母或字符顺序排序文本行
@@ -22,7 +22,6 @@
 - [文本清理](/tools/text-clean/)：去除控制字符并规范换行
 - [正则转义](/tools/text-escape-regex/)：转义正则表达式中的特殊字符
 - [唯一单词](/tools/text-unique-words/)：提取文本中的不重复单词
-- [Lorem Ipsum 生成](/tools/lorem/)：生成指定段数的占位文本
 - [正则文本过滤](/tools/text-filter/)：使用正则表达式筛选匹配的文本行
 - [批量添加前缀](/tools/text-prefix/)：为每一行批量添加指定前缀
 - [批量添加后缀](/tools/text-suffix/)：为每一行批量添加指定后缀
@@ -101,7 +100,7 @@
 - [长度单位换算](/tools/unit-convert/)：米、千米、厘米、英尺和英寸换算
 - [温度换算](/tools/temperature/)：摄氏度、华氏度和开尔文换算
 
-## 颜色工具（10）
+## 颜色工具（9）
 
 - [HEX 转 RGB](/tools/color-hex-rgb/)：将 HEX 颜色转换为 RGB
 - [RGB 转 HEX](/tools/color-rgb-hex/)：将 RGB 颜色转换为 HEX
@@ -112,7 +111,6 @@
 - [配色板生成](/tools/color-palette/)：基于主色生成简单配色板
 - [颜色反转](/tools/color-invert/)：计算 HEX 颜色的反色
 - [相对亮度](/tools/color-luminance/)：计算颜色相对亮度
-- [CSS 渐变生成](/tools/css-gradient/)：输入两个 HEX 色值，生成线性渐变 CSS
 
 ## 安全与生成器（4）
 
@@ -121,22 +119,18 @@
 - [HMAC-SHA256](/tools/hmac-sha256/)：用浏览器 Web Crypto 计算 HMAC-SHA256
 - [密码强度检查](/tools/password-strength/)：根据长度和字符种类给出本地估算
 
-## Web 与网络（8）
+## Web 与网络（5）
 
 - [宽高比计算](/tools/aspect-ratio/)：计算宽高比和等比例尺寸
-- [Meta 标签生成](/tools/html-meta/)：根据标题、描述和网址生成 Meta 标签
-- [robots.txt 生成](/tools/robots-txt/)：生成基础 robots.txt 内容
-- [Sitemap URL 条目生成](/tools/sitemap-url/)：将网址包装为 sitemap XML 的单条 URL 记录
 - [HTTP 状态码查询](/tools/http-status/)：查询常见 HTTP 状态码说明
 - [MIME 类型查询](/tools/mime-type/)：查询常见文件扩展名的 MIME 类型
 - [IP 地址格式检查](/tools/ip-format/)：检查 IPv4 地址格式
 - [邮箱格式检查](/tools/email-validate/)：检查常见邮箱格式（非投递验证）
 
-## 图片与设计（3）
+## 图片与设计（2）
 
 - [SVG 文本压缩](/tools/svg-minify/)：压缩简单 SVG 文本中的空白
 - [SVG 转 Data URI](/tools/svg-to-data-uri/)：将 SVG 文本转换为 Data URI
-- [设计 Token 生成](/tools/design-token/)：将颜色与间距输入转成 CSS 变量
 
 ## 数据与格式（13）
 
