@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.0.0",
-    "astro": "^5.0.0"
+    "astro": "^5.0.0",
+    "bwip-js": "^4.11.4"
   }
 }
