@@ -40,6 +40,9 @@ if (root) {
   if (['factorial','prime-check','leap-year','weekday','date-timestamp','date-iso','date-utc','timestamp-date','number-format','byte-convert','bmi','calorie-estimate','tip-calculator','loan-payment','discount','split-bill','aspect-ratio','css-shadow','css-border-radius','css-grid','design-token','placeholder-svg','html-meta','sitemap-url','robots-txt','ip-format','email-validate','mime-type','http-status','password-strength','lorem','reading-time','name-initials','unix-permissions','cron-explain','json-stringify','json-unstringify','querystring-build','querystring-parse','json-key-sort','list-to-json','json-to-list','csv-to-json','json-to-csv','table-to-markdown','data-uri','svg-to-data-uri','url-parse','querystring-parse','hmac-sha256'].includes(op)) {
     // Tool-specific controls are optional; the text field is used where possible.
   }
+  if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
+  if (['json-to-go','json-to-kotlin'].includes(op)) addInput('model-name','类型名称','Root');
+  if (op === 'json-to-sql-table') addInput('sql-table-name','表名','items');
   const words = s => s.trim() ? s.trim().split(/\s+/) : [];
   const finite = (value, label='数值') => { const x=Number(value); if(!Number.isFinite(x)) throw Error(`${label}必须是有效数字`); return x; };
   const nums = s => s.split(/[\s,;]+/).filter(Boolean).map(Number);
@@ -539,6 +542,91 @@ if (root) {
           } else root.push(key + '=' + scalar(val));
         }
         return [...(root.length ? [root.join('\n')] : []), ...sections].join('\n\n');
+      }
+
+      case 'cookie-to-json': {
+        const raw = s.trim().replace(/^Cookie:\s*/i, '');
+        if (!raw) throw Error('请输入 Cookie 请求头内容');
+        const out = {};
+        for (const part of raw.split(';')) {
+          const idx = part.indexOf('=');
+          if (idx < 1) { if (part.trim()) throw Error('Cookie 项格式无效，应为 name=value'); continue; }
+          const key = part.slice(0, idx).trim(), value = part.slice(idx + 1).trim();
+          if (!key) throw Error('Cookie 名称不能为空');
+          let decoded; try { decoded = decodeURIComponent(value); } catch { decoded = value; }
+          if (Object.prototype.hasOwnProperty.call(out, key)) out[key] = Array.isArray(out[key]) ? [...out[key], decoded] : [out[key], decoded];
+          else out[key] = decoded;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-array-dedupe': {
+        const data = JSON.parse(s);
+        if (!Array.isArray(data)) throw Error('请输入 JSON 数组');
+        const seen = new Set();
+        const stable = value => Array.isArray(value) ? '[' + value.map(stable).join(',') + ']' : value && typeof value === 'object' ? '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stable(value[k])).join(',') + '}' : JSON.stringify(value);
+        return JSON.stringify(data.filter(item => { const key = stable(item); if (seen.has(key)) return false; seen.add(key); return true; }), null, 2);
+      }
+      case 'list-shuffle': {
+        const lines = s.split(/\r?\n/).filter(line => line.length > 0);
+        for (let i = lines.length - 1; i > 0; i--) {
+          const random = new Uint32Array(1); crypto.getRandomValues(random);
+          const j = random[0] % (i + 1); [lines[i], lines[j]] = [lines[j], lines[i]];
+        }
+        return lines.join('\n');
+      }
+      case 'list-chunk': {
+        const size = Number(v('chunk-size') || 5);
+        if (!Number.isInteger(size) || size < 1 || size > 10000) throw Error('每组数量必须是 1 到 10000 的整数');
+        const lines = s.split(/\r?\n/).filter(line => line.length > 0);
+        const groups = [];
+        for (let i = 0; i < lines.length; i += size) groups.push(lines.slice(i, i + size).join('\n'));
+        return groups.join('\n\n');
+      }
+      case 'json-to-go': {
+        const data = JSON.parse(s), rootName = (v('model-name') || 'Root').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(rootName)) throw Error('类型名称必须以字母或下划线开头');
+        const exported = key => key.replace(/[^A-Za-z0-9_]/g, ' ').split(/\s+/).filter(Boolean).map(x => x[0].toUpperCase()+x.slice(1)).join('') || 'Field';
+        const infer = value => {
+          if (value === null) return 'interface{}';
+          if (Array.isArray(value)) return value.length ? '[]' + infer(value[0]) : '[]interface{}';
+          if (typeof value === 'object') { const fields = Object.entries(value).map(([k,val]) => '\t'+exported(k)+' '+infer(val)+' \x60json:"'+k+'"\x60'); return 'struct {\n'+fields.join('\n')+'\n}'; }
+          if (typeof value === 'string') return 'string';
+          if (typeof value === 'boolean') return 'bool';
+          if (typeof value === 'number') return Number.isInteger(value) ? 'int64' : 'float64';
+          return 'interface{}';
+        };
+        return 'type '+rootName+' '+infer(data);
+      }
+      case 'json-to-kotlin': {
+        const data = JSON.parse(s), rootName = (v('model-name') || 'Root').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(rootName)) throw Error('类型名称必须以字母或下划线开头');
+        if (!data || typeof data !== 'object' || Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const typeOf = value => value === null ? 'Any?' : Array.isArray(value) ? (value.length ? 'List<'+typeOf(value[0])+'>' : 'List<Any>') : typeof value === 'string' ? 'String' : typeof value === 'boolean' ? 'Boolean' : typeof value === 'number' ? (Number.isInteger(value) ? 'Long' : 'Double') : 'Any';
+        const fields = Object.entries(data).map(([key,value]) => {
+          const prop = /^[A-Za-z_][A-Za-z0-9_]*$/.test(key) ? key : '\x60'+key.replace(/\x60/g,'')+'\x60';
+          return '    val '+prop+': '+typeOf(value);
+        });
+        return 'data class '+rootName+'(\n'+fields.join(',\n')+'\n)';
+      }
+      case 'json-to-sql-table': {
+        const data = JSON.parse(s), table = (v('sql-table-name') || 'items').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(table)) throw Error('表名只能包含字母、数字和下划线，且不能以数字开头');
+        const rows = Array.isArray(data) ? data : [data];
+        if (!rows.length || !rows[0] || typeof rows[0] !== 'object' || Array.isArray(rows[0])) throw Error('请输入 JSON 对象或对象数组');
+        const merged = Object.assign({}, ...rows);
+        const sqlType = val => val === null ? 'TEXT' : typeof val === 'boolean' ? 'BOOLEAN' : typeof val === 'number' ? (Number.isInteger(val) ? 'BIGINT' : 'DOUBLE PRECISION') : typeof val === 'object' ? 'JSON' : 'TEXT';
+        const cols = Object.entries(merged).map(([key,val]) => {
+          if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw Error('字段名含有 SQL 标识符不支持的字符：'+key);
+          return '  "'+key+'" '+sqlType(val);
+        });
+        return 'CREATE TABLE "'+table+'" (\n'+cols.join(',\n')+'\n);';
+      }
+      case 'json-to-html-table': {
+        const data = JSON.parse(s);
+        if (!Array.isArray(data) || !data.length || data.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw Error('请输入非空 JSON 对象数组');
+        const keys = [...new Set(data.flatMap(row => Object.keys(row)))];
+        const cell = value => esc(value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value));
+        return '<table>\n  <thead>\n    <tr>'+keys.map(k=>'<th>'+cell(k)+'</th>').join('')+'</tr>\n  </thead>\n  <tbody>\n'+data.map(row=>'    <tr>'+keys.map(k=>'<td>'+cell(row[k])+'</td>').join('')+'</tr>').join('\n')+'\n  </tbody>\n</table>';
       }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
