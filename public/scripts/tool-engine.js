@@ -656,6 +656,42 @@ if (root) {
         if(!methods[q]) throw Error('未知 HTTP 方法；可查询 GET、POST、PUT、PATCH、DELETE 等');
         return q+'\\n'+methods[q];
       }
+
+      case 'list-random-pick': {
+        const lines=s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+        if(!lines.length) throw Error('请输入名单，每行一个项目');
+        const count=Number(v('pick-count')||1);
+        if(!Number.isInteger(count)||count<1||count>lines.length) throw Error('抽取数量必须在 1 到名单行数之间');
+        for(let i=lines.length-1;i>0;i--){const r=new Uint32Array(1);crypto.getRandomValues(r);const j=r[0]%(i+1);[lines[i],lines[j]]=[lines[j],lines[i]];}
+        return lines.slice(0,count).join('\n');
+      }
+      case 'list-group-random': {
+        const lines=s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+        if(!lines.length) throw Error('请输入名单，每行一个项目');
+        const count=Number(v('group-count')||3);
+        if(!Number.isInteger(count)||count<1||count>lines.length) throw Error('分组数量必须在 1 到名单行数之间');
+        for(let i=lines.length-1;i>0;i--){const r=new Uint32Array(1);crypto.getRandomValues(r);const j=r[0]%(i+1);[lines[i],lines[j]]=[lines[j],lines[i]];}
+        const groups=Array.from({length:count},()=>[]);
+        lines.forEach((line,i)=>groups[i%count].push(line));
+        return groups.map((g,i)=>'第 '+(i+1)+' 组（'+g.length+' 项）\n'+g.join('\n')).join('\n\n');
+      }
+      case 'json-to-rust': {
+        const data=JSON.parse(s), name=(v('model-name')||'Root').trim();
+        if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) throw Error('类型名称必须以字母或下划线开头');
+        if(!data||typeof data!=='object'||Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const snake=k=>k.replace(/([a-z0-9])([A-Z])/g,'$1_$2').replace(/[^A-Za-z0-9_]+/g,'_').toLowerCase().replace(/^([0-9])/,'_$1');
+        const typeOf=x=>x===null?'serde_json::Value':Array.isArray(x)?(x.length?'Vec<'+typeOf(x[0])+'>':'Vec<serde_json::Value>'):typeof x==='string'?'String':typeof x==='boolean'?'bool':typeof x==='number'?(Number.isInteger(x)?'i64':'f64'):'serde_json::Value';
+        const fields=Object.entries(data).map(([k,val])=>{const field=snake(k);return (field!==k?'    #[serde(rename = "'+k+'")]\n':'')+'    pub '+field+': '+typeOf(val)+',';});
+        return '#[derive(Debug, serde::Serialize, serde::Deserialize)]\npub struct '+name+' {\n'+fields.join('\n')+'\n}';
+      }
+      case 'json-to-cpp': {
+        const data=JSON.parse(s), name=(v('model-name')||'Root').trim();
+        if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) throw Error('类型名称必须以字母或下划线开头');
+        if(!data||typeof data!=='object'||Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const typeOf=x=>x===null?'nlohmann::json':Array.isArray(x)?(x.length?'std::vector<'+typeOf(x[0])+'>' : 'std::vector<nlohmann::json>'):typeof x==='string'?'std::string':typeof x==='boolean'?'bool':typeof x==='number'?(Number.isInteger(x)?'std::int64_t':'double'):'nlohmann::json';
+        const fields=Object.entries(data).map(([k,val])=>{if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(k)) throw Error('字段名不符合 C++ 标识符规范：'+k);return '    '+typeOf(val)+' '+k+'{};';});
+        return '#include <cstdint>\n#include <string>\n#include <vector>\n#include <nlohmann/json.hpp>\n\nstruct '+name+' {\n'+fields.join('\n')+'\n};';
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
