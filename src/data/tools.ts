@@ -625,11 +625,11 @@ export const tools: Tool[] = [
     "operation": "mime-type"
   },
   {
-    "slug": "ip-format",
-    "name": "IP 地址格式检查",
+    "slug": "my-ip",
+    "name": "查询本机 IP",
     "category": "Web 与网络",
-    "description": "检查 IPv4 地址格式",
-    "operation": "ip-format"
+    "description": "查询当前网络对外显示的公网 IP 地址；不等同于路由器分配的局域网 IP",
+    "operation": "my-ip"
   },
   {
     "slug": "email-validate",
