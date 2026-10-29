@@ -596,13 +596,6 @@ export const tools: Tool[] = [
     "description": "根据长度和字符种类给出本地估算",
     "operation": "password-strength"
   },
-  {
-    "slug": "lorem",
-    "name": "Lorem Ipsum 生成",
-    "category": "文本工具",
-    "description": "生成指定段数的占位文本",
-    "operation": "lorem"
-  },
       {
     "slug": "url-safe-base64",
     "name": "URL 安全 Base64",
@@ -616,27 +609,6 @@ export const tools: Tool[] = [
     "category": "Web 与网络",
     "description": "计算宽高比和等比例尺寸",
     "operation": "aspect-ratio"
-  },
-  {
-    "slug": "html-meta",
-    "name": "Meta 标签生成",
-    "category": "Web 与网络",
-    "description": "根据标题、描述和网址生成 Meta 标签",
-    "operation": "html-meta"
-  },
-  {
-    "slug": "robots-txt",
-    "name": "robots.txt 生成",
-    "category": "Web 与网络",
-    "description": "生成基础 robots.txt 内容",
-    "operation": "robots-txt"
-  },
-  {
-    "slug": "sitemap-url",
-    "name": "Sitemap URL 条目生成",
-    "category": "Web 与网络",
-    "description": "将网址包装为 sitemap XML 的单条 URL 记录",
-    "operation": "sitemap-url"
   },
   {
     "slug": "http-status",
@@ -679,20 +651,6 @@ export const tools: Tool[] = [
     "category": "图片与设计",
     "description": "将 SVG 文本转换为 Data URI",
     "operation": "svg-to-data-uri"
-  },
-  {
-    "slug": "css-gradient",
-    "name": "CSS 渐变生成",
-    "category": "颜色工具",
-    "description": "输入两个 HEX 色值，生成线性渐变 CSS",
-    "operation": "css-gradient"
-  },
-  {
-    "slug": "design-token",
-    "name": "设计 Token 生成",
-    "category": "图片与设计",
-    "description": "将颜色与间距输入转成 CSS 变量",
-    "operation": "design-token"
   },
   {
     "slug": "list-to-json",
