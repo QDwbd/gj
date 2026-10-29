@@ -41,7 +41,9 @@ if (root) {
     // Tool-specific controls are optional; the text field is used where possible.
   }
   if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
-  if (['json-to-go','json-to-kotlin'].includes(op)) addInput('model-name','类型名称','Root');
+  if (['json-to-go','json-to-kotlin','json-to-rust','json-to-cpp'].includes(op)) addInput('model-name','类型名称','Root');
+  if (op === 'list-random-pick') addInput('pick-count','抽取数量','1','number');
+  if (op === 'list-group-random') addInput('group-count','分组数量','3','number');
   if (op === 'json-to-sql-table') addInput('sql-table-name','表名','items');
   const words = s => s.trim() ? s.trim().split(/\s+/) : [];
   const finite = (value, label='数值') => { const x=Number(value); if(!Number.isFinite(x)) throw Error(`${label}必须是有效数字`); return x; };
@@ -627,6 +629,32 @@ if (root) {
         const keys = [...new Set(data.flatMap(row => Object.keys(row)))];
         const cell = value => esc(value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value));
         return '<table>\n  <thead>\n    <tr>'+keys.map(k=>'<th>'+cell(k)+'</th>').join('')+'</tr>\n  </thead>\n  <tbody>\n'+data.map(row=>'    <tr>'+keys.map(k=>'<td>'+cell(row[k])+'</td>').join('')+'</tr>').join('\n')+'\n  </tbody>\n</table>';
+      }
+
+      case 'unicode-escape': return [...s].map(ch => [...ch].map(unit => '\\u' + unit.charCodeAt(0).toString(16).padStart(4,'0')).join('')).join('');
+      case 'unicode-unescape': return s.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex,16)));
+      case 'content-type-lookup': {
+        const types = {html:'text/html',htm:'text/html',css:'text/css',js:'text/javascript',json:'application/json',xml:'application/xml',txt:'text/plain',csv:'text/csv',md:'text/markdown',yaml:'application/yaml',yml:'application/yaml',pdf:'application/pdf',zip:'application/zip',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',avif:'image/avif',ico:'image/x-icon',mp3:'audio/mpeg',wav:'audio/wav',ogg:'audio/ogg',mp4:'video/mp4',webm:'video/webm',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xls:'application/vnd.ms-excel',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',ppt:'application/vnd.ms-powerpoint',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',wasm:'application/wasm',bin:'application/octet-stream'};
+        const q=s.trim().toLowerCase();
+        if(!q) throw Error('请输入文件扩展名或 MIME 类型');
+        const ext=q.includes('/')?Object.keys(types).find(k=>types[k]===q):q.split(/[?#]/)[0].split('/').pop().replace(/^\\./,'');
+        if(ext&&types[ext]) return '扩展名：.'+ext+'\\nMIME 类型：'+types[ext];
+        const found=Object.entries(types).filter(([,v])=>v.includes(q));
+        if(found.length) return found.map(([k,v])=>'.'+k+' — '+v).join('\\n');
+        throw Error('未找到该类型；请尝试 json、.png 或 application/json');
+      }
+      case 'tcp-port-lookup': {
+        const rows=[[20,'FTP-DATA','文件传输数据通道'],[21,'FTP','文件传输控制'],[22,'SSH','安全远程登录'],[23,'TELNET','明文远程终端'],[25,'SMTP','邮件传输'],[53,'DNS','域名解析'],[80,'HTTP','网页 HTTP'],[110,'POP3','邮件接收'],[123,'NTP','网络时间同步'],[143,'IMAP','邮件访问'],[161,'SNMP','网络管理'],[389,'LDAP','目录服务'],[443,'HTTPS','加密网页通信'],[445,'SMB','文件共享'],[3306,'MySQL','MySQL 数据库'],[3389,'RDP','远程桌面'],[5432,'PostgreSQL','PostgreSQL 数据库'],[6379,'Redis','Redis 数据库'],[8080,'HTTP-alt','常见 HTTP 替代端口'],[8443,'HTTPS-alt','常见 HTTPS 替代端口'],[27017,'MongoDB','MongoDB 数据库']];
+        const q=s.trim().toLowerCase(); if(!q) throw Error('请输入端口号或服务名');
+        const found=rows.filter(r=>String(r[0])===q||r[1].toLowerCase().includes(q));
+        if(!found.length) throw Error('未找到常见端口；此表不是完整的 IANA 端口注册表');
+        return found.map(r=>'端口：'+r[0]+'\\n服务：'+r[1]+'\\n说明：'+r[2]).join('\\n\\n');
+      }
+      case 'http-method-reference': {
+        const methods={GET:'获取资源；通常安全且幂等',HEAD:'与 GET 类似，但只返回响应头',POST:'提交数据或触发资源处理；通常不保证幂等',PUT:'创建或完整替换资源；语义上幂等',PATCH:'对资源执行部分修改',DELETE:'删除资源；语义上幂等',OPTIONS:'查询支持的通信选项，常用于 CORS 预检',TRACE:'诊断请求链路；服务器通常禁用',CONNECT:'建立到目标服务器的隧道，常用于代理'};
+        const q=s.trim().toUpperCase(); if(!q) return Object.entries(methods).map(([k,v])=>k+'\\n'+v).join('\\n\\n');
+        if(!methods[q]) throw Error('未知 HTTP 方法；可查询 GET、POST、PUT、PATCH、DELETE 等');
+        return q+'\\n'+methods[q];
       }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
