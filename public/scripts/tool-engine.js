@@ -23,6 +23,9 @@ if (root) {
   if (['text-replace'].includes(op)) { addInput('find-text','查找内容'); addInput('replace-text','替换为'); }
   if (['regex-test'].includes(op)) { addInput('regex-pattern','正则表达式','\\w+'); addInput('regex-flags','标志','gi'); }
   if (['caesar'].includes(op)) addInput('shift','偏移量','3','number');
+  if (op === 'json-to-xml') addInput('xml-root-name','XML 根节点名称','root');
+  if (op === 'json-to-typescript') addInput('ts-interface-name','根接口名称','Root');
+  if (op === 'uuid-bulk') addInput('uuid-count','生成数量','10','number');
   if (['random-number'].includes(op)) { addInput('min-number','最小值','1','number'); addInput('max-number','最大值','100','number'); }
   if (['round-number'].includes(op)) addInput('decimal-places','小数位数','2','number');
   if (['unit-convert'].includes(op)) addInput('unit-value','数值','1','number');
@@ -37,6 +40,9 @@ if (root) {
   if (['factorial','prime-check','leap-year','weekday','date-timestamp','date-iso','date-utc','timestamp-date','number-format','byte-convert','bmi','calorie-estimate','tip-calculator','loan-payment','discount','split-bill','aspect-ratio','css-shadow','css-border-radius','css-grid','design-token','placeholder-svg','html-meta','sitemap-url','robots-txt','ip-format','email-validate','mime-type','http-status','password-strength','lorem','reading-time','name-initials','unix-permissions','cron-explain','json-stringify','json-unstringify','querystring-build','querystring-parse','json-key-sort','list-to-json','json-to-list','csv-to-json','json-to-csv','table-to-markdown','data-uri','svg-to-data-uri','url-parse','querystring-parse','hmac-sha256'].includes(op)) {
     // Tool-specific controls are optional; the text field is used where possible.
   }
+  if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
+  if (['json-to-go','json-to-kotlin'].includes(op)) addInput('model-name','类型名称','Root');
+  if (op === 'json-to-sql-table') addInput('sql-table-name','表名','items');
   const words = s => s.trim() ? s.trim().split(/\s+/) : [];
   const finite = (value, label='数值') => { const x=Number(value); if(!Number.isFinite(x)) throw Error(`${label}必须是有效数字`); return x; };
   const nums = s => s.split(/[\s,;]+/).filter(Boolean).map(Number);
@@ -261,6 +267,367 @@ if (root) {
       case 'text-wrap-quotes': {const q=v('line-quote');if(!q)throw Error('请输入要使用的引号');return s.split(/\r?\n/).map(line=>q+line.replace(/\\/g,'\\\\').split(q).join('\\'+q)+q).join('\n');}
       case 'substring-extract': {const a=v('substring-start'),b=v('substring-end');if(!a||!b)throw Error('请填写开始和结束标记');const i=s.indexOf(a);if(i<0)throw Error('未找到开始标记：'+a);const j=s.indexOf(b,i+a.length);if(j<0)throw Error('未找到结束标记：'+b);return s.slice(i+a.length,j);}
       case 'text-diff': {const a=s.split(/\r?\n/),b=v('diff-second').split(/\r?\n/);if(a.length*b.length>1000000)throw Error('文本过大，请将每份文本控制在约 1000 行以内');const dp=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);const out=[];let i=0,j=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){out.push('  '+a[i]);i++;j++;}else if(dp[i+1][j]>=dp[i][j+1])out.push('- '+a[i++]);else out.push('+ '+b[j++]);}while(i<a.length)out.push('- '+a[i++]);while(j<b.length)out.push('+ '+b[j++]);return out.join('\n');}
+
+      case 'base64url-encode': {
+        const bytes = new TextEncoder().encode(s);
+        let binary = '';
+        for (const byte of bytes) binary += String.fromCharCode(byte);
+        return btoa(binary).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+      }
+      case 'base64url-decode': {
+        const raw = s.trim();
+        if (!/^[A-Za-z0-9_-]*$/.test(raw) || raw.length % 4 === 1) throw Error('Base64URL 格式无效');
+        const normalized = raw.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - raw.length % 4) % 4);
+        let binary;
+        try { binary = atob(normalized); } catch { throw Error('Base64URL 格式无效'); }
+        try { return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(binary, c => c.charCodeAt(0))); }
+        catch { throw Error('解码结果不是有效的 UTF-8 文本'); }
+      }
+      case 'json-flatten': {
+        const value = JSON.parse(s), out = {};
+        const walk = (node, path) => {
+          if (node !== null && typeof node === 'object') {
+            const entries = Array.isArray(node) ? node.map((v, i) => [String(i), v]) : Object.entries(node);
+            if (!entries.length) out[path || '/'] = node;
+            else for (const [key, child] of entries) walk(child, path + '/' + String(key).replace(/~/g, '~0').replace(/\//g, '~1'));
+          } else out[path || '/'] = node;
+        };
+        walk(value, '');
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-unflatten': {
+        const flat = JSON.parse(s);
+        if (!flat || typeof flat !== 'object' || Array.isArray(flat)) throw Error('请输入 JSON Pointer 路径到值的对象');
+        const rootNode = {};
+        const decodeKey = key => key.replace(/~1/g, '/').replace(/~0/g, '~');
+        for (const [pointer, value] of Object.entries(flat)) {
+          const parts = pointer === '/' || pointer === '' ? [] : pointer.replace(/^\//, '').split('/').map(decodeKey);
+          if (!parts.length) { rootNode.value = value; rootNode.hasRoot = true; continue; }
+          let node = rootNode;
+          for (let i = 0; i < parts.length; i++) {
+            const key = parts[i], last = i === parts.length - 1;
+            if (last) {
+              if (Object.prototype.hasOwnProperty.call(node, key)) throw Error('路径冲突：' + pointer);
+              node[key] = value;
+            } else {
+              if (node[key] == null) node[key] = /^\d+$/.test(parts[i + 1]) ? [] : {};
+              if (typeof node[key] !== 'object') throw Error('路径冲突：' + pointer);
+              node = node[key];
+            }
+          }
+        }
+        const convert = node => {
+          if (!node || typeof node !== 'object') return node;
+          for (const key of Object.keys(node)) node[key] = convert(node[key]);
+          if (Array.isArray(node)) return node;
+          const keys = Object.keys(node);
+          if (keys.length && keys.every((key, i) => key === String(i))) return keys.map(key => node[key]);
+          return node;
+        };
+        return JSON.stringify(rootNode.hasRoot ? rootNode.value : convert(rootNode), null, 2);
+      }
+      case 'xml-unescape': {
+        const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" };
+        return s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (match, entity) => {
+          if (entity[0] === '#') {
+            const hex = entity[1]?.toLowerCase() === 'x';
+            const point = parseInt(entity.slice(hex ? 2 : 1), hex ? 16 : 10);
+            if (!Number.isFinite(point) || point < 0 || point > 0x10ffff || (point >= 0xd800 && point <= 0xdfff)) return match;
+            return String.fromCodePoint(point);
+          }
+          return entities[entity.toLowerCase()] ?? match;
+        });
+      }
+      case 'list-duplicates': {
+        const counts = new Map();
+        for (const line of s.split(/\r?\n/)) {
+          const item = line.trim();
+          if (item) counts.set(item, (counts.get(item) || 0) + 1);
+        }
+        const duplicates = [...counts].filter(([, count]) => count > 1).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+        return duplicates.length ? '重复项目（项目\t出现次数）\n' + duplicates.map(([item, count]) => item + '\t' + count).join('\n') : '未发现重复项目';
+      }
+      case 'json-to-xml': {
+        const value = JSON.parse(s);
+        const rootName = (v('xml-root-name') || 'root').trim();
+        if (!/^[A-Za-z_][\w.:-]*$/.test(rootName)) throw Error('根节点名称无效');
+        const escXml = value => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        const tag = key => /^[A-Za-z_][\w.:-]*$/.test(key) ? key : 'item';
+        const emit = (node, name) => {
+          if (Array.isArray(node)) return node.map(item => emit(item, name === rootName ? 'item' : name)).join('');
+          if (node !== null && typeof node === 'object') return '<' + name + '>' + Object.entries(node).map(([key, val]) => emit(val, tag(key))).join('') + '</' + name + '>';
+          return '<' + name + '>' + (node === null ? '' : escXml(node)) + '</' + name + '>';
+        };
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' + emit(value, rootName);
+      }
+      case 'xml-to-json': {
+        const xml = s.trim();
+        if (!xml || !/^<\?xml[\s\S]*?\?>\s*<|^<[\w:.-]+(?:\s|>|\/)/i.test(xml)) throw Error('请输入有效的 XML 文档');
+        if (/<!(?:DOCTYPE|ENTITY)\b/i.test(xml)) throw Error('为避免外部实体风险，不支持 DOCTYPE/ENTITY 声明');
+        const tokens = xml.match(/<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[^>]+>|[^<]+/g) || [];
+        const stack = [];
+        let root = null;
+        const decode = text => text.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (m, e) => {
+          if (e[0] === '#') { const hex = e[1]?.toLowerCase() === 'x'; const n = parseInt(e.slice(hex ? 2 : 1), hex ? 16 : 10); return Number.isFinite(n) && n >= 0 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n) : m; }
+          return ({amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"})[e.toLowerCase()] ?? m;
+        });
+        const attach = (parent, name, value) => {
+          if (Object.prototype.hasOwnProperty.call(parent, name)) parent[name] = Array.isArray(parent[name]) ? [...parent[name], value] : [parent[name], value];
+          else parent[name] = value;
+        };
+        for (const token of tokens) {
+          if (/^<!--|^<\?/.test(token)) continue;
+          if (/^<!\[CDATA\[/.test(token)) { if (!stack.length) throw Error('XML 文本节点位置无效'); stack[stack.length - 1].text += token.slice(9, -3); continue; }
+          if (/^<!/.test(token)) throw Error('不支持的 XML 声明');
+          if (/^<\//.test(token)) {
+            const name = token.slice(2, -1).trim();
+            const node = stack.pop();
+            if (!node || node.name !== name) throw Error('XML 标签不匹配：' + name);
+            let value = node.value;
+            if (Object.keys(value).length === 0) value = decode(node.text.trim());
+            else {
+              if (node.text.trim()) value['#text'] = decode(node.text.trim());
+              if (Object.keys(node.attrs).length) value['@attributes'] = node.attrs;
+            }
+            if (stack.length) attach(stack[stack.length - 1].value, node.name, value);
+            else { if (root !== null) throw Error('XML 只能有一个根节点'); root = { [node.name]: value }; }
+            continue;
+          }
+          if (/^</.test(token)) {
+            const selfClosing = /\/>$/.test(token);
+            const match = token.match(/^<([^\s/>]+)([\s\S]*?)\/?>$/);
+            if (!match) throw Error('XML 标签格式无效');
+            const name = match[1], attrText = match[2];
+            const attrs = {};
+            const attrRe = /([^\s=]+)\s*=\s*("([^"]*)"|'([^']*)')/g;
+            let attr;
+            while ((attr = attrRe.exec(attrText))) attrs[attr[1]] = decode(attr[3] ?? attr[4] ?? '');
+            const node = { name, attrs, text: '', value: {} };
+            if (selfClosing) {
+              let value = Object.keys(attrs).length ? {'@attributes': attrs} : '';
+              if (stack.length) attach(stack[stack.length - 1].value, name, value);
+              else { if (root !== null) throw Error('XML 只能有一个根节点'); root = { [name]: value }; }
+            } else stack.push(node);
+          } else if (stack.length) stack[stack.length - 1].text += token;
+          else if (token.trim()) throw Error('根节点外存在文本');
+        }
+        if (stack.length || root === null) throw Error('XML 标签未闭合或缺少根节点');
+        return JSON.stringify(root, null, 2);
+      }
+      case 'xml-format': {
+        const xml = s.trim();
+        if (!xml) throw Error('请输入 XML');
+        const tokens = xml.match(/<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[^>]+>|[^<]+/g) || [];
+        let depth = 0, out = '';
+        for (const token of tokens) {
+          if (!token.trim() && !/^<!\[CDATA\[/.test(token)) continue;
+          if (/^<\//.test(token)) depth = Math.max(0, depth - 1);
+          const line = '  '.repeat(depth) + token.trim();
+          out += (out ? '\n' : '') + line;
+          if (/^<[^!?/][^>]*[^/]?>$/.test(token.trim()) && !/^<!/.test(token)) depth++;
+        }
+        if (!out || (out.match(/</g) || []).length !== (out.match(/>/g) || []).length) throw Error('XML 标签格式可能无效');
+        return out;
+      }
+      case 'xml-minify': {
+        const xml = s.trim();
+        if (!xml) throw Error('请输入 XML');
+        const min = xml.replace(/>\s+</g, '><').replace(/\s+/g, ' ').replace(/\s+(?=\/?>)/g, '');
+        if ((min.match(/</g) || []).length !== (min.match(/>/g) || []).length) throw Error('XML 标签格式可能无效');
+        return min;
+      }
+      case 'rot47': return [...s].map(ch => { const n = ch.charCodeAt(0); return n >= 33 && n <= 126 ? String.fromCharCode(33 + ((n - 33 + 47) % 94)) : ch; }).join('');
+      case 'url-params-to-json': {
+        let url;
+        try { url = new URL(s.trim(), 'https://example.invalid'); } catch { throw Error('URL 格式无效'); }
+        const out = {};
+        for (const [key, value] of url.searchParams) {
+          if (Object.prototype.hasOwnProperty.call(out, key)) out[key] = Array.isArray(out[key]) ? [...out[key], value] : [out[key], value];
+          else out[key] = value;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-to-typescript': {
+        const data = JSON.parse(s);
+        const rootName = (v('ts-interface-name') || 'Root').trim();
+        if (!/^[A-Za-z_$][\w$]*$/.test(rootName)) throw Error('接口名称无效');
+        const interfaces = [];
+        const nameFor = key => { const n = key.replace(/[^A-Za-z0-9_$]+/g, ' ').trim().split(/\s+/).map((p, i) => i ? p[0].toUpperCase() + p.slice(1) : p).join(''); return /^[A-Za-z_$]/.test(n) ? n : 'Field' + n; };
+        const typeOf = (value, name) => {
+          if (value === null) return 'null';
+          if (Array.isArray(value)) { if (!value.length) return 'unknown[]'; const types = [...new Set(value.map(item => typeOf(item, name + 'Item')))]; return '(' + types.join(' | ') + ')[]'; }
+          if (typeof value === 'object') {
+            const typeName = nameFor(name);
+            const fields = Object.entries(value).map(([key, val]) => '  ' + (/^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)) + (val === null ? '?' : '') + ': ' + typeOf(val, key) + ';');
+            interfaces.push('export interface ' + typeName + ' {\n' + fields.join('\n') + '\n}');
+            return typeName;
+          }
+          return typeof value;
+        };
+        typeOf(data, rootName);
+        return interfaces.reverse().join('\n\n');
+      }
+      case 'uuid-bulk': {
+        const count = Number(v('uuid-count') || 10);
+        if (!Number.isInteger(count) || count < 1 || count > 1000) throw Error('数量必须为 1 到 1000 之间的整数');
+        const makeUuid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+        return Array.from({length: count}, makeUuid).join('\n');
+      }
+      case 'css-format': {
+        const css = s.trim();
+        if (!css) throw Error('请输入 CSS');
+        let out = '', depth = 0, token = '', quote = '', comment = false;
+        const flush = () => { const value = token.trim(); if (value) { out += '  '.repeat(depth) + value.replace(/\s*:\s*/g, ': '); token = ''; } };
+        for (let i = 0; i < css.length; i++) {
+          const ch = css[i], next = css[i + 1];
+          if (comment) { token += ch; if (ch === '*' && next === '/') { token += '/'; i++; comment = false; } continue; }
+          if (quote) { token += ch; if (ch === '\\' && next) { token += next; i++; } else if (ch === quote) quote = ''; continue; }
+          if (ch === '/' && next === '*') { token += '/*'; i++; comment = true; continue; }
+          if (ch === '"' || ch === "'") { quote = ch; token += ch; continue; }
+          if (ch === '{') { flush(); out += ' {\n'; depth++; }
+          else if (ch === ';') { token = token.trimEnd() + ';'; flush(); out += '\n'; }
+          else if (ch === '}') { flush(); depth = Math.max(0, depth - 1); if (out && !out.endsWith('\n')) out += '\n'; out += '  '.repeat(depth) + '}\n'; }
+          else token += ch;
+        }
+        flush();
+        return out.trim();
+      }
+      case 'sql-format': {
+        const sql = s.trim();
+        if (!sql) throw Error('请输入 SQL');
+        const parts = sql.split(/('(?:''|[^'])*'|"(?:\"\"|[^"])*"|--[^\n]*|\/\*[\s\S]*?\*\/)/g);
+        const clauses = /\b(SELECT|FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|OFFSET|UNION(?:\s+ALL)?|INSERT\s+INTO|VALUES|UPDATE|SET|DELETE\s+FROM|LEFT\s+JOIN|RIGHT\s+JOIN|INNER\s+JOIN|FULL\s+JOIN|JOIN|ON|AND|OR)\b/gi;
+        const out = parts.map((part, index) => {
+          if (index % 2 === 1) return part;
+          return part.replace(/\s+/g, ' ').replace(clauses, match => '\n' + match.toUpperCase()).trim();
+        }).join(' ').replace(/\s*,\s*/g, ', ').replace(/^\n+/, '').replace(/\n{2,}/g, '\n');
+        return out.split('\n').map(line => line.trim()).join('\n');
+      }
+      case 'ini-to-json': {
+        const out = {}, section = () => {
+          const name = currentSection;
+          if (name && !Object.prototype.hasOwnProperty.call(out, name)) out[name] = {};
+          return name ? out[name] : out;
+        };
+        let currentSection = '';
+        for (const [index, raw] of s.split(/\r?\n/).entries()) {
+          const line = raw.trim();
+          if (!line || line.startsWith(';') || line.startsWith('#')) continue;
+          if (line.startsWith('[') && line.endsWith(']')) {
+            currentSection = line.slice(1, -1).trim();
+            if (!currentSection) throw Error('第 ' + (index + 1) + ' 行分组名称为空');
+            if (Object.prototype.hasOwnProperty.call(out, currentSection) && (typeof out[currentSection] !== 'object' || Array.isArray(out[currentSection]))) throw Error('分组名称与键冲突：' + currentSection);
+            if (!out[currentSection]) out[currentSection] = {};
+            continue;
+          }
+          const eq = line.indexOf('=');
+          if (eq < 1) throw Error('第 ' + (index + 1) + ' 行缺少 key=value');
+          const key = line.slice(0, eq).trim(), value = line.slice(eq + 1).trim();
+          if (!key) throw Error('第 ' + (index + 1) + ' 行键名为空');
+          const target = section();
+          if (Object.prototype.hasOwnProperty.call(target, key)) target[key] = Array.isArray(target[key]) ? [...target[key], value] : [target[key], value];
+          else target[key] = value;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-to-ini': {
+        const value = JSON.parse(s);
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('请输入 JSON 对象');
+        const scalar = v => v === null ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v);
+        const root = [], sections = [];
+        for (const [key, val] of Object.entries(value)) {
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            const lines = Object.entries(val).map(([k, v]) => k + '=' + scalar(v));
+            sections.push('[' + key + ']' + (lines.length ? '\n' + lines.join('\n') : ''));
+          } else root.push(key + '=' + scalar(val));
+        }
+        return [...(root.length ? [root.join('\n')] : []), ...sections].join('\n\n');
+      }
+
+      case 'cookie-to-json': {
+        const raw = s.trim().replace(/^Cookie:\s*/i, '');
+        if (!raw) throw Error('请输入 Cookie 请求头内容');
+        const out = {};
+        for (const part of raw.split(';')) {
+          const idx = part.indexOf('=');
+          if (idx < 1) { if (part.trim()) throw Error('Cookie 项格式无效，应为 name=value'); continue; }
+          const key = part.slice(0, idx).trim(), value = part.slice(idx + 1).trim();
+          if (!key) throw Error('Cookie 名称不能为空');
+          let decoded; try { decoded = decodeURIComponent(value); } catch { decoded = value; }
+          if (Object.prototype.hasOwnProperty.call(out, key)) out[key] = Array.isArray(out[key]) ? [...out[key], decoded] : [out[key], decoded];
+          else out[key] = decoded;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-array-dedupe': {
+        const data = JSON.parse(s);
+        if (!Array.isArray(data)) throw Error('请输入 JSON 数组');
+        const seen = new Set();
+        const stable = value => Array.isArray(value) ? '[' + value.map(stable).join(',') + ']' : value && typeof value === 'object' ? '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stable(value[k])).join(',') + '}' : JSON.stringify(value);
+        return JSON.stringify(data.filter(item => { const key = stable(item); if (seen.has(key)) return false; seen.add(key); return true; }), null, 2);
+      }
+      case 'list-shuffle': {
+        const lines = s.split(/\r?\n/).filter(line => line.length > 0);
+        for (let i = lines.length - 1; i > 0; i--) {
+          const random = new Uint32Array(1); crypto.getRandomValues(random);
+          const j = random[0] % (i + 1); [lines[i], lines[j]] = [lines[j], lines[i]];
+        }
+        return lines.join('\n');
+      }
+      case 'list-chunk': {
+        const size = Number(v('chunk-size') || 5);
+        if (!Number.isInteger(size) || size < 1 || size > 10000) throw Error('每组数量必须是 1 到 10000 的整数');
+        const lines = s.split(/\r?\n/).filter(line => line.length > 0);
+        const groups = [];
+        for (let i = 0; i < lines.length; i += size) groups.push(lines.slice(i, i + size).join('\n'));
+        return groups.join('\n\n');
+      }
+      case 'json-to-go': {
+        const data = JSON.parse(s), rootName = (v('model-name') || 'Root').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(rootName)) throw Error('类型名称必须以字母或下划线开头');
+        const exported = key => key.replace(/[^A-Za-z0-9_]/g, ' ').split(/\s+/).filter(Boolean).map(x => x[0].toUpperCase()+x.slice(1)).join('') || 'Field';
+        const infer = value => {
+          if (value === null) return 'interface{}';
+          if (Array.isArray(value)) return value.length ? '[]' + infer(value[0]) : '[]interface{}';
+          if (typeof value === 'object') { const fields = Object.entries(value).map(([k,val]) => '\t'+exported(k)+' '+infer(val)+' \x60json:"'+k+'"\x60'); return 'struct {\n'+fields.join('\n')+'\n}'; }
+          if (typeof value === 'string') return 'string';
+          if (typeof value === 'boolean') return 'bool';
+          if (typeof value === 'number') return Number.isInteger(value) ? 'int64' : 'float64';
+          return 'interface{}';
+        };
+        return 'type '+rootName+' '+infer(data);
+      }
+      case 'json-to-kotlin': {
+        const data = JSON.parse(s), rootName = (v('model-name') || 'Root').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(rootName)) throw Error('类型名称必须以字母或下划线开头');
+        if (!data || typeof data !== 'object' || Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const typeOf = value => value === null ? 'Any?' : Array.isArray(value) ? (value.length ? 'List<'+typeOf(value[0])+'>' : 'List<Any>') : typeof value === 'string' ? 'String' : typeof value === 'boolean' ? 'Boolean' : typeof value === 'number' ? (Number.isInteger(value) ? 'Long' : 'Double') : 'Any';
+        const fields = Object.entries(data).map(([key,value]) => {
+          const prop = /^[A-Za-z_][A-Za-z0-9_]*$/.test(key) ? key : '\x60'+key.replace(/\x60/g,'')+'\x60';
+          return '    val '+prop+': '+typeOf(value);
+        });
+        return 'data class '+rootName+'(\n'+fields.join(',\n')+'\n)';
+      }
+      case 'json-to-sql-table': {
+        const data = JSON.parse(s), table = (v('sql-table-name') || 'items').trim();
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(table)) throw Error('表名只能包含字母、数字和下划线，且不能以数字开头');
+        const rows = Array.isArray(data) ? data : [data];
+        if (!rows.length || !rows[0] || typeof rows[0] !== 'object' || Array.isArray(rows[0])) throw Error('请输入 JSON 对象或对象数组');
+        const merged = Object.assign({}, ...rows);
+        const sqlType = val => val === null ? 'TEXT' : typeof val === 'boolean' ? 'BOOLEAN' : typeof val === 'number' ? (Number.isInteger(val) ? 'BIGINT' : 'DOUBLE PRECISION') : typeof val === 'object' ? 'JSON' : 'TEXT';
+        const cols = Object.entries(merged).map(([key,val]) => {
+          if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw Error('字段名含有 SQL 标识符不支持的字符：'+key);
+          return '  "'+key+'" '+sqlType(val);
+        });
+        return 'CREATE TABLE "'+table+'" (\n'+cols.join(',\n')+'\n);';
+      }
+      case 'json-to-html-table': {
+        const data = JSON.parse(s);
+        if (!Array.isArray(data) || !data.length || data.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw Error('请输入非空 JSON 对象数组');
+        const keys = [...new Set(data.flatMap(row => Object.keys(row)))];
+        const cell = value => esc(value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value));
+        return '<table>\n  <thead>\n    <tr>'+keys.map(k=>'<th>'+cell(k)+'</th>').join('')+'</tr>\n  </thead>\n  <tbody>\n'+data.map(row=>'    <tr>'+keys.map(k=>'<td>'+cell(row[k])+'</td>').join('')+'</tr>').join('\n')+'\n  </tbody>\n</table>';
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }

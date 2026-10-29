@@ -868,5 +868,190 @@ export const tools: Tool[] = [
     "category": "文本工具",
     "description": "逐行比较两段文本并标记新增、删除和相同行",
     "operation": "text-diff"
+  },
+  {
+    "slug": "base64url-encode",
+    "name": "Base64URL 编码",
+    "category": "编码与转换",
+    "description": "将 UTF-8 文本编码为适用于 URL 的 Base64URL 格式",
+    "operation": "base64url-encode"
+  },
+  {
+    "slug": "base64url-decode",
+    "name": "Base64URL 解码",
+    "category": "编码与转换",
+    "description": "解码 Base64URL 文本并还原 UTF-8 内容",
+    "operation": "base64url-decode"
+  },
+  {
+    "slug": "json-flatten",
+    "name": "JSON 展平",
+    "category": "开发者工具",
+    "description": "将嵌套 JSON 转为 JSON Pointer 路径与值的映射",
+    "operation": "json-flatten"
+  },
+  {
+    "slug": "json-unflatten",
+    "name": "JSON 还原嵌套结构",
+    "category": "开发者工具",
+    "description": "将 JSON Pointer 路径映射还原为嵌套对象与数组",
+    "operation": "json-unflatten"
+  },
+  {
+    "slug": "xml-unescape",
+    "name": "XML 反转义",
+    "category": "开发者工具",
+    "description": "将 XML 实体还原为普通文本",
+    "operation": "xml-unescape"
+  },
+  {
+    "slug": "list-duplicates",
+    "name": "列表重复项分析",
+    "category": "文本工具",
+    "description": "统计列表中重复项目及其出现次数，忽略首尾空格",
+    "operation": "list-duplicates"
+  },
+
+  {
+    "slug": "json-to-xml",
+    "name": "JSON 转 XML",
+    "category": "开发者工具",
+    "description": "将 JSON 对象或数组转换为 XML，支持自定义根节点名称",
+    "operation": "json-to-xml"
+  },
+  {
+    "slug": "xml-to-json",
+    "name": "XML 转 JSON",
+    "category": "开发者工具",
+    "description": "将简单 XML 文档转换为 JSON，保留属性、文本和重复节点",
+    "operation": "xml-to-json"
+  },
+  {
+    "slug": "xml-format",
+    "name": "XML 格式化",
+    "category": "开发者工具",
+    "description": "缩进排版 XML 文档，便于阅读和调试",
+    "operation": "xml-format"
+  },
+  {
+    "slug": "xml-minify",
+    "name": "XML 压缩",
+    "category": "开发者工具",
+    "description": "移除 XML 标签之间的多余空白并压缩文档",
+    "operation": "xml-minify"
+  },
+  {
+    "slug": "rot47",
+    "name": "ROT47 编码/解码",
+    "category": "编码与转换",
+    "description": "对 ASCII 可打印字符执行 ROT47 替换；同一操作可编码和解码",
+    "operation": "rot47"
+  },
+  {
+    "slug": "url-params-to-json",
+    "name": "URL 参数转 JSON",
+    "category": "开发者工具",
+    "description": "提取 URL 查询参数并转换为 JSON，重复参数会转换为数组",
+    "operation": "url-params-to-json"
+  },
+  {
+    "slug": "json-to-typescript",
+    "name": "JSON 转 TypeScript 接口",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象生成 TypeScript interface，支持嵌套对象和数组",
+    "operation": "json-to-typescript"
+  },
+  {
+    "slug": "uuid-bulk",
+    "name": "批量 UUID 生成",
+    "category": "生成器",
+    "description": "按指定数量生成 UUID v4，每行一个",
+    "operation": "uuid-bulk"
+  },
+
+  {
+    "slug": "css-format",
+    "name": "CSS 格式化",
+    "category": "开发者工具",
+    "description": "格式化 CSS 规则并缩进属性，便于阅读和维护",
+    "operation": "css-format"
+  },
+  {
+    "slug": "sql-format",
+    "name": "SQL 格式化",
+    "category": "开发者工具",
+    "description": "格式化常见 SQL 查询语句，突出 SELECT、FROM、WHERE、JOIN 等子句",
+    "operation": "sql-format"
+  },
+
+  {
+    "slug": "ini-to-json",
+    "name": "INI 转 JSON",
+    "category": "开发者工具",
+    "description": "解析 INI 配置文件中的键值与分组并转换为 JSON",
+    "operation": "ini-to-json"
+  },
+  {
+    "slug": "json-to-ini",
+    "name": "JSON 转 INI",
+    "category": "开发者工具",
+    "description": "将 JSON 对象转换为常见 INI 键值和分组格式",
+    "operation": "json-to-ini"
+  },
+  {
+    "slug": "cookie-to-json",
+    "name": "Cookie 转 JSON",
+    "category": "开发者工具",
+    "description": "将 Cookie 请求头解析为 JSON，保留重复键",
+    "operation": "cookie-to-json"
+  },
+  {
+    "slug": "json-array-dedupe",
+    "name": "JSON 数组去重",
+    "category": "数据与格式",
+    "description": "按 JSON 值去重数组元素并保留首次出现顺序",
+    "operation": "json-array-dedupe"
+  },
+  {
+    "slug": "list-shuffle",
+    "name": "列表随机打乱",
+    "category": "文本工具",
+    "description": "使用浏览器随机源打乱逐行列表顺序",
+    "operation": "list-shuffle"
+  },
+  {
+    "slug": "list-chunk",
+    "name": "列表分组切片",
+    "category": "文本工具",
+    "description": "按指定每组数量将逐行列表分组",
+    "operation": "list-chunk"
+  },
+  {
+    "slug": "json-to-go",
+    "name": "JSON 转 Go struct",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 Go struct 和 json 标签",
+    "operation": "json-to-go"
+  },
+  {
+    "slug": "json-to-kotlin",
+    "name": "JSON 转 Kotlin data class",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 Kotlin data class",
+    "operation": "json-to-kotlin"
+  },
+  {
+    "slug": "json-to-sql-table",
+    "name": "JSON 转 SQL 建表语句",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象字段推断 SQL 列类型并生成 CREATE TABLE",
+    "operation": "json-to-sql-table"
+  },
+  {
+    "slug": "json-to-html-table",
+    "name": "JSON 转 HTML 表格",
+    "category": "数据与格式",
+    "description": "将对象数组转换为可复制的 HTML table 标记",
+    "operation": "json-to-html-table"
   }
 ];
