@@ -38,7 +38,7 @@
 - [ ] Excel/PPT 内嵌图片提取、Excel 转 HTML/JSON、JSON 转 Excel
 - [ ] CSV 编码/中文乱码修复
 - [ ] ZIP 文件打包、文件对比、随机文件抽取
-- [ ] SQLite 浏览与编辑
+- [x] SQLite 本地浏览、SQL 执行、修改与数据库导出（WebAssembly）
 
 ### 开发者与数据转换
 - [ ] XML 排序与更严格的 XML 校验
