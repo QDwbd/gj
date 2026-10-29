@@ -641,14 +641,14 @@ export const tools: Tool[] = [
   {
     "slug": "svg-minify",
     "name": "SVG 文本压缩",
-    "category": "图片与设计",
+    "category": "图片工具",
     "description": "压缩简单 SVG 文本中的空白",
     "operation": "svg-minify"
   },
   {
     "slug": "svg-to-data-uri",
     "name": "SVG 转 Data URI",
-    "category": "图片与设计",
+    "category": "图片工具",
     "description": "将 SVG 文本转换为 Data URI",
     "operation": "svg-to-data-uri"
   },
