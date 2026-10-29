@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import { webcrypto } from 'node:crypto';
 
 const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url), 'utf8');
-const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder'].includes(op));
+const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser'].includes(op));
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const mediaSource = fs.readFileSync(new URL('../public/scripts/media-tools.js', import.meta.url), 'utf8');
 const imageEditorSource = fs.readFileSync(new URL('../public/scripts/image-editor.js', import.meta.url), 'utf8');
@@ -12,6 +12,7 @@ const barcodeSource = fs.readFileSync(new URL('../src/scripts/barcode-tools.js',
 const pdfSource = fs.readFileSync(new URL('../src/scripts/pdf-tools.js', import.meta.url), 'utf8');
 const pdfRenderSource = fs.readFileSync(new URL('../src/scripts/pdf-render.js', import.meta.url), 'utf8');
 const playbackSource = fs.readFileSync(new URL('../src/scripts/media-playback.js', import.meta.url), 'utf8');
+const sqliteSource = fs.readFileSync(new URL('../src/scripts/sqlite-browser.js', import.meta.url), 'utf8');
 const samples = {
   'csv-clean':' a \n b ','html-color-name':'rgb(255, 0, 0)','url-safe-base64':'hello','markdown-preview-text':'# Title\n**bold**','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
   'case-upper':'hello','case-lower':'HELLO','case-title':'hello world','case-sentence':'hello. world','text-reverse':'hello','text-replace':'foo foo','text-to-slug':'中文工具 测试!','comma-to-lines':'a, b','lines-to-comma':'a\nb','text-clean':'hello',
@@ -41,7 +42,7 @@ Object.assign(samples, {"cookie-to-json":"session=abc%20123; theme=dark; session
 Object.assign(expectedContains, {"cookie-to-json":"\"theme\": \"dark\"","json-array-dedupe":"\"a\": 1","list-chunk":"a\nb\nc\n\nd\ne","json-to-go":"type Root struct","json-to-kotlin":"data class Root","json-to-sql-table":"CREATE TABLE \"items\"","json-to-html-table":"<table>"});
 Object.assign(samples, {"content-type-lookup":".json","tcp-port-lookup":"443","http-method-reference":"GET","unicode-escape":"Hi","unicode-unescape":"\\u4e2d\\u6587","list-random-pick":"a\nb\nc\nd","list-group-random":"a\nb\nc\nd\ne","json-to-rust":"{\"name\":\"Ada\",\"active\":true}","json-to-cpp":"{\"name\":\"Ada\",\"age\":30}"});
 Object.assign(expectedContains, {"content-type-lookup":"application/json","tcp-port-lookup":"HTTPS","http-method-reference":"获取资源","unicode-escape":"\\u0048\\u0069","unicode-unescape":"中文","list-group-random":"第 1 组","json-to-rust":"pub struct Root","json-to-cpp":"struct Root"});
-const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder'].includes(op));
+const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser'].includes(op));
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
 let passed=0; const failures=[];
@@ -64,6 +65,7 @@ for (const op of operations) {
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
 try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
+if (!sqliteSource.includes("from 'sql.js'") || !sqliteSource.includes('new SQL.Database') || !sqliteSource.includes('db.export') || !pageSource.includes('id="sqlite-workbench"')) failures.push({op:'SQLite UI coverage',status:'FAIL',detail:'Missing SQLite editor UI or implementation'});
 if (!playbackSource.includes("getDisplayMedia") || !playbackSource.includes('playbackRate') || !pageSource.includes('id=\"screen-recorder-workbench\"')) failures.push({op:'audio/video tools UI coverage',status:'FAIL',detail:'Missing playback or screen recorder UI'});
 if (!pdfRenderSource.includes("from 'pdfjs-dist'") || !pdfRenderSource.includes("from 'jszip'") || !pdfRenderSource.includes('getDocument') || !pageSource.includes('id="pdf-image-workbench"')) failures.push({op:'PDF-to-image UI coverage',status:'FAIL',detail:'Missing PDF render UI or implementation'});
 if (!pdfSource.includes("import { PDFDocument, degrees } from 'pdf-lib'") || !pdfSource.includes('copyPages') || !pageSource.includes('id="pdf-workbench"')) failures.push({op:'PDF tools UI coverage',status:'FAIL',detail:'Missing PDF editor UI or implementation'});
