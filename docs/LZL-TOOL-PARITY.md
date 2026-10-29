@@ -44,13 +44,15 @@
 - [ ] JS/HTML 格式化与混合代码处理、JS 压缩/混淆选项
 - [ ] SQL Insert/Update 字段视图
 - [ ] YAML ↔ XML/INI、INI ↔ XML、JSON ↔ XML 的复杂类型与边界用例
+- [x] JSON → Rust struct / C++ struct
 - [ ] C# ↔ VB.NET、C# DTO 到 Java/C++/Go/TypeScript/SQL 等转换
 - [ ] C# 插值字符串、Cookie JSON、cURL 转 C#/Java/Python/Go/PHP
 - [ ] SVG/图标生成器、window.open 参数生成器、JS 执行沙箱
 - [ ] 正则表达式可视化、参考表和键码工具
 
 ### 文本 / 列表 / 生成器
-- [ ] 名单随机点名、列表随机/分组/切片/合并/唯一后缀
+- [x] 名单随机抽取、随机分组、分组切片与随机打乱
+- [ ] 列表合并/唯一后缀
 - [ ] 中文词频分析的完整分词方案、大小写/简繁转换
 - [ ] 批量二维码/条码生成与排版导出（PNG/SVG/PDF/Excel、模板、颜色/Logo）
 - [ ] 随机 JSON/XML/YAML/CSV、随机字符串/数字/分数/二进制等生成器
@@ -59,7 +61,8 @@
 ### 生活工具与参考资料
 - [ ] 录屏（浏览器权限与多轨音视频）、音频播放器、视频变速预览
 - [ ] 键盘/鼠标测试、番茄钟、待办事项、RMB 大写、车牌归属地
-- [ ] HTTP Content-Type/状态码/方法/头、端口、ASCII、HTML 实体、文件签名等参考表
+- [x] 常见 MIME / Content-Type、TCP 端口、HTTP 方法参考表（内置静态数据）
+- [ ] HTTP 状态码/头、ASCII、HTML 实体、文件签名等参考表
 - [ ] 浏览器信息、IP 工具、MAC 厂商查询、TLD/高校/尺码/Excel 函数等资料页
 
 ## 验收规则

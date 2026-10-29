@@ -41,7 +41,9 @@ if (root) {
     // Tool-specific controls are optional; the text field is used where possible.
   }
   if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
-  if (['json-to-go','json-to-kotlin'].includes(op)) addInput('model-name','类型名称','Root');
+  if (['json-to-go','json-to-kotlin','json-to-rust','json-to-cpp'].includes(op)) addInput('model-name','类型名称','Root');
+  if (op === 'list-random-pick') addInput('pick-count','抽取数量','1','number');
+  if (op === 'list-group-random') addInput('group-count','分组数量','3','number');
   if (op === 'json-to-sql-table') addInput('sql-table-name','表名','items');
   const words = s => s.trim() ? s.trim().split(/\s+/) : [];
   const finite = (value, label='数值') => { const x=Number(value); if(!Number.isFinite(x)) throw Error(`${label}必须是有效数字`); return x; };
@@ -627,6 +629,68 @@ if (root) {
         const keys = [...new Set(data.flatMap(row => Object.keys(row)))];
         const cell = value => esc(value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value));
         return '<table>\n  <thead>\n    <tr>'+keys.map(k=>'<th>'+cell(k)+'</th>').join('')+'</tr>\n  </thead>\n  <tbody>\n'+data.map(row=>'    <tr>'+keys.map(k=>'<td>'+cell(row[k])+'</td>').join('')+'</tr>').join('\n')+'\n  </tbody>\n</table>';
+      }
+
+      case 'unicode-escape': return [...s].map(ch => [...ch].map(unit => '\\u' + unit.charCodeAt(0).toString(16).padStart(4,'0')).join('')).join('');
+      case 'unicode-unescape': return s.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex,16)));
+      case 'content-type-lookup': {
+        const types = {html:'text/html',htm:'text/html',css:'text/css',js:'text/javascript',json:'application/json',xml:'application/xml',txt:'text/plain',csv:'text/csv',md:'text/markdown',yaml:'application/yaml',yml:'application/yaml',pdf:'application/pdf',zip:'application/zip',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',avif:'image/avif',ico:'image/x-icon',mp3:'audio/mpeg',wav:'audio/wav',ogg:'audio/ogg',mp4:'video/mp4',webm:'video/webm',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xls:'application/vnd.ms-excel',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',ppt:'application/vnd.ms-powerpoint',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',wasm:'application/wasm',bin:'application/octet-stream'};
+        const q=s.trim().toLowerCase();
+        if(!q) throw Error('请输入文件扩展名或 MIME 类型');
+        const ext=q.includes('/')?Object.keys(types).find(k=>types[k]===q):q.split(/[?#]/)[0].split('/').pop().replace(/^[.]/,'');
+        if(ext&&types[ext]) return '扩展名：.'+ext+'\\nMIME 类型：'+types[ext];
+        const found=Object.entries(types).filter(([,v])=>v.includes(q));
+        if(found.length) return found.map(([k,v])=>'.'+k+' — '+v).join('\\n');
+        throw Error('未找到该类型；请尝试 json、.png 或 application/json');
+      }
+      case 'tcp-port-lookup': {
+        const rows=[[20,'FTP-DATA','文件传输数据通道'],[21,'FTP','文件传输控制'],[22,'SSH','安全远程登录'],[23,'TELNET','明文远程终端'],[25,'SMTP','邮件传输'],[53,'DNS','域名解析'],[80,'HTTP','网页 HTTP'],[110,'POP3','邮件接收'],[123,'NTP','网络时间同步'],[143,'IMAP','邮件访问'],[161,'SNMP','网络管理'],[389,'LDAP','目录服务'],[443,'HTTPS','加密网页通信'],[445,'SMB','文件共享'],[3306,'MySQL','MySQL 数据库'],[3389,'RDP','远程桌面'],[5432,'PostgreSQL','PostgreSQL 数据库'],[6379,'Redis','Redis 数据库'],[8080,'HTTP-alt','常见 HTTP 替代端口'],[8443,'HTTPS-alt','常见 HTTPS 替代端口'],[27017,'MongoDB','MongoDB 数据库']];
+        const q=s.trim().toLowerCase(); if(!q) throw Error('请输入端口号或服务名');
+        const found=rows.filter(r=>String(r[0])===q||r[1].toLowerCase().includes(q));
+        if(!found.length) throw Error('未找到常见端口；此表不是完整的 IANA 端口注册表');
+        return found.map(r=>'端口：'+r[0]+'\\n服务：'+r[1]+'\\n说明：'+r[2]).join('\\n\\n');
+      }
+      case 'http-method-reference': {
+        const methods={GET:'获取资源；通常安全且幂等',HEAD:'与 GET 类似，但只返回响应头',POST:'提交数据或触发资源处理；通常不保证幂等',PUT:'创建或完整替换资源；语义上幂等',PATCH:'对资源执行部分修改',DELETE:'删除资源；语义上幂等',OPTIONS:'查询支持的通信选项，常用于 CORS 预检',TRACE:'诊断请求链路；服务器通常禁用',CONNECT:'建立到目标服务器的隧道，常用于代理'};
+        const q=s.trim().toUpperCase(); if(!q) return Object.entries(methods).map(([k,v])=>k+'\\n'+v).join('\\n\\n');
+        if(!methods[q]) throw Error('未知 HTTP 方法；可查询 GET、POST、PUT、PATCH、DELETE 等');
+        return q+'\\n'+methods[q];
+      }
+
+      case 'list-random-pick': {
+        const lines=s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+        if(!lines.length) throw Error('请输入名单，每行一个项目');
+        const count=Number(v('pick-count')||1);
+        if(!Number.isInteger(count)||count<1||count>lines.length) throw Error('抽取数量必须在 1 到名单行数之间');
+        for(let i=lines.length-1;i>0;i--){const r=new Uint32Array(1);crypto.getRandomValues(r);const j=r[0]%(i+1);[lines[i],lines[j]]=[lines[j],lines[i]];}
+        return lines.slice(0,count).join('\n');
+      }
+      case 'list-group-random': {
+        const lines=s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+        if(!lines.length) throw Error('请输入名单，每行一个项目');
+        const count=Number(v('group-count')||3);
+        if(!Number.isInteger(count)||count<1||count>lines.length) throw Error('分组数量必须在 1 到名单行数之间');
+        for(let i=lines.length-1;i>0;i--){const r=new Uint32Array(1);crypto.getRandomValues(r);const j=r[0]%(i+1);[lines[i],lines[j]]=[lines[j],lines[i]];}
+        const groups=Array.from({length:count},()=>[]);
+        lines.forEach((line,i)=>groups[i%count].push(line));
+        return groups.map((g,i)=>'第 '+(i+1)+' 组（'+g.length+' 项）\n'+g.join('\n')).join('\n\n');
+      }
+      case 'json-to-rust': {
+        const data=JSON.parse(s), name=(v('model-name')||'Root').trim();
+        if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) throw Error('类型名称必须以字母或下划线开头');
+        if(!data||typeof data!=='object'||Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const snake=k=>k.replace(/([a-z0-9])([A-Z])/g,'$1_$2').replace(/[^A-Za-z0-9_]+/g,'_').toLowerCase().replace(/^([0-9])/,'_$1');
+        const typeOf=x=>x===null?'serde_json::Value':Array.isArray(x)?(x.length?'Vec<'+typeOf(x[0])+'>':'Vec<serde_json::Value>'):typeof x==='string'?'String':typeof x==='boolean'?'bool':typeof x==='number'?(Number.isInteger(x)?'i64':'f64'):'serde_json::Value';
+        const fields=Object.entries(data).map(([k,val])=>{const field=snake(k);return (field!==k?'    #[serde(rename = "'+k+'")]\n':'')+'    pub '+field+': '+typeOf(val)+',';});
+        return '#[derive(Debug, serde::Serialize, serde::Deserialize)]\npub struct '+name+' {\n'+fields.join('\n')+'\n}';
+      }
+      case 'json-to-cpp': {
+        const data=JSON.parse(s), name=(v('model-name')||'Root').trim();
+        if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) throw Error('类型名称必须以字母或下划线开头');
+        if(!data||typeof data!=='object'||Array.isArray(data)) throw Error('根节点必须是 JSON 对象');
+        const typeOf=x=>x===null?'nlohmann::json':Array.isArray(x)?(x.length?'std::vector<'+typeOf(x[0])+'>' : 'std::vector<nlohmann::json>'):typeof x==='string'?'std::string':typeof x==='boolean'?'bool':typeof x==='number'?(Number.isInteger(x)?'std::int64_t':'double'):'nlohmann::json';
+        const fields=Object.entries(data).map(([k,val])=>{if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(k)) throw Error('字段名不符合 C++ 标识符规范：'+k);return '    '+typeOf(val)+' '+k+'{};';});
+        return '#include <cstdint>\n#include <string>\n#include <vector>\n#include <nlohmann/json.hpp>\n\nstruct '+name+' {\n'+fields.join('\n')+'\n};';
       }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }

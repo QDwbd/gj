@@ -1084,4 +1084,68 @@ export const tools: Tool[] = [
     "description": "将 SVG 标记渲染为可下载的 PNG 图片",
     "operation": "svg-to-png"
   }
+,
+  {
+    "slug": "content-type-lookup",
+    "name": "MIME / Content-Type 查询",
+    "category": "参考资料",
+    "description": "按文件扩展名或 MIME 类型查询常见媒体类型",
+    "operation": "content-type-lookup"
+  },
+  {
+    "slug": "tcp-port-lookup",
+    "name": "常见端口查询",
+    "category": "参考资料",
+    "description": "按 TCP/UDP 端口号或服务名查询常见端口说明",
+    "operation": "tcp-port-lookup"
+  },
+  {
+    "slug": "http-method-reference",
+    "name": "HTTP 方法参考",
+    "category": "参考资料",
+    "description": "查询 GET、POST、PUT、PATCH、DELETE 等 HTTP 方法用途",
+    "operation": "http-method-reference"
+  },
+  {
+    "slug": "unicode-escape",
+    "name": "Unicode 转义",
+    "category": "编码与转换",
+    "description": "将文本转为 UTF-16 Unicode 转义序列",
+    "operation": "unicode-escape"
+  },
+  {
+    "slug": "unicode-unescape",
+    "name": "Unicode 反转义",
+    "category": "编码与转换",
+    "description": "将文本中的反斜线 uXXXX 序列还原为字符",
+    "operation": "unicode-unescape"
+  },
+  {
+    "slug": "list-random-pick",
+    "name": "名单随机抽取",
+    "category": "文本工具",
+    "description": "从逐行名单中无重复随机抽取指定数量",
+    "operation": "list-random-pick"
+  },
+  {
+    "slug": "list-group-random",
+    "name": "名单随机分组",
+    "category": "文本工具",
+    "description": "将逐行名单随机打乱并均匀分到指定组数",
+    "operation": "list-group-random"
+  },
+  {
+    "slug": "json-to-rust",
+    "name": "JSON 转 Rust struct",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象生成 Rust struct 和 serde 字段标记",
+    "operation": "json-to-rust"
+  },
+  {
+    "slug": "json-to-cpp",
+    "name": "JSON 转 C++ struct",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象生成 C++ struct 字段及常见类型",
+    "operation": "json-to-cpp"
+  }
 ];
