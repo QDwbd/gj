@@ -637,7 +637,7 @@ if (root) {
         const types = {html:'text/html',htm:'text/html',css:'text/css',js:'text/javascript',json:'application/json',xml:'application/xml',txt:'text/plain',csv:'text/csv',md:'text/markdown',yaml:'application/yaml',yml:'application/yaml',pdf:'application/pdf',zip:'application/zip',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',avif:'image/avif',ico:'image/x-icon',mp3:'audio/mpeg',wav:'audio/wav',ogg:'audio/ogg',mp4:'video/mp4',webm:'video/webm',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xls:'application/vnd.ms-excel',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',ppt:'application/vnd.ms-powerpoint',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',wasm:'application/wasm',bin:'application/octet-stream'};
         const q=s.trim().toLowerCase();
         if(!q) throw Error('请输入文件扩展名或 MIME 类型');
-        const ext=q.includes('/')?Object.keys(types).find(k=>types[k]===q):q.split(/[?#]/)[0].split('/').pop().replace(/^\\./,'');
+        const ext=q.includes('/')?Object.keys(types).find(k=>types[k]===q):q.split(/[?#]/)[0].split('/').pop().replace(/^[.]/,'');
         if(ext&&types[ext]) return '扩展名：.'+ext+'\\nMIME 类型：'+types[ext];
         const found=Object.entries(types).filter(([,v])=>v.includes(q));
         if(found.length) return found.map(([k,v])=>'.'+k+' — '+v).join('\\n');
