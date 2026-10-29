@@ -6,6 +6,7 @@ const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url
 const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png'].includes(op));
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const mediaSource = fs.readFileSync(new URL('../public/scripts/media-tools.js', import.meta.url), 'utf8');
+const imageEditorSource = fs.readFileSync(new URL('../public/scripts/image-editor.js', import.meta.url), 'utf8');
 const pageSource = fs.readFileSync(new URL('../src/pages/tools/[slug].astro', import.meta.url), 'utf8');
 const samples = {
   'csv-clean':' a \n b ','html-color-name':'rgb(255, 0, 0)','url-safe-base64':'hello','markdown-preview-text':'# Title\n**bold**','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
@@ -56,6 +57,7 @@ for (const op of operations) {
     if(status==='完成') { const expected=expectedContains[op]; const actual=elements.get('#tool-output').value; if(expected && !actual.includes(expected)) failures.push({op,status:'WRONG OUTPUT',detail:`expected to include ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`}); else passed++; } else failures.push({op,status,detail:elements.get('#output-meta').textContent});
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
+try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
 if (!mediaSource.includes("op === 'image-to-base64'") || !mediaSource.includes("op === 'base64-to-image'") || !mediaSource.includes("op === 'svg-to-png'") || !pageSource.includes('id=\"media-workbench\"')) failures.push({op:'media tools UI coverage',status:'FAIL',detail:'Missing browser-side media handlers or UI'});
 console.log(`Smoke test: ${passed}/${operations.length} operations returned success.`);
 if(failures.length) { console.log(JSON.stringify(failures,null,2)); process.exitCode=1; }
