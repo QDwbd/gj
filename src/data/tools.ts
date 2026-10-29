@@ -1163,4 +1163,19 @@ export const tools: Tool[] = [
     "description": "生成 Code 128、EAN-13、EAN-8、UPC-A、ITF-14 等常见条码并导出 PNG",
     "operation": "barcode-generator"
   }
+,
+  {
+    "slug": "pdf-page-editor",
+    "name": "PDF 页面整理",
+    "category": "文件工具",
+    "description": "在本地重排、删除和旋转 PDF 页面并导出新文件",
+    "operation": "pdf-page-editor"
+  },
+  {
+    "slug": "pdf-merge",
+    "name": "PDF 合并",
+    "category": "文件工具",
+    "description": "在浏览器中合并多个 PDF 文件并下载结果",
+    "operation": "pdf-merge"
+  }
 ];
