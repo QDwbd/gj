@@ -1208,4 +1208,12 @@ export const tools: Tool[] = [
     "description": "通过浏览器屏幕共享权限录制屏幕并下载 WebM 文件",
     "operation": "screen-recorder"
   }
+,
+  {
+    "slug": "sqlite-browser",
+    "name": "SQLite 浏览与编辑",
+    "category": "数据库工具",
+    "description": "在浏览器中打开 SQLite 数据库、执行 SQL 查询与修改并导出数据库",
+    "operation": "sqlite-browser"
+  }
 ];
