@@ -84,16 +84,13 @@ if (root) {
       case 'text-reverse': return [...s].reverse().join('');
       case 'text-replace': { const f=v('find-text'); if(!f) throw Error('请填写查找内容'); return s.split(f).join(v('replace-text')); }
       case 'text-to-slug': return slug(s);
-      case 'slugify': return slug(s);
       case 'comma-to-lines': return s.split(',').map(x=>x.trim()).join('\n');
       case 'lines-to-comma': return s.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).join(', ');
       case 'text-clean': return s.replace(/\r\n?/g,'\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
       case 'html-escape': return htmlEscape(s);
-      case 'text-escape-html': return htmlEscape(s);
       case 'xml-escape': return htmlEscape(s);
       case 'html-encode': return htmlEscape(s);
       case 'html-unescape': return htmlUnescape(s);
-      case 'text-unescape-html': return htmlUnescape(s);
       case 'html-decode': return htmlUnescape(s);
       case 'regex-escape': return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
       case 'text-escape-regex': return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
@@ -148,9 +145,6 @@ if (root) {
         if(cursor<lines.length)throw Error(`无法解析 YAML 行：${lines[cursor].body}`);
         return JSON.stringify(parsed,null,2);
       }
-      case 'html-minify': return s.replace(/>\s+</g,'><').replace(/\s{2,}/g,' ').trim();
-      case 'css-minify': return s.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s*([{}:;,])\s*/g,'$1').replace(/\s+/g,' ').trim();
-      case 'js-minify': return s.replace(/\/\*[\s\S]*?\*\//g,'').replace(/^\s*\/\/.*$/gm,'').replace(/\s+/g,' ').trim();
       case 'url-encode': return encodeURIComponent(s);
       case 'url-decode': return decodeURIComponent(s.trim());
       case 'base64-encode': return b64encode(s);
@@ -164,7 +158,6 @@ if (root) {
       case 'hmac-sha256': {if(!v('secret-key'))throw Error('请填写 HMAC 密钥');const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(v('secret-key')),{name:'HMAC',hash:'SHA-256'},false,['sign']);const sig=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(s));return [...new Uint8Array(sig)].map(b=>b.toString(16).padStart(2,'0')).join('');}
       case 'jwt-decode': {const p=s.trim().split('.');if(p.length<2)throw Error('JWT 应包含至少两段');return JSON.stringify({header:JSON.parse(b64decode(p[0].replace(/-/g,'+').replace(/_/g,'/'))),payload:JSON.parse(b64decode(p[1].replace(/-/g,'+').replace(/_/g,'/'))),warning:'仅解码，不验证签名'},null,2);}
       case 'url-parse': {const u=new URL(s.trim());return JSON.stringify({href:u.href,protocol:u.protocol,host:u.host,hostname:u.hostname,port:u.port,pathname:u.pathname,search:u.search,hash:u.hash},null,2);}
-      case 'punycode-info': {const raw=s.trim();if(!raw)throw Error('请输入域名或 URL');const u=new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)?raw:`https://${raw}`);const labels=u.hostname.split('.');return JSON.stringify({input:raw,hostnameASCII:u.hostname,hostnameUnicode:raw.replace(/^https?:\/\//i,'').split(/[/?#:]/)[0],protocol:u.protocol,port:u.port||'(默认端口)',domainLabels:labels,validHostname:labels.every(x=>x.length>0&&x.length<=63)},null,2);}
       case 'querystring-parse': {let q=s.trim();if(/^https?:\/\//i.test(q)){q=new URL(q).search;}else{q=q.includes('?')?q.slice(q.indexOf('?')+1):q.replace(/^\?/,'');}return JSON.stringify(Object.fromEntries(new URLSearchParams(q)),null,2);}
       case 'querystring-build': {const o=JSON.parse(s);return new URLSearchParams(o).toString();}
       case 'unix-permissions': {const num=parseInt(s.trim(),8);if(Number.isNaN(num))throw Error('请输入八进制权限，例如 755');return `${s.trim()} → `+[4,2,1].map((_,i)=>'').join('')+((num>>6&4)?'r':'-')+((num>>6&2)?'w':'-')+((num>>6&1)?'x':'-')+((num>>3&4)?'r':'-')+((num>>3&2)?'w':'-')+((num>>3&1)?'x':'-')+((num&4)?'r':'-')+((num&2)?'w':'-')+((num&1)?'x':'-');}
@@ -172,7 +165,6 @@ if (root) {
       case 'binary-encode': return [...new TextEncoder().encode(s)].map(b=>b.toString(2).padStart(8,'0')).join(' ');
       case 'binary-decode': return new TextDecoder().decode(new Uint8Array(s.trim().split(/\s+/).map(x=>parseInt(x,2))));
       case 'hex-encode': return toHex(s);
-      case 'text-to-binary': {const bytes=new TextEncoder().encode(s);return `UTF-8 字节数：${bytes.length}\n十六进制：${[...bytes].map(b=>b.toString(16).padStart(2,'0')).join(' ')}\n二进制：${[...bytes].map(b=>b.toString(2).padStart(8,'0')).join(' ')}`;}
       case 'hex-decode': return fromHex(s);
       case 'ascii-table': return [...s].map(c=>`${c}\tU+${c.codePointAt(0).toString(16).toUpperCase()}\t${c.codePointAt(0)}`).join('\n');
       case 'unicode-inspect': return [...s].map(c=>`${c}  U+${c.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')}  UTF-16: ${Array.from({length:c.length},(_,i)=>c.charCodeAt(i).toString(16).padStart(4,'0')).join(' ')}`).join('\n');
@@ -182,7 +174,6 @@ if (root) {
       case 'caesar': {const shift=((n('shift')%26)+26)%26;return s.replace(/[a-z]/gi,c=>String.fromCharCode((c===c.toUpperCase()?65:97)+(c.charCodeAt(0)-(c===c.toUpperCase()?65:97)+shift)%26));}
       case 'csv-to-json': {const rows=parseCsv(s);if(rows.length<1)throw Error('请输入包含表头的 CSV 数据');const head=rows.shift().map(x=>x.trim());if(head.some(x=>!x))throw Error('CSV 表头不能为空');return JSON.stringify(rows.map(row=>Object.fromEntries(head.map((h,i)=>[h,row[i]??'']))),null,2);}
       case 'json-to-csv': {const rows=JSON.parse(s);if(!Array.isArray(rows)||!rows.length||rows.some(o=>!o||typeof o!=='object'||Array.isArray(o)))throw Error('请输入非空 JSON 对象数组');const keys=[...new Set(rows.flatMap(o=>Object.keys(o)))];return [keys.map(csvCell).join(','),...rows.map(o=>keys.map(k=>csvCell(o[k])).join(','))].join('\n');}
-      case 'markdown-plain': return s.replace(/!\[([^\]]*)\]\([^)]+\)/g,'$1').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/^#{1,6}\s+/gm,'').replace(/[*_~`>]/g,'').trim();
       case 'markdown-preview-text': return s.replace(/!\[([^\]]*)\]\([^)]+\)/g,'$1').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/^#{1,6}\s+/gm,'').replace(/[*_~`>]/g,'').trim();
       case 'html-to-text': {const d=new DOMParser().parseFromString(s,'text/html');return d.body.textContent||'';}
       case 'timestamp-now': {const d=Date.now();return `Unix 秒：${Math.floor(d/1000)}\nUnix 毫秒：${d}\n本地时间：${new Date(d).toString()}\nUTC：${new Date(d).toISOString()}`;}
@@ -220,11 +211,9 @@ if (root) {
       case 'color-palette': {let h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('输入 6 位 HEX 色值');const n=parseInt(h,16);return [-40,-20,0,20,40].map(d=>{let r=Math.max(0,Math.min(255,((n>>16)&255)+d)),g=Math.max(0,Math.min(255,((n>>8)&255)+d)),b=Math.max(0,Math.min(255,(n&255)+d));return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}).join('\n');}
       case 'color-invert': {const h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('请输入 6 位 HEX 色值');return '#'+(0xffffff-parseInt(h,16)).toString(16).padStart(6,'0').toUpperCase();}
       case 'color-luminance': {const h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('请输入 6 位 HEX 色值');const c=h.match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return String(.2126*c[0]+.7152*c[1]+.0722*c[2]);}
-      case 'gradient-css': {const a=s.trim().split(/\s+/);return `background: linear-gradient(135deg, ${a[0]||'#4263eb'}, ${a[1]||'#a5b4fc'});`;}
-      case 'css-gradient': {const a=s.trim().split(/\s+/);return `background: linear-gradient(135deg, ${a[0]||'#4263eb'}, ${a[1]||'#a5b4fc'});`;}
+      case 'css-gradient': {const colors=s.trim().split(/\s+/);if(colors.length!==2||!colors.every(c=>/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)))throw Error('请输入两个 HEX 色值，例如 #4263eb #a5b4fc');return `background: linear-gradient(135deg, ${colors[0]}, ${colors[1]});`;}
       case 'password-strength': {let score=0;if(s.length>=12)score++;if(s.length>=16)score++;if(/[a-z]/.test(s)&&/[A-Z]/.test(s))score++;if(/\d/.test(s))score++;if(/[^A-Za-z0-9]/.test(s))score++;return `长度：${s.length}\n强度估算：${['很弱','较弱','一般','较强','强','很强'][score]}\n提示：这是本地启发式估算，不代表密码绝对安全。`;}
       case 'lorem': {const para='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec sed odio dui. Cras mattis consectetur purus sit amet fermentum.';return Array.from({length:Math.max(1,Math.min(20,Number(s)||3))},()=>para).join('\n\n');}
-      case 'qr-text': {const value=s.replace(/\r\n?/g,'\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').trim();if(!value)throw Error('请输入准备放入二维码的文本');const size=new TextEncoder().encode(value).length;if(size>2953)throw Error(`文本有 ${size} 字节，超过二维码常见最大容量 2953 字节`);return value;}
       case 'data-uri': return 'data:text/plain;charset=utf-8;base64,'+b64encode(s);
       case 'base64-url-encode': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       case 'url-safe-base64': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -240,19 +229,12 @@ if (root) {
       case 'email-validate': return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim())?'邮箱格式看起来有效（未验证是否真实可收信）':'邮箱格式无效';
       case 'svg-minify': return s.replace(/>\s+</g,'><').replace(/\s{2,}/g,' ').trim();
       case 'svg-to-data-uri': return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s.trim());
-      case 'css-shadow': return 'box-shadow: 0 8px 24px rgba(20, 30, 60, 0.12);';
-      case 'css-border-radius': return 'border-radius: 12px;';
-      case 'css-flex-center': return 'display: flex;\nalign-items: center;\njustify-content: center;';
-      case 'css-grid': return 'display: grid;\ngrid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\ngap: 16px;';
-      case 'image-dimensions': {const raw=s.trim();if(!raw.startsWith('data:image/'))throw Error('为保护隐私，请粘贴以 data:image/ 开头的图片 Data URL');const img=new Image();return await new Promise((resolve,reject)=>{img.onload=()=>resolve(`图片宽度：${img.naturalWidth||img.width} px\n图片高度：${img.naturalHeight||img.height} px\n显示比例：${((img.naturalWidth||img.width)/(img.naturalHeight||img.height)).toFixed(4)}`);img.onerror=()=>reject(Error('无法解析图片 Data URL，请检查图片数据'));img.src=raw;});}
-      case 'placeholder-svg': return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><rect width="100%" height="100%" fill="#eef1f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#687386" font-family="sans-serif" font-size="20">640 × 360</text></svg>`;
       case 'design-token': return `:root {\n  --color-primary: ${s.trim()||'#4263eb'};\n  --space-1: 4px;\n  --space-2: 8px;\n  --space-3: 12px;\n  --space-4: 16px;\n  --radius-card: 12px;\n}`;
       case 'list-to-json': return JSON.stringify(s.split(/\r?\n/).filter(x=>x.length),null,2);
       case 'json-to-list': {const a=JSON.parse(s);if(!Array.isArray(a))throw Error('输入必须是 JSON 数组');return a.join('\n');}
       case 'number-format': return finite(s.trim()).toLocaleString('en-US');
       case 'byte-convert': {const x=finite(s.trim(),'字节数');if(x<0)throw Error('字节数不能为负数');return `${x} B\n${(x/1024).toFixed(3)} KiB\n${(x/1024**2).toFixed(3)} MiB\n${(x/1024**3).toFixed(3)} GiB`;}
       case 'table-to-markdown': {const rows=parseCsv(s).map(row=>row.map(c=>c.trim()));if(!rows.length)return '';const width=Math.max(...rows.map(r=>r.length));const normalize=r=>Array.from({length:width},(_,i)=>(r[i]??'').replace(/\|/g,'\\|'));return [normalize(rows[0]),Array.from({length:width},()=> '---'),...rows.slice(1).map(normalize)].map(r=>'| '+r.join(' | ')+' |').join('\n');}
-      case 'markdown-table': {const rows=parseCsv(s).map(row=>row.map(c=>c.trim()));if(!rows.length)return '';const width=Math.max(...rows.map(r=>r.length));const normalize=r=>Array.from({length:width},(_,i)=>(r[i]??'').replace(/\|/g,'\\|'));return [normalize(rows[0]),Array.from({length:width},()=> '---'),...rows.slice(1).map(normalize)].map(r=>'| '+r.join(' | ')+' |').join('\n');}
       case 'json-key-sort': {const sort=o=>Array.isArray(o)?o.map(sort):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,sort(o[k])])):o;return JSON.stringify(sort(JSON.parse(s)),null,2);}
       case 'json-stringify': return JSON.stringify(s);
       case 'json-unstringify': {const x=JSON.parse(s);return typeof x==='string'?x:JSON.stringify(x,null,2);}
