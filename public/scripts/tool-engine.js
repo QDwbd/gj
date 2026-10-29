@@ -166,7 +166,7 @@ if (root) {
       case 'binary-decode': return new TextDecoder().decode(new Uint8Array(s.trim().split(/\s+/).map(x=>parseInt(x,2))));
       case 'hex-encode': return toHex(s);
       case 'hex-decode': return fromHex(s);
-      case 'ascii-table': return [...s].map(c=>`${c}\tU+${c.codePointAt(0).toString(16).toUpperCase()}\t${c.codePointAt(0)}`).join('\n');
+
       case 'unicode-inspect': return [...s].map(c=>`${c}  U+${c.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')}  UTF-16: ${Array.from({length:c.length},(_,i)=>c.charCodeAt(i).toString(16).padStart(4,'0')).join(' ')}`).join('\n');
       case 'morse-encode': {const map={a:'.-',b:'-...',c:'-.-.',d:'-..',e:'.',f:'..-.',g:'--.',h:'....',i:'..',j:'.---',k:'-.-',l:'.-..',m:'--',n:'-.',o:'---',p:'.--.',q:'--.-',r:'.-.',s:'...',t:'-',u:'..-',v:'...-',w:'.--',x:'-..-',y:'-.--',z:'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.'};return s.toLowerCase().split('').map(c=>c===' '?' / ':(map[c]||'?')).join(' ');}
       case 'morse-decode': {const map={'.-':'A','-...':'B','-.-.':'C','-..':'D','.':'E','..-.':'F','--.':'G','....':'H','..':'I','.---':'J','-.-':'K','.-..':'L','--':'M','-.':'N','---':'O','.--.':'P','--.-':'Q','.-.':'R','...':'S','-':'T','..-':'U','...-':'V','.--':'W','-..-':'X','-.--':'Y','--..':'Z','-----':'0','.----':'1','..---':'2','...--':'3','....-':'4','.....':'5','-....':'6','--...':'7','---..':'8','----.':'9'};return s.split(' / ').map(part=>part.split(/\s+/).map(x=>map[x]||'?').join('')).join(' ');}
@@ -176,16 +176,14 @@ if (root) {
       case 'json-to-csv': {const rows=JSON.parse(s);if(!Array.isArray(rows)||!rows.length||rows.some(o=>!o||typeof o!=='object'||Array.isArray(o)))throw Error('请输入非空 JSON 对象数组');const keys=[...new Set(rows.flatMap(o=>Object.keys(o)))];return [keys.map(csvCell).join(','),...rows.map(o=>keys.map(k=>csvCell(o[k])).join(','))].join('\n');}
       case 'markdown-preview-text': return s.replace(/!\[([^\]]*)\]\([^)]+\)/g,'$1').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/^#{1,6}\s+/gm,'').replace(/[*_~`>]/g,'').trim();
       case 'html-to-text': {const d=new DOMParser().parseFromString(s,'text/html');return d.body.textContent||'';}
-      case 'timestamp-now': {const d=Date.now();return `Unix 秒：${Math.floor(d/1000)}\nUnix 毫秒：${d}\n本地时间：${new Date(d).toString()}\nUTC：${new Date(d).toISOString()}`;}
+
       case 'timestamp-date': {const x=Number(s.trim());const d=new Date(Math.abs(x)<1e12?x*1000:x);if(isNaN(d))throw Error('时间戳无效');return `本地时间：${d.toString()}\nISO：${d.toISOString()}\nUTC：${d.toUTCString()}`;}
       case 'date-timestamp': {const d=new Date(s.trim());if(isNaN(d))throw Error('日期格式无效');return `Unix 秒：${Math.floor(d.getTime()/1000)}\nUnix 毫秒：${d.getTime()}`;}
-      case 'date-iso': {const d=new Date(s.trim());if(isNaN(d))throw Error('日期格式无效');return d.toISOString();}
-      case 'date-utc': {const d=new Date(s.trim());if(isNaN(d))throw Error('日期格式无效');return d.toUTCString();}
+
       case 'date-diff': {const a=new Date(v('date-start')),b=new Date(v('date-end'));if(Number.isNaN(a.getTime())||Number.isNaN(b.getTime()))throw Error('请选择有效的开始和结束日期');return `相差天数：${Math.round((b-a)/86400000)}\n绝对天数：${Math.abs(Math.round((b-a)/86400000))}`;}
-      case 'days-in-month': {const year=finite(v('year-value'),'年份'),month=finite(v('month-value'),'月份');if(!Number.isInteger(year)||year<1||!Number.isInteger(month)||month<1||month>12)throw Error('请输入有效年份和 1 到 12 的月份');return `${year} 年 ${month} 月有 ${new Date(year,month,0).getDate()} 天`;}
-      case 'leap-year': {const y=Number(s.trim());return `${y} 年${(y%4===0&&y%100!==0)||y%400===0?'是':'不是'}闰年`;}
+
       case 'weekday': {const d=new Date(s.trim());if(isNaN(d))throw Error('请输入有效日期');return ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][d.getDay()];}
-      case 'timezone-offset': return `时区：${Intl.DateTimeFormat().resolvedOptions().timeZone}\nUTC 偏移：${-new Date().getTimezoneOffset()/60} 小时`;
+
       case 'calculator': return String(evaluateArithmetic(s));
       case 'percentage': {const part=finite(v('part-value'),'部分数值'),whole=finite(v('whole-value'),'总数值');if(whole===0)throw Error('总数不能为 0');return `${(part/whole*100).toFixed(4)}%`;}
       case 'percent-change': {const oldValue=finite(v('old-value'),'原数值'),newValue=finite(v('new-value'),'新数值');if(oldValue===0)throw Error('原数值不能为 0');return `${((newValue-oldValue)/oldValue*100).toFixed(4)}%`;}
@@ -201,7 +199,7 @@ if (root) {
       case 'round-number': {const value=finite(s.trim()),places=finite(v('decimal-places'),'小数位数');if(!Number.isInteger(places)||places<0||places>100)throw Error('小数位数必须是 0 到 100 的整数');return value.toFixed(places);}
       case 'unit-convert': {const x=finite(v('unit-value'),'长度');return `${x} 米 = ${x/1000} 千米 = ${x*100} 厘米 = ${x*3.28084} 英尺 = ${x*39.3701} 英寸`;}
       case 'temperature': {const x=finite(v('temp-value'),'温度');if(x < -273.15)throw Error('摄氏温度不能低于绝对零度 -273.15°C');return `摄氏度：${x}\n华氏度：${x*9/5+32}\n开尔文：${x+273.15}`;}
-      case 'html-color-name': {const value=s.trim();const hex=value.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);if(hex){const raw=hex[1].length===3?[...hex[1]].map(c=>c+c).join(''):hex[1];return `颜色格式有效：#${raw.toUpperCase()}\nRGB(${parseInt(raw.slice(0,2),16)}, ${parseInt(raw.slice(2,4),16)}, ${parseInt(raw.slice(4,6),16)})`;}const rgb=value.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);if(rgb&&rgb.slice(1).every(x=>Number(x)<=255))return `颜色格式有效：rgb(${rgb.slice(1).map(Number).join(', ')})`;throw Error('请输入 #RGB、#RRGGBB 或 rgb(255, 0, 0) 格式');}
+
       case 'color-hex-rgb': {const h=s.trim().replace('#','');if(!/^[0-9a-f]{3}$|^[0-9a-f]{6}$/i.test(h))throw Error('请输入 #RGB 或 #RRGGBB');const full=h.length===3?[...h].map(c=>c+c).join(''):h;return `RGB(${parseInt(full.slice(0,2),16)}, ${parseInt(full.slice(2,4),16)}, ${parseInt(full.slice(4,6),16)})`;}
       case 'color-rgb-hex': {const m=s.match(/\d+/g)?.map(Number);if(!m||m.length<3||m.slice(0,3).some(x=>x<0||x>255))throw Error('输入 0 到 255 范围内的 RGB 值，例如 rgb(66, 99, 235)');return '#'+m.slice(0,3).map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();}
       case 'color-rgb-hsl': {const values=s.match(/\d+/g)?.slice(0,3).map(Number);if(!values||values.length<3||values.some(x=>x<0||x>255))throw Error('输入 0 到 255 范围内的 RGB 值，例如 255, 0, 0');const [r,g,b]=values.map(x=>x/255);const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0,l=(max+min)/2,ss=0;if(d){ss=d/(1-Math.abs(2*l-1));switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;if(h<0)h+=360;}return `hsl(${Math.round(h)}, ${Math.round(ss*100)}%, ${Math.round(l*100)}%)`;}
@@ -214,11 +212,10 @@ if (root) {
       case 'css-gradient': {const colors=s.trim().split(/\s+/);if(colors.length!==2||!colors.every(c=>/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)))throw Error('请输入两个 HEX 色值，例如 #4263eb #a5b4fc');return `background: linear-gradient(135deg, ${colors[0]}, ${colors[1]});`;}
       case 'password-strength': {let score=0;if(s.length>=12)score++;if(s.length>=16)score++;if(/[a-z]/.test(s)&&/[A-Z]/.test(s))score++;if(/\d/.test(s))score++;if(/[^A-Za-z0-9]/.test(s))score++;return `长度：${s.length}\n强度估算：${['很弱','较弱','一般','较强','强','很强'][score]}\n提示：这是本地启发式估算，不代表密码绝对安全。`;}
       case 'lorem': {const para='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec sed odio dui. Cras mattis consectetur purus sit amet fermentum.';return Array.from({length:Math.max(1,Math.min(20,Number(s)||3))},()=>para).join('\n\n');}
-      case 'data-uri': return 'data:text/plain;charset=utf-8;base64,'+b64encode(s);
+
       case 'base64-url-encode': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       case 'url-safe-base64': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-      case 'user-agent-info': return `User-Agent：${navigator.userAgent}\n语言：${navigator.language}\n平台：${navigator.platform}`;
-      case 'viewport-info': return `视口：${innerWidth} × ${innerHeight}\n屏幕：${screen.width} × ${screen.height}\n设备像素比：${devicePixelRatio}\n颜色深度：${screen.colorDepth}`;
+
       case 'aspect-ratio': {const m=s.match(/\d+(?:\.\d+)?/g)?.map(Number);if(!m||m.length<2)throw Error('请输入宽和高，例如 1920 1080');const g=gcd(Math.round(m[0]),Math.round(m[1]));return `宽高比：${m[0]/g}:${m[1]/g}\n小数比例：${(m[0]/m[1]).toFixed(4)}`;}
       case 'html-meta': {const [title='',desc='',url='']=s.split('\n');return `<title>${htmlEscape(title)}</title>\n<meta name="description" content="${htmlEscape(desc)}">\n<link rel="canonical" href="${htmlEscape(url)}">`;}
       case 'robots-txt': return 'User-agent: *\nAllow: /\nSitemap: '+(s.trim()||'https://example.com/sitemap-index.xml');
@@ -246,7 +243,7 @@ if (root) {
       case 'split-bill': {const a=nums(s);if(a.length<2||!a.every(Number.isFinite)||a[1]<=0)throw Error('输入有效的总金额和正数人数，例如 120 4');return `每人支付：${(a[0]/a[1]).toFixed(2)}`;}
       case 'word-frequency': {const a=(s.toLowerCase().match(/[a-z0-9']+/g)||[]),m={};a.forEach(w=>m[w]=(m[w]||0)+1);return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([w,c])=>`${w}: ${c}`).join('\n');}
       case 'reading-time': {const cjk=(s.match(/[\u3400-\u9fff\uf900-\ufaff]/g)||[]).length;const english=words(s.replace(/[\u3400-\u9fff\uf900-\ufaff]/g,' ')).length;const minutes=cjk/300+english/200;if(!s.trim())throw Error('请输入需要估算的文章内容');return `约 ${Math.max(0.1,minutes).toFixed(1)} 分钟（中文按每分钟 300 字、其他文本按每分钟 200 词粗略估算）。`;}
-      case 'name-initials': return s.trim().split(/\s+/).map(x=>x[0]||'').join('').toUpperCase();
+
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
@@ -283,5 +280,5 @@ if (root) {
   });
   document.querySelector('#clear-tool')?.addEventListener('click',()=>{input.value='';output.value='';status.textContent='';meta.textContent='结果仅在本页显示';});
   document.querySelector('#copy-tool')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.value);status.textContent='已复制';}catch{output.select();status.textContent='请手动复制';}});
-  if (['timestamp-now','user-agent-info','viewport-info','color-random','uuid-gen','password-gen'].includes(op)) input.value = op==='timestamp-now'?'now':op==='user-agent-info'?'current browser':op==='viewport-info'?'current viewport':op==='color-random'?'#4263eb':op==='uuid-gen'?'generate':'generate';
+  if (['color-random','uuid-gen','password-gen'].includes(op)) input.value = op==='color-random'?'#4263eb':'generate';
 }

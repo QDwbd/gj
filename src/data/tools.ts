@@ -309,14 +309,7 @@ export const tools: Tool[] = [
     "description": "将十六进制解码为文本",
     "operation": "hex-decode"
   },
-  {
-    "slug": "ascii-table",
-    "name": "字符码点查看",
-    "category": "编码与转换",
-    "description": "查看输入字符的 Unicode 码点与十进制值",
-    "operation": "ascii-table"
-  },
-  {
+    {
     "slug": "unicode-inspect",
     "name": "Unicode 查看器",
     "category": "编码与转换",
@@ -379,14 +372,7 @@ export const tools: Tool[] = [
     "description": "移除标签并提取文本",
     "operation": "html-to-text"
   },
-  {
-    "slug": "timestamp-now",
-    "name": "当前时间戳",
-    "category": "时间与日期",
-    "description": "显示当前 Unix 秒和毫秒时间戳",
-    "operation": "timestamp-now"
-  },
-  {
+    {
     "slug": "timestamp-date",
     "name": "时间戳转日期",
     "category": "时间与日期",
@@ -400,56 +386,21 @@ export const tools: Tool[] = [
     "description": "将日期字符串转换为 Unix 秒和毫秒",
     "operation": "date-timestamp"
   },
-  {
-    "slug": "date-iso",
-    "name": "ISO 日期转换",
-    "category": "时间与日期",
-    "description": "将日期转换为 ISO 8601 格式",
-    "operation": "date-iso"
-  },
-  {
-    "slug": "date-utc",
-    "name": "UTC 时间转换",
-    "category": "时间与日期",
-    "description": "将日期转换为 UTC 字符串",
-    "operation": "date-utc"
-  },
-  {
+      {
     "slug": "date-diff",
     "name": "日期间隔计算",
     "category": "时间与日期",
     "description": "计算两个日期之间的天数差",
     "operation": "date-diff"
   },
-  {
-    "slug": "days-in-month",
-    "name": "月份天数",
-    "category": "时间与日期",
-    "description": "计算指定年份月份的天数",
-    "operation": "days-in-month"
-  },
-  {
-    "slug": "leap-year",
-    "name": "闰年判断",
-    "category": "时间与日期",
-    "description": "判断指定年份是否为闰年",
-    "operation": "leap-year"
-  },
-  {
+      {
     "slug": "weekday",
     "name": "星期计算",
     "category": "时间与日期",
     "description": "计算日期对应的星期几",
     "operation": "weekday"
   },
-  {
-    "slug": "timezone-offset",
-    "name": "时区偏移说明",
-    "category": "时间与日期",
-    "description": "显示本地时区与 UTC 偏移",
-    "operation": "timezone-offset"
-  },
-  {
+    {
     "slug": "calculator",
     "name": "计算器",
     "category": "数学与数字",
@@ -652,42 +603,14 @@ export const tools: Tool[] = [
     "description": "生成指定段数的占位文本",
     "operation": "lorem"
   },
-  {
-    "slug": "data-uri",
-    "name": "文本转 Data URI",
-    "category": "安全与生成器",
-    "description": "将文本编码为 Data URI",
-    "operation": "data-uri"
-  },
-  {
-    "slug": "html-color-name",
-    "name": "颜色格式校验",
-    "category": "颜色工具",
-    "description": "校验 HEX 或 RGB 颜色格式并显示对应 RGB 值",
-    "operation": "html-color-name"
-  },
-  {
+      {
     "slug": "url-safe-base64",
     "name": "URL 安全 Base64",
     "category": "编码与转换",
     "description": "进行 URL-safe Base64 编码",
     "operation": "url-safe-base64"
   },
-  {
-    "slug": "user-agent-info",
-    "name": "User-Agent 查看",
-    "category": "Web 与网络",
-    "description": "显示当前浏览器的 User-Agent",
-    "operation": "user-agent-info"
-  },
-  {
-    "slug": "viewport-info",
-    "name": "屏幕与视口信息",
-    "category": "Web 与网络",
-    "description": "显示视口、屏幕和设备像素比",
-    "operation": "viewport-info"
-  },
-  {
+      {
     "slug": "aspect-ratio",
     "name": "宽高比计算",
     "category": "Web 与网络",
@@ -890,11 +813,4 @@ export const tools: Tool[] = [
     "description": "按阅读速度估算阅读分钟数",
     "operation": "reading-time"
   },
-  {
-    "slug": "name-initials",
-    "name": "姓名首字母",
-    "category": "生活与实用",
-    "description": "提取每个词的首字母",
-    "operation": "name-initials"
-  },
-];
+  ];
