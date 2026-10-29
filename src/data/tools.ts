@@ -998,7 +998,6 @@ export const tools: Tool[] = [
     "description": "将 JSON 对象转换为常见 INI 键值和分组格式",
     "operation": "json-to-ini"
   },
-,
   {
     "slug": "cookie-to-json",
     "name": "Cookie 转 JSON",
