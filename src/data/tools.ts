@@ -284,119 +284,119 @@ export const tools: Tool[] = [
   {
     "slug": "binary-encode",
     "name": "文本转二进制",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将文本转为 UTF-8 字节二进制表示",
     "operation": "binary-encode"
   },
   {
     "slug": "binary-decode",
     "name": "二进制转文本",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将 8 位二进制字节解码为文本",
     "operation": "binary-decode"
   },
   {
     "slug": "hex-encode",
     "name": "文本转十六进制",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将文本转为 UTF-8 十六进制",
     "operation": "hex-encode"
   },
   {
     "slug": "hex-decode",
     "name": "十六进制转文本",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将十六进制解码为文本",
     "operation": "hex-decode"
   },
     {
     "slug": "unicode-inspect",
     "name": "Unicode 查看器",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "显示字符、码点和 UTF-16 编码",
     "operation": "unicode-inspect"
   },
   {
     "slug": "morse-encode",
     "name": "摩斯电码编码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将常见英文字母和数字转为摩斯码",
     "operation": "morse-encode"
   },
   {
     "slug": "morse-decode",
     "name": "摩斯电码解码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将摩斯码转换为英文和数字",
     "operation": "morse-decode"
   },
   {
     "slug": "rot13",
     "name": "ROT13 转换",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "执行 ROT13 字母转换",
     "operation": "rot13"
   },
   {
     "slug": "caesar",
     "name": "凯撒密码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "按偏移量进行凯撒字母位移",
     "operation": "caesar"
   },
   {
     "slug": "csv-to-json",
     "name": "CSV 转 JSON",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将基础 CSV 表格转换为 JSON 数组",
     "operation": "csv-to-json"
   },
   {
     "slug": "json-to-csv",
     "name": "JSON 转 CSV",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将 JSON 对象数组转换为 CSV",
     "operation": "json-to-csv"
   },
   {
     "slug": "markdown-preview-text",
     "name": "Markdown 纯文本提取",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "去除常见 Markdown 标记",
     "operation": "markdown-preview-text"
   },
   {
     "slug": "html-to-text",
     "name": "HTML 转纯文本",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "移除标签并提取文本",
     "operation": "html-to-text"
   },
     {
     "slug": "timestamp-date",
     "name": "时间戳转日期",
-    "category": "时间与日期",
+    "category": "数学与数字",
     "description": "将 Unix 秒或毫秒时间戳转换为日期",
     "operation": "timestamp-date"
   },
   {
     "slug": "date-timestamp",
     "name": "日期转时间戳",
-    "category": "时间与日期",
+    "category": "数学与数字",
     "description": "将日期字符串转换为 Unix 秒和毫秒",
     "operation": "date-timestamp"
   },
       {
     "slug": "date-diff",
     "name": "日期间隔计算",
-    "category": "时间与日期",
+    "category": "数学与数字",
     "description": "计算两个日期之间的天数差",
     "operation": "date-diff"
   },
       {
     "slug": "weekday",
     "name": "星期计算",
-    "category": "时间与日期",
+    "category": "数学与数字",
     "description": "计算日期对应的星期几",
     "operation": "weekday"
   },
@@ -508,63 +508,63 @@ export const tools: Tool[] = [
   {
     "slug": "color-hex-rgb",
     "name": "HEX 转 RGB",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "将 HEX 颜色转换为 RGB",
     "operation": "color-hex-rgb"
   },
   {
     "slug": "color-rgb-hex",
     "name": "RGB 转 HEX",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "将 RGB 颜色转换为 HEX",
     "operation": "color-rgb-hex"
   },
   {
     "slug": "color-rgb-hsl",
     "name": "RGB 转 HSL",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "将 RGB 颜色转换为 HSL",
     "operation": "color-rgb-hsl"
   },
   {
     "slug": "color-hsl-rgb",
     "name": "HSL 转 RGB",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "将 HSL 颜色转换为 RGB",
     "operation": "color-hsl-rgb"
   },
   {
     "slug": "color-contrast",
     "name": "对比度计算",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "计算两种颜色的 WCAG 对比度",
     "operation": "color-contrast"
   },
   {
     "slug": "color-random",
     "name": "随机颜色",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "生成随机 HEX 颜色",
     "operation": "color-random"
   },
   {
     "slug": "color-palette",
     "name": "配色板生成",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "基于主色生成简单配色板",
     "operation": "color-palette"
   },
   {
     "slug": "color-invert",
     "name": "颜色反转",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "计算 HEX 颜色的反色",
     "operation": "color-invert"
   },
   {
     "slug": "color-luminance",
     "name": "相对亮度",
-    "category": "颜色工具",
+    "category": "图片工具",
     "description": "计算颜色相对亮度",
     "operation": "color-luminance"
   },
@@ -599,7 +599,7 @@ export const tools: Tool[] = [
       {
     "slug": "url-safe-base64",
     "name": "URL 安全 Base64",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "进行 URL-safe Base64 编码",
     "operation": "url-safe-base64"
   },
@@ -655,63 +655,63 @@ export const tools: Tool[] = [
   {
     "slug": "list-to-json",
     "name": "列表转 JSON",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将逐行文本转换为 JSON 字符串数组",
     "operation": "list-to-json"
   },
   {
     "slug": "json-to-list",
     "name": "JSON 数组转列表",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将 JSON 数组转换为逐行文本",
     "operation": "json-to-list"
   },
   {
     "slug": "number-format",
     "name": "数字千分位格式化",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "为数字添加千分位分隔符",
     "operation": "number-format"
   },
   {
     "slug": "byte-convert",
     "name": "字节单位换算",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "字节转换为 KB、MB、GB",
     "operation": "byte-convert"
   },
   {
     "slug": "csv-clean",
     "name": "CSV 行空白清理",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "规范换行并去除每行首尾空白，适用于简单 CSV 文本",
     "operation": "csv-clean"
   },
   {
     "slug": "table-to-markdown",
     "name": "表格转 Markdown",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将 CSV 转成 Markdown 表格",
     "operation": "table-to-markdown"
   },
   {
     "slug": "json-key-sort",
     "name": "JSON 键排序",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "递归按键名排序 JSON 对象",
     "operation": "json-key-sort"
   },
   {
     "slug": "json-stringify",
     "name": "JSON 字符串化",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将输入文本包装为 JSON 字符串",
     "operation": "json-stringify"
   },
   {
     "slug": "json-unstringify",
     "name": "JSON 字符串还原",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "还原 JSON 中的字符串内容",
     "operation": "json-unstringify"
   },
@@ -802,28 +802,28 @@ export const tools: Tool[] = [
   {
     "slug": "json-pick-fields",
     "name": "JSON 字段提取",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "按字段名从 JSON 对象或对象数组中提取字段",
     "operation": "json-pick-fields"
   },
   {
     "slug": "json-merge",
     "name": "JSON 深度合并",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "深度合并两个 JSON 对象，后一个对象覆盖同名值",
     "operation": "json-merge"
   },
   {
     "slug": "json-lines-merge",
     "name": "JSON 行合并",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将每行一个 JSON 值合并成标准 JSON 数组并定位错误行",
     "operation": "json-lines-merge"
   },
   {
     "slug": "json-to-array",
     "name": "JSON 对象转数组",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "提取 JSON 对象的字段值并转换为数组",
     "operation": "json-to-array"
   },
@@ -872,14 +872,14 @@ export const tools: Tool[] = [
   {
     "slug": "base64url-encode",
     "name": "Base64URL 编码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将 UTF-8 文本编码为适用于 URL 的 Base64URL 格式",
     "operation": "base64url-encode"
   },
   {
     "slug": "base64url-decode",
     "name": "Base64URL 解码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "解码 Base64URL 文本并还原 UTF-8 内容",
     "operation": "base64url-decode"
   },
@@ -943,7 +943,7 @@ export const tools: Tool[] = [
   {
     "slug": "rot47",
     "name": "ROT47 编码/解码",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "对 ASCII 可打印字符执行 ROT47 替换；同一操作可编码和解码",
     "operation": "rot47"
   },
@@ -964,7 +964,7 @@ export const tools: Tool[] = [
   {
     "slug": "uuid-bulk",
     "name": "批量 UUID 生成",
-    "category": "生成器",
+    "category": "安全与生成器",
     "description": "按指定数量生成 UUID v4，每行一个",
     "operation": "uuid-bulk"
   },
@@ -1008,7 +1008,7 @@ export const tools: Tool[] = [
   {
     "slug": "json-array-dedupe",
     "name": "JSON 数组去重",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "按 JSON 值去重数组元素并保留首次出现顺序",
     "operation": "json-array-dedupe"
   },
@@ -1050,7 +1050,7 @@ export const tools: Tool[] = [
   {
     "slug": "json-to-html-table",
     "name": "JSON 转 HTML 表格",
-    "category": "数据与格式",
+    "category": "开发者工具",
     "description": "将对象数组转换为可复制的 HTML table 标记",
     "operation": "json-to-html-table"
   }
@@ -1088,35 +1088,35 @@ export const tools: Tool[] = [
   {
     "slug": "content-type-lookup",
     "name": "MIME / Content-Type 查询",
-    "category": "参考资料",
+    "category": "Web 与网络",
     "description": "按文件扩展名或 MIME 类型查询常见媒体类型",
     "operation": "content-type-lookup"
   },
   {
     "slug": "tcp-port-lookup",
     "name": "常见端口查询",
-    "category": "参考资料",
+    "category": "Web 与网络",
     "description": "按 TCP/UDP 端口号或服务名查询常见端口说明",
     "operation": "tcp-port-lookup"
   },
   {
     "slug": "http-method-reference",
     "name": "HTTP 方法参考",
-    "category": "参考资料",
+    "category": "Web 与网络",
     "description": "查询 GET、POST、PUT、PATCH、DELETE 等 HTTP 方法用途",
     "operation": "http-method-reference"
   },
   {
     "slug": "unicode-escape",
     "name": "Unicode 转义",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将文本转为 UTF-16 Unicode 转义序列",
     "operation": "unicode-escape"
   },
   {
     "slug": "unicode-unescape",
     "name": "Unicode 反转义",
-    "category": "编码与转换",
+    "category": "开发者工具",
     "description": "将文本中的反斜线 uXXXX 序列还原为字符",
     "operation": "unicode-unescape"
   },
