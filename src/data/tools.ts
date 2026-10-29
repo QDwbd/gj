@@ -868,8 +868,7 @@ export const tools: Tool[] = [
     "category": "文本工具",
     "description": "逐行比较两段文本并标记新增、删除和相同行",
     "operation": "text-diff"
-  }
-
+  },
   {
     "slug": "base64url-encode",
     "name": "Base64URL 编码",
@@ -911,5 +910,62 @@ export const tools: Tool[] = [
     "category": "文本工具",
     "description": "统计列表中重复项目及其出现次数，忽略首尾空格",
     "operation": "list-duplicates"
+  },
+
+  {
+    "slug": "json-to-xml",
+    "name": "JSON 转 XML",
+    "category": "开发者工具",
+    "description": "将 JSON 对象或数组转换为 XML，支持自定义根节点名称",
+    "operation": "json-to-xml"
+  },
+  {
+    "slug": "xml-to-json",
+    "name": "XML 转 JSON",
+    "category": "开发者工具",
+    "description": "将简单 XML 文档转换为 JSON，保留属性、文本和重复节点",
+    "operation": "xml-to-json"
+  },
+  {
+    "slug": "xml-format",
+    "name": "XML 格式化",
+    "category": "开发者工具",
+    "description": "缩进排版 XML 文档，便于阅读和调试",
+    "operation": "xml-format"
+  },
+  {
+    "slug": "xml-minify",
+    "name": "XML 压缩",
+    "category": "开发者工具",
+    "description": "移除 XML 标签之间的多余空白并压缩文档",
+    "operation": "xml-minify"
+  },
+  {
+    "slug": "rot47",
+    "name": "ROT47 编码/解码",
+    "category": "编码与转换",
+    "description": "对 ASCII 可打印字符执行 ROT47 替换；同一操作可编码和解码",
+    "operation": "rot47"
+  },
+  {
+    "slug": "url-params-to-json",
+    "name": "URL 参数转 JSON",
+    "category": "开发者工具",
+    "description": "提取 URL 查询参数并转换为 JSON，重复参数会转换为数组",
+    "operation": "url-params-to-json"
+  },
+  {
+    "slug": "json-to-typescript",
+    "name": "JSON 转 TypeScript 接口",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象生成 TypeScript interface，支持嵌套对象和数组",
+    "operation": "json-to-typescript"
+  },
+  {
+    "slug": "uuid-bulk",
+    "name": "批量 UUID 生成",
+    "category": "生成器",
+    "description": "按指定数量生成 UUID v4，每行一个",
+    "operation": "uuid-bulk"
   },
 ];
