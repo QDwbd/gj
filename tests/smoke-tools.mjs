@@ -61,7 +61,7 @@ for (const op of operations) {
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
 try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
-if (!barcodeSource.includes("import bwipjs from 'bwip-js'") || !barcodeSource.includes('bwipjs.toCanvas') || !pageSource.includes('id=\\"barcode-workbench\\"')) failures.push({op:'QR/barcode UI coverage',status:'FAIL',detail:'Missing barcode generator UI or implementation'});
+if (!barcodeSource.includes("import bwipjs from 'bwip-js'") || !barcodeSource.includes('bwipjs.toCanvas') || !pageSource.includes('id="barcode-workbench"')) failures.push({op:'QR/barcode UI coverage',status:'FAIL',detail:'Missing barcode generator UI or implementation'});
 if (!mediaSource.includes("op === 'image-to-base64'") || !mediaSource.includes("op === 'base64-to-image'") || !mediaSource.includes("op === 'svg-to-png'") || !pageSource.includes('id=\"media-workbench\"')) failures.push({op:'media tools UI coverage',status:'FAIL',detail:'Missing browser-side media handlers or UI'});
 console.log(`Smoke test: ${passed}/${operations.length} operations returned success.`);
 if(failures.length) { console.log(JSON.stringify(failures,null,2)); process.exitCode=1; }
