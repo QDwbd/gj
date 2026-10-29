@@ -114,20 +114,6 @@ export const tools: Tool[] = [
     "operation": "text-clean"
   },
   {
-    "slug": "text-escape-html",
-    "name": "HTML 转义",
-    "category": "文本工具",
-    "description": "转义 HTML 特殊字符",
-    "operation": "text-escape-html"
-  },
-  {
-    "slug": "text-unescape-html",
-    "name": "HTML 反转义",
-    "category": "文本工具",
-    "description": "将常见 HTML 实体还原为文本",
-    "operation": "text-unescape-html"
-  },
-  {
     "slug": "text-escape-regex",
     "name": "正则转义",
     "category": "文本工具",
@@ -182,27 +168,6 @@ export const tools: Tool[] = [
     "category": "开发者工具",
     "description": "转义 XML 特殊字符",
     "operation": "xml-escape"
-  },
-  {
-    "slug": "html-minify",
-    "name": "HTML 压缩",
-    "category": "开发者工具",
-    "description": "压缩简单 HTML 文本空白",
-    "operation": "html-minify"
-  },
-  {
-    "slug": "css-minify",
-    "name": "CSS 压缩",
-    "category": "开发者工具",
-    "description": "移除 CSS 注释与多余空白",
-    "operation": "css-minify"
-  },
-  {
-    "slug": "js-minify",
-    "name": "JS 文本压缩",
-    "category": "开发者工具",
-    "description": "移除简单 JS 注释和多余空白（非 AST）",
-    "operation": "js-minify"
   },
   {
     "slug": "url-encode",
@@ -346,9 +311,9 @@ export const tools: Tool[] = [
   },
   {
     "slug": "ascii-table",
-    "name": "ASCII 编码查看",
+    "name": "字符码点查看",
     "category": "编码与转换",
-    "description": "显示输入字符的码点信息",
+    "description": "查看输入字符的 Unicode 码点与十进制值",
     "operation": "ascii-table"
   },
   {
@@ -385,13 +350,6 @@ export const tools: Tool[] = [
     "category": "编码与转换",
     "description": "按偏移量进行凯撒字母位移",
     "operation": "caesar"
-  },
-  {
-    "slug": "punycode-info",
-    "name": "域名信息解析",
-    "category": "编码与转换",
-    "description": "解析域名 URL 与主机名（不做完整 IDN 转换）",
-    "operation": "punycode-info"
   },
   {
     "slug": "csv-to-json",
@@ -660,13 +618,6 @@ export const tools: Tool[] = [
     "operation": "color-luminance"
   },
   {
-    "slug": "gradient-css",
-    "name": "渐变 CSS 生成",
-    "category": "颜色工具",
-    "description": "根据两个颜色生成线性渐变 CSS",
-    "operation": "gradient-css"
-  },
-  {
     "slug": "hash-sha1",
     "name": "SHA-1 计算",
     "category": "安全与生成器",
@@ -697,23 +648,9 @@ export const tools: Tool[] = [
   {
     "slug": "lorem",
     "name": "Lorem Ipsum 生成",
-    "category": "安全与生成器",
+    "category": "文本工具",
     "description": "生成指定段数的占位文本",
     "operation": "lorem"
-  },
-  {
-    "slug": "slugify",
-    "name": "Slug 转换",
-    "category": "安全与生成器",
-    "description": "将标题转成小写连字符格式",
-    "operation": "slugify"
-  },
-  {
-    "slug": "qr-text",
-    "name": "二维码内容准备",
-    "category": "安全与生成器",
-    "description": "校验并规范二维码文本内容（不生成图片）",
-    "operation": "qr-text"
   },
   {
     "slug": "data-uri",
@@ -724,15 +661,15 @@ export const tools: Tool[] = [
   },
   {
     "slug": "html-color-name",
-    "name": "颜色格式检查",
-    "category": "安全与生成器",
-    "description": "校验常见 HEX/RGB 颜色格式",
+    "name": "颜色格式校验",
+    "category": "颜色工具",
+    "description": "校验 HEX 或 RGB 颜色格式并显示对应 RGB 值",
     "operation": "html-color-name"
   },
   {
     "slug": "url-safe-base64",
     "name": "URL 安全 Base64",
-    "category": "安全与生成器",
+    "category": "编码与转换",
     "description": "进行 URL-safe Base64 编码",
     "operation": "url-safe-base64"
   },
@@ -773,9 +710,9 @@ export const tools: Tool[] = [
   },
   {
     "slug": "sitemap-url",
-    "name": "Sitemap URL 生成",
+    "name": "Sitemap URL 条目生成",
     "category": "Web 与网络",
-    "description": "生成简单 XML sitemap 条目",
+    "description": "将网址包装为 sitemap XML 的单条 URL 记录",
     "operation": "sitemap-url"
   },
   {
@@ -821,53 +758,11 @@ export const tools: Tool[] = [
     "operation": "svg-to-data-uri"
   },
   {
-    "slug": "css-shadow",
-    "name": "CSS 阴影生成",
-    "category": "图片与设计",
-    "description": "根据参数生成 box-shadow 样式",
-    "operation": "css-shadow"
-  },
-  {
-    "slug": "css-border-radius",
-    "name": "圆角 CSS 生成",
-    "category": "图片与设计",
-    "description": "生成 border-radius CSS",
-    "operation": "css-border-radius"
-  },
-  {
-    "slug": "css-flex-center",
-    "name": "Flex 居中代码",
-    "category": "图片与设计",
-    "description": "生成 Flex 居中布局 CSS",
-    "operation": "css-flex-center"
-  },
-  {
-    "slug": "css-grid",
-    "name": "Grid 布局代码",
-    "category": "图片与设计",
-    "description": "生成基础 CSS Grid 模板",
-    "operation": "css-grid"
-  },
-  {
     "slug": "css-gradient",
     "name": "CSS 渐变生成",
-    "category": "图片与设计",
-    "description": "生成渐变背景 CSS",
+    "category": "颜色工具",
+    "description": "输入两个 HEX 色值，生成线性渐变 CSS",
     "operation": "css-gradient"
-  },
-  {
-    "slug": "placeholder-svg",
-    "name": "占位 SVG 生成",
-    "category": "图片与设计",
-    "description": "生成指定尺寸和颜色的 SVG 占位图",
-    "operation": "placeholder-svg"
-  },
-  {
-    "slug": "image-dimensions",
-    "name": "图片尺寸说明",
-    "category": "图片与设计",
-    "description": "读取图片 Data URL 的基本信息提示",
-    "operation": "image-dimensions"
   },
   {
     "slug": "design-token",
@@ -906,9 +801,9 @@ export const tools: Tool[] = [
   },
   {
     "slug": "csv-clean",
-    "name": "CSV 清理",
+    "name": "CSV 行空白清理",
     "category": "数据与格式",
-    "description": "清理 CSV 文本每行空白",
+    "description": "规范换行并去除每行首尾空白，适用于简单 CSV 文本",
     "operation": "csv-clean"
   },
   {
@@ -917,13 +812,6 @@ export const tools: Tool[] = [
     "category": "数据与格式",
     "description": "将 CSV 转成 Markdown 表格",
     "operation": "table-to-markdown"
-  },
-  {
-    "slug": "markdown-table",
-    "name": "Markdown 表格生成",
-    "category": "数据与格式",
-    "description": "根据 CSV 输入生成 Markdown 表格",
-    "operation": "markdown-table"
   },
   {
     "slug": "json-key-sort",
@@ -1009,11 +897,4 @@ export const tools: Tool[] = [
     "description": "提取每个词的首字母",
     "operation": "name-initials"
   },
-  {
-    "slug": "text-to-binary",
-    "name": "文本转字节",
-    "category": "生活与实用",
-    "description": "输出文本 UTF-8 字节数和十六进制",
-    "operation": "text-to-binary"
-  }
 ];

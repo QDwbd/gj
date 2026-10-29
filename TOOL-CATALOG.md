@@ -1,8 +1,8 @@
 # 工具目录
 
-当前目录包含 **145 个独立工具入口**。
+当前目录包含 **128 个精选工具入口**。已移除重复、名不副实或容易产生错误结果的功能。
 
-## 文本工具（20）
+## 文本工具（19）
 
 - [字数统计](/tools/text-count/)：统计字符、单词、行数和段落数
 - [文本行排序](/tools/line-sort/)：按字母或字符顺序排序文本行
@@ -20,12 +20,11 @@
 - [逗号转行](/tools/text-to-lines/)：将逗号分隔的文本转换为逐行列表
 - [行转逗号](/tools/lines-to-comma/)：将多行内容转换为逗号分隔文本
 - [文本清理](/tools/text-clean/)：去除控制字符并规范换行
-- [HTML 转义](/tools/text-escape-html/)：转义 HTML 特殊字符
-- [HTML 反转义](/tools/text-unescape-html/)：将常见 HTML 实体还原为文本
 - [正则转义](/tools/text-escape-regex/)：转义正则表达式中的特殊字符
 - [唯一单词](/tools/text-unique-words/)：提取文本中的不重复单词
+- [Lorem Ipsum 生成](/tools/lorem/)：生成指定段数的占位文本
 
-## 开发者工具（25）
+## 开发者工具（22）
 
 - [JSON 格式化](/tools/json-format/)：格式化 JSON 并显示缩进
 - [JSON 压缩](/tools/json-minify/)：压缩 JSON 去除空白
@@ -33,9 +32,6 @@
 - [JSON 转 YAML](/tools/json-to-yaml/)：将 JSON 数据转换为基础 YAML
 - [YAML 转 JSON（基础）](/tools/yaml-to-json/)：解析简单键值 YAML 并转换为 JSON
 - [XML 转义](/tools/xml-escape/)：转义 XML 特殊字符
-- [HTML 压缩](/tools/html-minify/)：压缩简单 HTML 文本空白
-- [CSS 压缩](/tools/css-minify/)：移除 CSS 注释与多余空白
-- [JS 文本压缩](/tools/js-minify/)：移除简单 JS 注释和多余空白（非 AST）
 - [URL 编码](/tools/url-encode/)：使用 encodeURIComponent 编码文本
 - [URL 解码](/tools/url-decode/)：解码 URL 编码文本
 - [Base64 编码](/tools/base64-encode/)：将 UTF-8 文本编码为 Base64
@@ -59,17 +55,17 @@
 - [二进制转文本](/tools/binary-decode/)：将 8 位二进制字节解码为文本
 - [文本转十六进制](/tools/hex-encode/)：将文本转为 UTF-8 十六进制
 - [十六进制转文本](/tools/hex-decode/)：将十六进制解码为文本
-- [ASCII 编码查看](/tools/ascii-table/)：显示输入字符的码点信息
+- [字符码点查看](/tools/ascii-table/)：查看输入字符的 Unicode 码点与十进制值
 - [Unicode 查看器](/tools/unicode-inspect/)：显示字符、码点和 UTF-16 编码
 - [摩斯电码编码](/tools/morse-encode/)：将常见英文字母和数字转为摩斯码
 - [摩斯电码解码](/tools/morse-decode/)：将摩斯码转换为英文和数字
 - [ROT13 转换](/tools/rot13/)：执行 ROT13 字母转换
 - [凯撒密码](/tools/caesar/)：按偏移量进行凯撒字母位移
-- [域名信息解析](/tools/punycode-info/)：解析域名 URL 与主机名（不做完整 IDN 转换）
 - [CSV 转 JSON](/tools/csv-to-json/)：将基础 CSV 表格转换为 JSON 数组
 - [JSON 转 CSV](/tools/json-to-csv/)：将 JSON 对象数组转换为 CSV
 - [Markdown 纯文本提取](/tools/markdown-preview-text/)：去除常见 Markdown 标记
 - [HTML 转纯文本](/tools/html-to-text/)：移除标签并提取文本
+- [URL 安全 Base64](/tools/url-safe-base64/)：进行 URL-safe Base64 编码
 
 ## 时间与日期（10）
 
@@ -102,7 +98,7 @@
 - [长度单位换算](/tools/unit-convert/)：米、千米、厘米、英尺和英寸换算
 - [温度换算](/tools/temperature/)：摄氏度、华氏度和开尔文换算
 
-## 颜色工具（10）
+## 颜色工具（11）
 
 - [HEX 转 RGB](/tools/color-hex-rgb/)：将 HEX 颜色转换为 RGB
 - [RGB 转 HEX](/tools/color-rgb-hex/)：将 RGB 颜色转换为 HEX
@@ -113,20 +109,16 @@
 - [配色板生成](/tools/color-palette/)：基于主色生成简单配色板
 - [颜色反转](/tools/color-invert/)：计算 HEX 颜色的反色
 - [相对亮度](/tools/color-luminance/)：计算颜色相对亮度
-- [渐变 CSS 生成](/tools/gradient-css/)：根据两个颜色生成线性渐变 CSS
+- [颜色格式校验](/tools/html-color-name/)：校验 HEX 或 RGB 颜色格式并显示对应 RGB 值
+- [CSS 渐变生成](/tools/css-gradient/)：输入两个 HEX 色值，生成线性渐变 CSS
 
-## 安全与生成器（10）
+## 安全与生成器（5）
 
 - [SHA-1 计算](/tools/hash-sha1/)：计算 SHA-1 摘要（不用于安全签名）
 - [SHA-512 计算](/tools/hash-sha512/)：计算 SHA-512 摘要
 - [HMAC-SHA256](/tools/hmac-sha256/)：用浏览器 Web Crypto 计算 HMAC-SHA256
 - [密码强度检查](/tools/password-strength/)：根据长度和字符种类给出本地估算
-- [Lorem Ipsum 生成](/tools/lorem/)：生成指定段数的占位文本
-- [Slug 转换](/tools/slugify/)：将标题转成小写连字符格式
-- [二维码内容准备](/tools/qr-text/)：校验并规范二维码文本内容（不生成图片）
 - [文本转 Data URI](/tools/data-uri/)：将文本编码为 Data URI
-- [颜色格式检查](/tools/html-color-name/)：校验常见 HEX/RGB 颜色格式
-- [URL 安全 Base64](/tools/url-safe-base64/)：进行 URL-safe Base64 编码
 
 ## Web 与网络（10）
 
@@ -135,39 +127,31 @@
 - [宽高比计算](/tools/aspect-ratio/)：计算宽高比和等比例尺寸
 - [Meta 标签生成](/tools/html-meta/)：根据标题、描述和网址生成 Meta 标签
 - [robots.txt 生成](/tools/robots-txt/)：生成基础 robots.txt 内容
-- [Sitemap URL 生成](/tools/sitemap-url/)：生成简单 XML sitemap 条目
+- [Sitemap URL 条目生成](/tools/sitemap-url/)：将网址包装为 sitemap XML 的单条 URL 记录
 - [HTTP 状态码查询](/tools/http-status/)：查询常见 HTTP 状态码说明
 - [MIME 类型查询](/tools/mime-type/)：查询常见文件扩展名的 MIME 类型
 - [IP 地址格式检查](/tools/ip-format/)：检查 IPv4 地址格式
 - [邮箱格式检查](/tools/email-validate/)：检查常见邮箱格式（非投递验证）
 
-## 图片与设计（10）
+## 图片与设计（3）
 
 - [SVG 文本压缩](/tools/svg-minify/)：压缩简单 SVG 文本中的空白
 - [SVG 转 Data URI](/tools/svg-to-data-uri/)：将 SVG 文本转换为 Data URI
-- [CSS 阴影生成](/tools/css-shadow/)：根据参数生成 box-shadow 样式
-- [圆角 CSS 生成](/tools/css-border-radius/)：生成 border-radius CSS
-- [Flex 居中代码](/tools/css-flex-center/)：生成 Flex 居中布局 CSS
-- [Grid 布局代码](/tools/css-grid/)：生成基础 CSS Grid 模板
-- [CSS 渐变生成](/tools/css-gradient/)：生成渐变背景 CSS
-- [占位 SVG 生成](/tools/placeholder-svg/)：生成指定尺寸和颜色的 SVG 占位图
-- [图片尺寸说明](/tools/image-dimensions/)：读取图片 Data URL 的基本信息提示
 - [设计 Token 生成](/tools/design-token/)：将颜色与间距输入转成 CSS 变量
 
-## 数据与格式（10）
+## 数据与格式（9）
 
 - [列表转 JSON](/tools/list-to-json/)：将逐行文本转换为 JSON 字符串数组
 - [JSON 数组转列表](/tools/json-to-list/)：将 JSON 数组转换为逐行文本
 - [数字千分位格式化](/tools/number-format/)：为数字添加千分位分隔符
 - [字节单位换算](/tools/byte-convert/)：字节转换为 KB、MB、GB
-- [CSV 清理](/tools/csv-clean/)：清理 CSV 文本每行空白
+- [CSV 行空白清理](/tools/csv-clean/)：规范换行并去除每行首尾空白，适用于简单 CSV 文本
 - [表格转 Markdown](/tools/table-to-markdown/)：将 CSV 转成 Markdown 表格
-- [Markdown 表格生成](/tools/markdown-table/)：根据 CSV 输入生成 Markdown 表格
 - [JSON 键排序](/tools/json-key-sort/)：递归按键名排序 JSON 对象
 - [JSON 字符串化](/tools/json-stringify/)：将输入文本包装为 JSON 字符串
 - [JSON 字符串还原](/tools/json-unstringify/)：还原 JSON 中的字符串内容
 
-## 生活与实用（10）
+## 生活与实用（9）
 
 - [BMI 计算器](/tools/bmi/)：根据身高体重计算 BMI（仅供参考）
 - [每日热量估算](/tools/calorie-estimate/)：用基础公式估算基础代谢（仅供参考）
@@ -178,5 +162,4 @@
 - [词频统计](/tools/word-frequency/)：统计英文单词出现次数
 - [阅读时间估算](/tools/reading-time/)：按阅读速度估算阅读分钟数
 - [姓名首字母](/tools/name-initials/)：提取每个词的首字母
-- [文本转字节](/tools/text-to-binary/)：输出文本 UTF-8 字节数和十六进制
 
