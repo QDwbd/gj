@@ -1,8 +1,8 @@
 # 工具目录
 
-当前目录包含 **116 个实用工具**。优先保留能完成明确任务的文本处理、开发者工具、编码转换、数据处理和计算功能，移除低价值的信息展示及重复入口。
+当前目录包含 **130 个实用工具**。重点覆盖文本处理、JSON 数据加工、开发者代码转换与常用格式处理。新增工具均有对应处理器和烟雾测试。
 
-## 文本工具（19）
+## 文本工具（25）
 
 - [字数统计](/tools/text-count/)：统计字符、单词、行数和段落数
 - [文本行排序](/tools/line-sort/)：按字母或字符顺序排序文本行
@@ -23,8 +23,14 @@
 - [正则转义](/tools/text-escape-regex/)：转义正则表达式中的特殊字符
 - [唯一单词](/tools/text-unique-words/)：提取文本中的不重复单词
 - [Lorem Ipsum 生成](/tools/lorem/)：生成指定段数的占位文本
+- [正则文本过滤](/tools/text-filter/)：使用正则表达式筛选匹配的文本行
+- [批量添加前缀](/tools/text-prefix/)：为每一行批量添加指定前缀
+- [批量添加后缀](/tools/text-suffix/)：为每一行批量添加指定后缀
+- [逐行添加引号](/tools/text-wrap-quotes/)：为每一行添加指定引号并转义内部引号
+- [子字符串提取](/tools/substring-extract/)：按开始和结束标记提取两者之间的内容
+- [文本差异对比](/tools/text-diff/)：逐行比较两段文本并标记新增、删除和相同行
 
-## 开发者工具（22）
+## 开发者工具（26）
 
 - [JSON 格式化](/tools/json-format/)：格式化 JSON 并显示缩进
 - [JSON 压缩](/tools/json-minify/)：压缩 JSON 去除空白
@@ -48,6 +54,10 @@
 - [查询参数生成](/tools/querystring-build/)：将 JSON 对象转换为查询字符串
 - [Unix 权限转换](/tools/unix-permissions/)：将 chmod 数字权限转换为 rwx 字符串
 - [Cron 表达式说明](/tools/cron-explain/)：拆解常见 Cron 五段表达式
+- [JSON 转 JavaScript 对象](/tools/json-to-js-object/)：将 JSON 转换为 JavaScript 对象字面量
+- [JSON 转 C# 模型](/tools/json-to-csharp/)：根据 JSON 示例生成 C# 类和属性类型
+- [JSON 转 Java 模型](/tools/json-to-java/)：根据 JSON 示例生成 Java DTO 字段和类型
+- [JSON 转 PHP 数组](/tools/json-to-php/)：将 JSON 转换为可用的 PHP 数组表达式
 
 ## 编码与转换（14）
 
@@ -128,7 +138,7 @@
 - [SVG 转 Data URI](/tools/svg-to-data-uri/)：将 SVG 文本转换为 Data URI
 - [设计 Token 生成](/tools/design-token/)：将颜色与间距输入转成 CSS 变量
 
-## 数据与格式（9）
+## 数据与格式（13）
 
 - [列表转 JSON](/tools/list-to-json/)：将逐行文本转换为 JSON 字符串数组
 - [JSON 数组转列表](/tools/json-to-list/)：将 JSON 数组转换为逐行文本
@@ -139,6 +149,10 @@
 - [JSON 键排序](/tools/json-key-sort/)：递归按键名排序 JSON 对象
 - [JSON 字符串化](/tools/json-stringify/)：将输入文本包装为 JSON 字符串
 - [JSON 字符串还原](/tools/json-unstringify/)：还原 JSON 中的字符串内容
+- [JSON 字段提取](/tools/json-pick-fields/)：按字段名从 JSON 对象或对象数组中提取字段
+- [JSON 深度合并](/tools/json-merge/)：深度合并两个 JSON 对象，后一个对象覆盖同名值
+- [JSON 行合并](/tools/json-lines-merge/)：将每行一个 JSON 值合并成标准 JSON 数组并定位错误行
+- [JSON 对象转数组](/tools/json-to-array/)：提取 JSON 对象的字段值并转换为数组
 
 ## 生活与实用（8）
 
