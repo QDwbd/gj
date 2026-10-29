@@ -1216,4 +1216,26 @@ export const tools: Tool[] = [
     "description": "在浏览器中打开 SQLite 数据库、执行 SQL 查询与修改并导出数据库",
     "operation": "sqlite-browser"
   }
+,
+  {
+    "slug": "excel-to-json",
+    "name": "Excel 转 JSON",
+    "category": "文件工具",
+    "description": "读取 XLSX 工作簿并将指定工作表转换为 JSON 数组",
+    "operation": "excel-to-json"
+  },
+  {
+    "slug": "excel-to-html",
+    "name": "Excel 转 HTML 表格",
+    "category": "文件工具",
+    "description": "将 XLSX 工作表转换为 HTML 表格源码",
+    "operation": "excel-to-html"
+  },
+  {
+    "slug": "json-to-excel",
+    "name": "JSON 转 Excel",
+    "category": "文件工具",
+    "description": "将 JSON 对象数组生成可下载的 XLSX 工作簿",
+    "operation": "json-to-excel"
+  }
 ];
