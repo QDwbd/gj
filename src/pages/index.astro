@@ -2,7 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { tools } from '../data/tools';
 const categories = [...new Set(tools.map(t => t.category))];
-const featured = tools.slice(0, 12);
+const featuredSlugs = ['json-format','json-validate','base64-encode','url-encode','text-count','text-replace','csv-to-json','json-to-csv','calculator','timestamp-date','color-contrast','css-gradient'];
+const featured = featuredSlugs.map(slug => tools.find(tool => tool.slug === slug)).filter(Boolean);
 ---
 <BaseLayout title="工具箱 — 免费在线工具集合" description="集合文本、开发、编码、时间、数学、颜色等实用在线工具。">
   <section class="hero">
@@ -11,6 +12,12 @@ const featured = tools.slice(0, 12);
     <p>一站式在线工具集合。无需安装软件，打开浏览器即可使用。</p>
     <label class="search-wrap"><span>⌕</span><input id="tool-search" type="search" placeholder="搜索工具，例如 JSON、时间戳、Base64…" autocomplete="off" /><kbd>搜索</kbd></label>
     <div class="hero-stats"><span><b>{tools.length}+</b> 实用工具</span><span><b>{categories.length}</b> 个分类</span><span><b>0</b> 次安装</span></div>
+  </section>
+  <section class="section" id="featured-tools">
+    <div class="section-heading"><div><span class="eyebrow">QUICK ACCESS</span><h2>常用工具</h2></div><span class="muted">优先展示最常用的实用功能</span></div>
+    <div class="tool-grid">
+      {featured.map(t => <a class="tool-card" data-search={`${t.name} ${t.description} ${t.category} ${t.slug}`} href={`/tools/${t.slug}/`}><span class="tool-symbol">{t.name.slice(0,1)}</span><span class="tool-copy"><strong>{t.name}</strong><small>{t.description}</small></span><span class="card-arrow">→</span></a>)}
+    </div>
   </section>
   <section class="section" id="categories">
     <div class="section-heading"><div><span class="eyebrow">BROWSE BY CATEGORY</span><h2>按分类探索</h2></div><span class="muted">找到合适的工具，从这里开始</span></div>
