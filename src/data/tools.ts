@@ -968,4 +968,19 @@ export const tools: Tool[] = [
     "description": "按指定数量生成 UUID v4，每行一个",
     "operation": "uuid-bulk"
   },
+
+  {
+    "slug": "css-format",
+    "name": "CSS 格式化",
+    "category": "开发者工具",
+    "description": "格式化 CSS 规则并缩进属性，便于阅读和维护",
+    "operation": "css-format"
+  },
+  {
+    "slug": "sql-format",
+    "name": "SQL 格式化",
+    "category": "开发者工具",
+    "description": "格式化常见 SQL 查询语句，突出 SELECT、FROM、WHERE、JOIN 等子句",
+    "operation": "sql-format"
+  },
 ];
