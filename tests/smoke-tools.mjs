@@ -30,6 +30,8 @@ Object.assign(expectedContains, {'json-to-xml':'<root>','xml-to-json':'"root"','
 Object.assign(expectedContains, {'css-format':'color: red;','sql-format':'SELECT'});
 Object.assign(expectedContains, {'ini-to-json':'"database": {','json-to-ini':'[database]','cookie-to-json':'"theme": "dark"','json-array-dedupe':'"a": 1','list-chunk':'a\\nb\\nc\\n\\nd\\ne','json-to-go':'type Root struct','json-to-kotlin':'data class Root','json-to-sql-table':'CREATE TABLE "items"','json-to-html-table':'<table>'});
 Object.assign(samples, {'list-shuffle':'a\\nb\\nc\\nd'});
+Object.assign(samples, {"cookie-to-json":"session=abc%20123; theme=dark; session=xyz","json-array-dedupe":"[1,1,{\"a\":1},{\"a\":1}]","list-shuffle":"a\nb\nc\nd","list-chunk":"a\nb\nc\nd\ne","json-to-go":"{\"name\":\"Ada\",\"age\":30}","json-to-kotlin":"{\"name\":\"Ada\",\"active\":true}","json-to-sql-table":"[{\"id\":1,\"name\":\"Ada\",\"active\":true}]","json-to-html-table":"[{\"name\":\"Ada\"},{\"name\":\"Lin\",\"age\":30}]"});
+Object.assign(expectedContains, {"cookie-to-json":"\"theme\": \"dark\"","json-array-dedupe":"\"a\": 1","list-chunk":"a\nb\nc\n\nd\ne","json-to-go":"type Root struct","json-to-kotlin":"data class Root","json-to-sql-table":"CREATE TABLE \"items\"","json-to-html-table":"<table>"});
 const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))];
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
