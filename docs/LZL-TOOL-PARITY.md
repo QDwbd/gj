@@ -16,6 +16,9 @@
 - [x] 日期时间、数学、颜色、单位、BMI、贷款/小费等计算工具
 - [x] SVG 压缩、SVG Data URI、占位 SVG、图片宽高等基础工具
 - [x] INI ↔ JSON
+- [x] Cookie 请求头转 JSON（重复键保留数组）
+- [x] JSON 数组去重、逐行列表随机打乱/分组切片
+- [x] JSON 转 Go struct / Kotlin data class / SQL 建表语句 / HTML 表格
 
 ## 仍需实现并通过测试的 LZL 类别
 
