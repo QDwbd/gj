@@ -37,7 +37,7 @@ if (root) {
   if (['days-in-month'].includes(op)) { addInput('year-value','年份','2026','number'); addInput('month-value','月份','10','number'); }
   if (['roman-numeral'].includes(op)) addInput('roman-mode','模式（to-roman / to-number）','to-roman');
   if (['gcd-lcm'].includes(op)) { addInput('gcd-a','整数 A','24','number'); addInput('gcd-b','整数 B','36','number'); }
-  if (['factorial','prime-check','leap-year','weekday','date-timestamp','date-iso','date-utc','timestamp-date','number-format','byte-convert','bmi','calorie-estimate','tip-calculator','loan-payment','discount','split-bill','aspect-ratio','css-shadow','css-border-radius','css-grid','design-token','placeholder-svg','html-meta','sitemap-url','robots-txt','ip-format','email-validate','mime-type','http-status','password-strength','lorem','reading-time','name-initials','unix-permissions','cron-explain','json-stringify','json-unstringify','querystring-build','querystring-parse','json-key-sort','list-to-json','json-to-list','csv-to-json','json-to-csv','table-to-markdown','data-uri','svg-to-data-uri','url-parse','querystring-parse','hmac-sha256'].includes(op)) {
+  if (['factorial','prime-check','leap-year','weekday','date-timestamp','date-iso','date-utc','timestamp-date','number-format','byte-convert','bmi','calorie-estimate','tip-calculator','loan-payment','discount','split-bill','aspect-ratio','css-shadow','css-border-radius','css-grid','design-token','placeholder-svg','html-meta','sitemap-url','robots-txt','my-ip','email-validate','mime-type','http-status','password-strength','lorem','reading-time','name-initials','unix-permissions','cron-explain','json-stringify','json-unstringify','querystring-build','querystring-parse','json-key-sort','list-to-json','json-to-list','csv-to-json','json-to-csv','table-to-markdown','data-uri','svg-to-data-uri','url-parse','querystring-parse','hmac-sha256'].includes(op)) {
     // Tool-specific controls are optional; the text field is used where possible.
   }
   if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
@@ -233,7 +233,7 @@ if (root) {
       case 'aspect-ratio': {const m=s.match(/\d+(?:\.\d+)?/g)?.map(Number);if(!m||m.length<2)throw Error('请输入宽和高，例如 1920 1080');const g=gcd(Math.round(m[0]),Math.round(m[1]));return `宽高比：${m[0]/g}:${m[1]/g}\n小数比例：${(m[0]/m[1]).toFixed(4)}`;}
       case 'http-status': {const map={'200':'OK - 请求成功','201':'Created - 已创建','301':'Moved Permanently - 永久重定向','302':'Found - 临时重定向','400':'Bad Request - 请求错误','401':'Unauthorized - 未授权','403':'Forbidden - 禁止访问','404':'Not Found - 未找到','429':'Too Many Requests - 请求过多','500':'Internal Server Error - 服务器错误','502':'Bad Gateway - 网关错误','503':'Service Unavailable - 服务不可用'};return map[s.trim()]||'未内置此状态码，请查阅 HTTP 状态码文档。';}
       case 'mime-type': {const ext=s.trim().split('.').pop().toLowerCase();return ({json:'application/json',html:'text/html',css:'text/css',js:'text/javascript',ts:'text/typescript',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',svg:'image/svg+xml',pdf:'application/pdf',txt:'text/plain',csv:'text/csv',xml:'application/xml',webp:'image/webp',mp3:'audio/mpeg',mp4:'video/mp4',zip:'application/zip'})[ext]||'未内置该扩展名的 MIME 类型';}
-      case 'ip-format': {const a=s.trim().split('.');return a.length===4&&a.every(x=>/^\d{1,3}$/.test(x)&&+x<=255)?'IPv4 格式有效':'不是有效的 IPv4 格式';}
+      case 'my-ip': {const response=await fetch('https://api64.ipify.org?format=json',{cache:'no-store'});if(!response.ok)throw Error('IP 查询服务暂时不可用，请稍后重试');const data=await response.json();if(!data.ip)throw Error('未能获取公网 IP 地址');return '当前公网 IP：'+data.ip+'\n\n说明：这是互联网服务看到的公网出口 IP，不是设备在 Wi-Fi/局域网中的内网 IP。';}
       case 'email-validate': return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim())?'邮箱格式看起来有效（未验证是否真实可收信）':'邮箱格式无效';
       case 'svg-minify': return s.replace(/>\s+</g,'><').replace(/\s{2,}/g,' ').trim();
       case 'svg-to-data-uri': return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s.trim());
@@ -721,7 +721,7 @@ if (root) {
     'bmi':'70 175','calorie-estimate':'70 175 30','tip-calculator':'100 15 2','loan-payment':'200000 4.5 30','discount':'80 25','split-bill':'120 4',
     'csv-to-json':'name,age\nAlice,30\nBob,28','json-to-csv':'[{\"name\":\"Alice\",\"age\":30}]','json-key-sort':'{\"z\":1,\"a\":2}',
     'morse-encode':'SOS 123','morse-decode':'... --- ...','binary-encode':'Hello','binary-decode':'01001000 01101001','hex-encode':'Hello','hex-decode':'48 69',
-    'email-validate':'hello@example.com','ip-format':'192.168.1.1','mime-type':'document.pdf','http-status':'404','unix-permissions':'755','cron-explain':'0 9 * * 1',
+    'email-validate':'hello@example.com','my-ip':'点击“查询本机 IP”获取公网 IP','mime-type':'document.pdf','http-status':'404','unix-permissions':'755','cron-explain':'0 9 * * 1',
     'html-meta':'Page title\nPage description\nhttps://example.com/page','sitemap-url':'https://example.com/page','robots-txt':'https://example.com/sitemap-index.xml',
     'table-to-markdown':'Name,Age\nAlice,30\nBob,28','list-to-json':'apple\nbanana\norange','json-to-list':'[\"apple\",\"banana\"]',
     'reading-time':'Paste text to estimate reading time','word-frequency':'this is a test this is only a test','name-initials':'Ada Lovelace',
@@ -729,6 +729,16 @@ if (root) {
     'gradient-css':'#4263eb #a5b4fc','svg-to-data-uri':'<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>','placeholder-svg':'generate'
   };
   if (examples[op]) input.placeholder = examples[op];
+  if (op === 'my-ip') {
+    const inputLabel = document.querySelector('label[for="tool-input"]');
+    if (inputLabel) inputLabel.style.display = 'none';
+    input.style.display = 'none';
+    const runButton = document.querySelector('#run-tool');
+    if (runButton) runButton.textContent = '查询本机 IP';
+    const privacy = root.querySelector('.privacy-label');
+    if (privacy) privacy.textContent = '通过公网 IP 查询服务获取';
+    meta.textContent = '查询结果仅显示给你；请求会发送至 IP 查询服务';
+  }
   if (['date-diff','days-in-month','percentage','percent-change','random-number','round-number','unit-convert','temperature','gcd-lcm'].includes(op)) {
     const label=input.closest?.('label');
     input.setAttribute?.('aria-label','按上方字段填写参数；本输入框可留空');
