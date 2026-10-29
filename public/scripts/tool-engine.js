@@ -266,7 +266,7 @@ if (root) {
         const bytes = new TextEncoder().encode(s);
         let binary = '';
         for (const byte of bytes) binary += String.fromCharCode(byte);
-        return btoa(binary).replace(/=/g, '').replace(/\\+/g, '-').replace(/\\//g, '_');
+        return btoa(binary).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
       }
       case 'base64url-decode': {
         const raw = s.trim();
@@ -283,7 +283,7 @@ if (root) {
           if (node !== null && typeof node === 'object') {
             const entries = Array.isArray(node) ? node.map((v, i) => [String(i), v]) : Object.entries(node);
             if (!entries.length) out[path || '/'] = node;
-            else for (const [key, child] of entries) walk(child, path + '/' + String(key).replace(/~/g, '~0').replace(/\\//g, '~1'));
+            else for (const [key, child] of entries) walk(child, path + '/' + String(key).replace(/~/g, '~0').replace(/\//g, '~1'));
           } else out[path || '/'] = node;
         };
         walk(value, '');
@@ -295,7 +295,7 @@ if (root) {
         const rootNode = {};
         const decodeKey = key => key.replace(/~1/g, '/').replace(/~0/g, '~');
         for (const [pointer, value] of Object.entries(flat)) {
-          const parts = pointer === '/' || pointer === '' ? [] : pointer.replace(/^\\//, '').split('/').map(decodeKey);
+          const parts = pointer === '/' || pointer === '' ? [] : pointer.replace(/^\//, '').split('/').map(decodeKey);
           if (!parts.length) { rootNode.value = value; rootNode.hasRoot = true; continue; }
           let node = rootNode;
           for (let i = 0; i < parts.length; i++) {
@@ -304,7 +304,7 @@ if (root) {
               if (Object.prototype.hasOwnProperty.call(node, key)) throw Error('路径冲突：' + pointer);
               node[key] = value;
             } else {
-              if (node[key] == null) node[key] = /^\\d+$/.test(parts[i + 1]) ? [] : {};
+              if (node[key] == null) node[key] = /^\d+$/.test(parts[i + 1]) ? [] : {};
               if (typeof node[key] !== 'object') throw Error('路径冲突：' + pointer);
               node = node[key];
             }
@@ -313,17 +313,16 @@ if (root) {
         const convert = node => {
           if (!node || typeof node !== 'object') return node;
           for (const key of Object.keys(node)) node[key] = convert(node[key]);
-          if (Array.isArray(node)) {
-            const keys = Object.keys(node);
-            if (keys.every((key, i) => key === String(i))) return node;
-          }
+          if (Array.isArray(node)) return node;
+          const keys = Object.keys(node);
+          if (keys.length && keys.every((key, i) => key === String(i))) return keys.map(key => node[key]);
           return node;
         };
         return JSON.stringify(rootNode.hasRoot ? rootNode.value : convert(rootNode), null, 2);
       }
       case 'xml-unescape': {
         const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" };
-        return s.replace(/&(#x[0-9a-f]+|#\\d+|amp|lt|gt|quot|apos);/gi, (match, entity) => {
+        return s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (match, entity) => {
           if (entity[0] === '#') {
             const hex = entity[1]?.toLowerCase() === 'x';
             const point = parseInt(entity.slice(hex ? 2 : 1), hex ? 16 : 10);
@@ -335,12 +334,12 @@ if (root) {
       }
       case 'list-duplicates': {
         const counts = new Map();
-        for (const line of s.split(/\\r?\\n/)) {
+        for (const line of s.split(/\r?\n/)) {
           const item = line.trim();
           if (item) counts.set(item, (counts.get(item) || 0) + 1);
         }
         const duplicates = [...counts].filter(([, count]) => count > 1).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-        return duplicates.length ? '重复项目（项目\\t出现次数）\\n' + duplicates.map(([item, count]) => item + '\\t' + count).join('\\n') : '未发现重复项目';
+        return duplicates.length ? '重复项目（项目\t出现次数）\n' + duplicates.map(([item, count]) => item + '\t' + count).join('\n') : '未发现重复项目';
       }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
