@@ -261,6 +261,87 @@ if (root) {
       case 'text-wrap-quotes': {const q=v('line-quote');if(!q)throw Error('请输入要使用的引号');return s.split(/\r?\n/).map(line=>q+line.replace(/\\/g,'\\\\').split(q).join('\\'+q)+q).join('\n');}
       case 'substring-extract': {const a=v('substring-start'),b=v('substring-end');if(!a||!b)throw Error('请填写开始和结束标记');const i=s.indexOf(a);if(i<0)throw Error('未找到开始标记：'+a);const j=s.indexOf(b,i+a.length);if(j<0)throw Error('未找到结束标记：'+b);return s.slice(i+a.length,j);}
       case 'text-diff': {const a=s.split(/\r?\n/),b=v('diff-second').split(/\r?\n/);if(a.length*b.length>1000000)throw Error('文本过大，请将每份文本控制在约 1000 行以内');const dp=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);const out=[];let i=0,j=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){out.push('  '+a[i]);i++;j++;}else if(dp[i+1][j]>=dp[i][j+1])out.push('- '+a[i++]);else out.push('+ '+b[j++]);}while(i<a.length)out.push('- '+a[i++]);while(j<b.length)out.push('+ '+b[j++]);return out.join('\n');}
+
+      case 'base64url-encode': {
+        const bytes = new TextEncoder().encode(s);
+        let binary = '';
+        for (const byte of bytes) binary += String.fromCharCode(byte);
+        return btoa(binary).replace(/=/g, '').replace(/\\+/g, '-').replace(/\\//g, '_');
+      }
+      case 'base64url-decode': {
+        const raw = s.trim();
+        if (!/^[A-Za-z0-9_-]*$/.test(raw) || raw.length % 4 === 1) throw Error('Base64URL 格式无效');
+        const normalized = raw.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - raw.length % 4) % 4);
+        let binary;
+        try { binary = atob(normalized); } catch { throw Error('Base64URL 格式无效'); }
+        try { return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(binary, c => c.charCodeAt(0))); }
+        catch { throw Error('解码结果不是有效的 UTF-8 文本'); }
+      }
+      case 'json-flatten': {
+        const value = JSON.parse(s), out = {};
+        const walk = (node, path) => {
+          if (node !== null && typeof node === 'object') {
+            const entries = Array.isArray(node) ? node.map((v, i) => [String(i), v]) : Object.entries(node);
+            if (!entries.length) out[path || '/'] = node;
+            else for (const [key, child] of entries) walk(child, path + '/' + String(key).replace(/~/g, '~0').replace(/\\//g, '~1'));
+          } else out[path || '/'] = node;
+        };
+        walk(value, '');
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-unflatten': {
+        const flat = JSON.parse(s);
+        if (!flat || typeof flat !== 'object' || Array.isArray(flat)) throw Error('请输入 JSON Pointer 路径到值的对象');
+        const rootNode = {};
+        const decodeKey = key => key.replace(/~1/g, '/').replace(/~0/g, '~');
+        for (const [pointer, value] of Object.entries(flat)) {
+          const parts = pointer === '/' || pointer === '' ? [] : pointer.replace(/^\\//, '').split('/').map(decodeKey);
+          if (!parts.length) { rootNode.value = value; rootNode.hasRoot = true; continue; }
+          let node = rootNode;
+          for (let i = 0; i < parts.length; i++) {
+            const key = parts[i], last = i === parts.length - 1;
+            if (last) {
+              if (Object.prototype.hasOwnProperty.call(node, key)) throw Error('路径冲突：' + pointer);
+              node[key] = value;
+            } else {
+              if (node[key] == null) node[key] = /^\\d+$/.test(parts[i + 1]) ? [] : {};
+              if (typeof node[key] !== 'object') throw Error('路径冲突：' + pointer);
+              node = node[key];
+            }
+          }
+        }
+        const convert = node => {
+          if (!node || typeof node !== 'object') return node;
+          for (const key of Object.keys(node)) node[key] = convert(node[key]);
+          if (Array.isArray(node)) {
+            const keys = Object.keys(node);
+            if (keys.every((key, i) => key === String(i))) return node;
+          }
+          return node;
+        };
+        return JSON.stringify(rootNode.hasRoot ? rootNode.value : convert(rootNode), null, 2);
+      }
+      case 'xml-unescape': {
+        const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" };
+        return s.replace(/&(#x[0-9a-f]+|#\\d+|amp|lt|gt|quot|apos);/gi, (match, entity) => {
+          if (entity[0] === '#') {
+            const hex = entity[1]?.toLowerCase() === 'x';
+            const point = parseInt(entity.slice(hex ? 2 : 1), hex ? 16 : 10);
+            if (!Number.isFinite(point) || point < 0 || point > 0x10ffff || (point >= 0xd800 && point <= 0xdfff)) return match;
+            return String.fromCodePoint(point);
+          }
+          return entities[entity.toLowerCase()] ?? match;
+        });
+      }
+      case 'list-duplicates': {
+        const counts = new Map();
+        for (const line of s.split(/\\r?\\n/)) {
+          const item = line.trim();
+          if (item) counts.set(item, (counts.get(item) || 0) + 1);
+        }
+        const duplicates = [...counts].filter(([, count]) => count > 1).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+        return duplicates.length ? '重复项目（项目\\t出现次数）\\n' + duplicates.map(([item, count]) => item + '\\t' + count).join('\\n') : '未发现重复项目';
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
