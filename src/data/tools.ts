@@ -998,4 +998,61 @@ export const tools: Tool[] = [
     "description": "将 JSON 对象转换为常见 INI 键值和分组格式",
     "operation": "json-to-ini"
   },
+,
+  {
+    "slug": "cookie-to-json",
+    "name": "Cookie 转 JSON",
+    "category": "开发者工具",
+    "description": "将 Cookie 请求头解析为 JSON，保留重复键",
+    "operation": "cookie-to-json"
+  },
+  {
+    "slug": "json-array-dedupe",
+    "name": "JSON 数组去重",
+    "category": "数据与格式",
+    "description": "按 JSON 值去重数组元素并保留首次出现顺序",
+    "operation": "json-array-dedupe"
+  },
+  {
+    "slug": "list-shuffle",
+    "name": "列表随机打乱",
+    "category": "文本工具",
+    "description": "使用浏览器随机源打乱逐行列表顺序",
+    "operation": "list-shuffle"
+  },
+  {
+    "slug": "list-chunk",
+    "name": "列表分组切片",
+    "category": "文本工具",
+    "description": "按指定每组数量将逐行列表分组",
+    "operation": "list-chunk"
+  },
+  {
+    "slug": "json-to-go",
+    "name": "JSON 转 Go struct",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 Go struct 和 json 标签",
+    "operation": "json-to-go"
+  },
+  {
+    "slug": "json-to-kotlin",
+    "name": "JSON 转 Kotlin data class",
+    "category": "开发者工具",
+    "description": "根据 JSON 示例生成 Kotlin data class",
+    "operation": "json-to-kotlin"
+  },
+  {
+    "slug": "json-to-sql-table",
+    "name": "JSON 转 SQL 建表语句",
+    "category": "开发者工具",
+    "description": "根据 JSON 对象字段推断 SQL 列类型并生成 CREATE TABLE",
+    "operation": "json-to-sql-table"
+  },
+  {
+    "slug": "json-to-html-table",
+    "name": "JSON 转 HTML 表格",
+    "category": "数据与格式",
+    "description": "将对象数组转换为可复制的 HTML table 标记",
+    "operation": "json-to-html-table"
+  }
 ];
