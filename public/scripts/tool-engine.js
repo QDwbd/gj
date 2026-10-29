@@ -474,7 +474,7 @@ if (root) {
         const css = s.trim();
         if (!css) throw Error('请输入 CSS');
         let out = '', depth = 0, token = '', quote = '', comment = false;
-        const flush = () => { const value = token.trim(); if (value) { out += '  '.repeat(depth) + value; token = ''; } };
+        const flush = () => { const value = token.trim(); if (value) { out += '  '.repeat(depth) + value.replace(/\s*:\s*/g, ': '); token = ''; } };
         for (let i = 0; i < css.length; i++) {
           const ch = css[i], next = css[i + 1];
           if (comment) { token += ch; if (ch === '*' && next === '/') { token += '/'; i++; comment = false; } continue; }
@@ -497,7 +497,7 @@ if (root) {
         const out = parts.map((part, index) => {
           if (index % 2 === 1) return part;
           return part.replace(/\s+/g, ' ').replace(clauses, match => '\n' + match.toUpperCase()).trim();
-        }).join('').replace(/\s*,\s*/g, ', ').replace(/^\n+/, '').replace(/\n{2,}/g, '\n');
+        }).join(' ').replace(/\s*,\s*/g, ', ').replace(/^\n+/, '').replace(/\n{2,}/g, '\n');
         return out.split('\n').map(line => line.trim()).join('\n');
       }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
