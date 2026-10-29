@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { webcrypto } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url), 'utf8');
 const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser','excel-to-json','excel-to-html','json-to-excel'].includes(op));
@@ -66,6 +67,25 @@ for (const op of operations) {
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
 try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
+const browserScripts = [
+  'public/scripts/tool-engine.js',
+  'public/scripts/media-tools.js',
+  'public/scripts/image-editor.js',
+  'src/scripts/barcode-tools.js',
+  'src/scripts/pdf-tools.js',
+  'src/scripts/pdf-render.js',
+  'src/scripts/media-playback.js',
+  'src/scripts/sqlite-browser.js',
+  'src/scripts/excel-tools.js'
+];
+for (const path of browserScripts) {
+  try {
+    execFileSync(process.execPath, ['--check', new URL('../' + path, import.meta.url).pathname], { stdio: 'pipe' });
+  } catch (e) {
+    failures.push({op:'JavaScript syntax: ' + path,status:'FAIL',detail:String(e.stderr || e.message || e)});
+  }
+}
+
 if (!excelSource.includes("from 'exceljs'") || !excelSource.includes('workbook.xlsx.load') || !excelSource.includes('book.xlsx.writeBuffer') || !pageSource.includes('id="excel-workbench"')) failures.push({op:'Excel tools UI coverage',status:'FAIL',detail:'Missing Excel converter UI or implementation'});
 if (!sqliteSource.includes("from 'sql.js'") || !sqliteSource.includes('new SQL.Database') || !sqliteSource.includes('db.export') || !pageSource.includes('id="sqlite-workbench"')) failures.push({op:'SQLite UI coverage',status:'FAIL',detail:'Missing SQLite editor UI or implementation'});
 if (!playbackSource.includes("getDisplayMedia") || !playbackSource.includes('playbackRate') || !pageSource.includes('id=\"screen-recorder-workbench\"')) failures.push({op:'audio/video tools UI coverage',status:'FAIL',detail:'Missing playback or screen recorder UI'});
