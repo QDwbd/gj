@@ -869,4 +869,47 @@ export const tools: Tool[] = [
     "description": "逐行比较两段文本并标记新增、删除和相同行",
     "operation": "text-diff"
   }
+
+  {
+    "slug": "base64url-encode",
+    "name": "Base64URL 编码",
+    "category": "编码与转换",
+    "description": "将 UTF-8 文本编码为适用于 URL 的 Base64URL 格式",
+    "operation": "base64url-encode"
+  },
+  {
+    "slug": "base64url-decode",
+    "name": "Base64URL 解码",
+    "category": "编码与转换",
+    "description": "解码 Base64URL 文本并还原 UTF-8 内容",
+    "operation": "base64url-decode"
+  },
+  {
+    "slug": "json-flatten",
+    "name": "JSON 展平",
+    "category": "开发者工具",
+    "description": "将嵌套 JSON 转为 JSON Pointer 路径与值的映射",
+    "operation": "json-flatten"
+  },
+  {
+    "slug": "json-unflatten",
+    "name": "JSON 还原嵌套结构",
+    "category": "开发者工具",
+    "description": "将 JSON Pointer 路径映射还原为嵌套对象与数组",
+    "operation": "json-unflatten"
+  },
+  {
+    "slug": "xml-unescape",
+    "name": "XML 反转义",
+    "category": "开发者工具",
+    "description": "将 XML 实体还原为普通文本",
+    "operation": "xml-unescape"
+  },
+  {
+    "slug": "list-duplicates",
+    "name": "列表重复项分析",
+    "category": "文本工具",
+    "description": "统计列表中重复项目及其出现次数，忽略首尾空格",
+    "operation": "list-duplicates"
+  },
 ];
