@@ -1,6 +1,6 @@
 # 工具目录
 
-当前目录包含 **128 个精选工具入口**。已移除重复、名不副实或容易产生错误结果的功能。
+当前目录包含 **116 个实用工具**。优先保留能完成明确任务的文本处理、开发者工具、编码转换、数据处理和计算功能，移除低价值的信息展示及重复入口。
 
 ## 文本工具（19）
 
@@ -49,13 +49,12 @@
 - [Unix 权限转换](/tools/unix-permissions/)：将 chmod 数字权限转换为 rwx 字符串
 - [Cron 表达式说明](/tools/cron-explain/)：拆解常见 Cron 五段表达式
 
-## 编码与转换（15）
+## 编码与转换（14）
 
 - [文本转二进制](/tools/binary-encode/)：将文本转为 UTF-8 字节二进制表示
 - [二进制转文本](/tools/binary-decode/)：将 8 位二进制字节解码为文本
 - [文本转十六进制](/tools/hex-encode/)：将文本转为 UTF-8 十六进制
 - [十六进制转文本](/tools/hex-decode/)：将十六进制解码为文本
-- [字符码点查看](/tools/ascii-table/)：查看输入字符的 Unicode 码点与十进制值
 - [Unicode 查看器](/tools/unicode-inspect/)：显示字符、码点和 UTF-16 编码
 - [摩斯电码编码](/tools/morse-encode/)：将常见英文字母和数字转为摩斯码
 - [摩斯电码解码](/tools/morse-decode/)：将摩斯码转换为英文和数字
@@ -67,18 +66,12 @@
 - [HTML 转纯文本](/tools/html-to-text/)：移除标签并提取文本
 - [URL 安全 Base64](/tools/url-safe-base64/)：进行 URL-safe Base64 编码
 
-## 时间与日期（10）
+## 时间与日期（4）
 
-- [当前时间戳](/tools/timestamp-now/)：显示当前 Unix 秒和毫秒时间戳
 - [时间戳转日期](/tools/timestamp-date/)：将 Unix 秒或毫秒时间戳转换为日期
 - [日期转时间戳](/tools/date-timestamp/)：将日期字符串转换为 Unix 秒和毫秒
-- [ISO 日期转换](/tools/date-iso/)：将日期转换为 ISO 8601 格式
-- [UTC 时间转换](/tools/date-utc/)：将日期转换为 UTC 字符串
 - [日期间隔计算](/tools/date-diff/)：计算两个日期之间的天数差
-- [月份天数](/tools/days-in-month/)：计算指定年份月份的天数
-- [闰年判断](/tools/leap-year/)：判断指定年份是否为闰年
 - [星期计算](/tools/weekday/)：计算日期对应的星期几
-- [时区偏移说明](/tools/timezone-offset/)：显示本地时区与 UTC 偏移
 
 ## 数学与数字（15）
 
@@ -98,7 +91,7 @@
 - [长度单位换算](/tools/unit-convert/)：米、千米、厘米、英尺和英寸换算
 - [温度换算](/tools/temperature/)：摄氏度、华氏度和开尔文换算
 
-## 颜色工具（11）
+## 颜色工具（10）
 
 - [HEX 转 RGB](/tools/color-hex-rgb/)：将 HEX 颜色转换为 RGB
 - [RGB 转 HEX](/tools/color-rgb-hex/)：将 RGB 颜色转换为 HEX
@@ -109,21 +102,17 @@
 - [配色板生成](/tools/color-palette/)：基于主色生成简单配色板
 - [颜色反转](/tools/color-invert/)：计算 HEX 颜色的反色
 - [相对亮度](/tools/color-luminance/)：计算颜色相对亮度
-- [颜色格式校验](/tools/html-color-name/)：校验 HEX 或 RGB 颜色格式并显示对应 RGB 值
 - [CSS 渐变生成](/tools/css-gradient/)：输入两个 HEX 色值，生成线性渐变 CSS
 
-## 安全与生成器（5）
+## 安全与生成器（4）
 
 - [SHA-1 计算](/tools/hash-sha1/)：计算 SHA-1 摘要（不用于安全签名）
 - [SHA-512 计算](/tools/hash-sha512/)：计算 SHA-512 摘要
 - [HMAC-SHA256](/tools/hmac-sha256/)：用浏览器 Web Crypto 计算 HMAC-SHA256
 - [密码强度检查](/tools/password-strength/)：根据长度和字符种类给出本地估算
-- [文本转 Data URI](/tools/data-uri/)：将文本编码为 Data URI
 
-## Web 与网络（10）
+## Web 与网络（8）
 
-- [User-Agent 查看](/tools/user-agent-info/)：显示当前浏览器的 User-Agent
-- [屏幕与视口信息](/tools/viewport-info/)：显示视口、屏幕和设备像素比
 - [宽高比计算](/tools/aspect-ratio/)：计算宽高比和等比例尺寸
 - [Meta 标签生成](/tools/html-meta/)：根据标题、描述和网址生成 Meta 标签
 - [robots.txt 生成](/tools/robots-txt/)：生成基础 robots.txt 内容
@@ -151,7 +140,7 @@
 - [JSON 字符串化](/tools/json-stringify/)：将输入文本包装为 JSON 字符串
 - [JSON 字符串还原](/tools/json-unstringify/)：还原 JSON 中的字符串内容
 
-## 生活与实用（9）
+## 生活与实用（8）
 
 - [BMI 计算器](/tools/bmi/)：根据身高体重计算 BMI（仅供参考）
 - [每日热量估算](/tools/calorie-estimate/)：用基础公式估算基础代谢（仅供参考）
@@ -161,5 +150,3 @@
 - [账单分摊](/tools/split-bill/)：将总金额按人数平均分摊
 - [词频统计](/tools/word-frequency/)：统计英文单词出现次数
 - [阅读时间估算](/tools/reading-time/)：按阅读速度估算阅读分钟数
-- [姓名首字母](/tools/name-initials/)：提取每个词的首字母
-
