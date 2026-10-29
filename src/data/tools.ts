@@ -1186,4 +1186,26 @@ export const tools: Tool[] = [
     "description": "将 PDF 指定页面渲染为 PNG，支持缩放、背景颜色、预览和 ZIP 批量下载",
     "operation": "pdf-to-images"
   }
+,
+  {
+    "slug": "audio-player",
+    "name": "本地音频播放器",
+    "category": "音视频工具",
+    "description": "加载本地音频文件播放，支持 0.5× 到 2× 播放速度",
+    "operation": "audio-player"
+  },
+  {
+    "slug": "video-speed",
+    "name": "视频变速播放器",
+    "category": "音视频工具",
+    "description": "在浏览器中预览本地视频并调整播放速度",
+    "operation": "video-speed"
+  },
+  {
+    "slug": "screen-recorder",
+    "name": "屏幕录制",
+    "category": "音视频工具",
+    "description": "通过浏览器屏幕共享权限录制屏幕并下载 WebM 文件",
+    "operation": "screen-recorder"
+  }
 ];
