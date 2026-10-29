@@ -124,7 +124,26 @@ const { tool } = Astro.props;
       <div id="pdf-image-preview" style="margin-top:16px"></div>
     </section>}
 
-    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {['audio-player', 'video-speed'].includes(tool.operation) && <section id="playback-workbench" class="workbench playback-workbench" data-playback-operation={tool.operation} style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>{tool.operation === 'audio-player' ? '本地音频播放器' : '视频变速工作台'}</strong></div><span class="privacy-label">本地播放，不上传文件</span></div>
+      <label class="field-label" for="playback-file">{tool.operation === 'audio-player' ? '选择音频文件（最大 200 MB）' : '选择视频文件（最大 200 MB）'}</label>
+      <input id="playback-file" type="file" accept={tool.operation === 'audio-player' ? 'audio/*' : 'video/*'} />
+      <label class="field-label" for="playback-speed">播放速度</label>
+      <select id="playback-speed"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+      {tool.operation === 'audio-player' && <audio id="playback-player" controls style="display:block;width:100%;margin:16px 0"></audio>}
+      {tool.operation === 'video-speed' && <video id="playback-player" controls playsinline style="display:block;width:100%;max-height:560px;background:#111;margin:16px 0"></video>}
+      <p id="playback-status" role="status">请选择本地媒体文件开始播放。</p>
+    </section>}
+    {tool.operation === 'screen-recorder' && <section id="screen-recorder-workbench" class="workbench screen-recorder-workbench" style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>屏幕录制工作台</strong></div><span class="privacy-label">需你主动授权共享屏幕</span></div>
+      <label><input id="record-audio" type="checkbox" /> 同时录制系统音频（取决于浏览器和共享选项）</label>
+      <p class="muted">点击开始后，在浏览器弹出的系统窗口中选择要共享的屏幕、窗口或标签页。录制会保存在本地并以 WebM 格式下载。</p>
+      <div class="action-row"><button id="record-start" class="primary-button" type="button">开始录制</button><button id="record-stop" class="secondary-button" type="button" disabled>停止并下载</button></div>
+      <p id="record-status" role="status">尚未开始录制。浏览器会在授权前询问你要共享的内容。</p>
+    </section>}
+
+    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images", "audio-player", "video-speed", "screen-recorder"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
@@ -143,4 +162,5 @@ const { tool } = Astro.props;
   <script src="../../scripts/barcode-tools.js"></script>
   <script src="../../scripts/pdf-tools.js"></script>
   <script src="../../scripts/pdf-render.js"></script>
+  <script src="../../scripts/media-playback.js"></script>
 </BaseLayout>
