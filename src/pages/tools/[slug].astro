@@ -109,7 +109,22 @@ const { tool } = Astro.props;
       <p id="pdf-status" role="status">请选择 PDF 文件开始。文件内容不会主动上传到服务器。</p>
     </section>}
 
-    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {tool.operation === 'pdf-to-images' && <section id="pdf-image-workbench" class="workbench pdf-image-workbench" data-pdf-operation="pdf-to-images" style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>PDF 转图片工作台</strong></div><span class="privacy-label">浏览器本地渲染</span></div>
+      <label class="field-label" for="pdf-image-file">选择 PDF 文件（最大 80 MB）</label><input id="pdf-image-file" type="file" accept="application/pdf,.pdf" />
+      <label class="field-label" for="pdf-image-pages">要导出的页码</label><input id="pdf-image-pages" type="text" placeholder="留空导出全部；例如 1,3-5" />
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:16px 0">
+        <label>缩放比例 <select id="pdf-image-scale"><option value="0.5">0.5×（较小）</option><option value="1">1×</option><option value="1.5" selected>1.5×（推荐）</option><option value="2">2×（高清）</option><option value="3">3×（超高清）</option></select></label>
+        <label>背景颜色 <select id="pdf-image-background"><option value="#ffffff">白色</option><option value="#f5f5f5">浅灰</option><option value="#000000">黑色</option></select></label>
+      </div>
+      <p class="muted">每次最多导出 50 页；单页最多 1600 万像素。所有 PNG 将打包为一个 ZIP 文件。</p>
+      <div class="action-row"><button id="pdf-image-render" class="primary-button" type="button">渲染页面</button><button id="pdf-image-download" class="secondary-button" type="button" disabled>下载 ZIP</button><button id="pdf-image-reset" class="secondary-button" type="button">重置</button></div>
+      <p id="pdf-image-status" role="status">请选择 PDF 文件开始转换；文件不会主动上传。</p>
+      <div id="pdf-image-preview" style="margin-top:16px"></div>
+    </section>}
+
+    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
@@ -127,4 +142,5 @@ const { tool } = Astro.props;
   <script type="module" src="/scripts/media-tools.js"></script>
   <script src="../../scripts/barcode-tools.js"></script>
   <script src="../../scripts/pdf-tools.js"></script>
+  <script src="../../scripts/pdf-render.js"></script>
 </BaseLayout>

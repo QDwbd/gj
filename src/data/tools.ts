@@ -1178,4 +1178,12 @@ export const tools: Tool[] = [
     "description": "在浏览器中合并多个 PDF 文件并下载结果",
     "operation": "pdf-merge"
   }
+,
+  {
+    "slug": "pdf-to-images",
+    "name": "PDF 转图片",
+    "category": "文件工具",
+    "description": "将 PDF 指定页面渲染为 PNG，支持缩放、背景颜色、预览和 ZIP 批量下载",
+    "operation": "pdf-to-images"
+  }
 ];
