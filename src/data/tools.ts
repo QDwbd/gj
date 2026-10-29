@@ -812,7 +812,7 @@ export const tools: Tool[] = [
     "category": "生活与实用",
     "description": "按阅读速度估算阅读分钟数",
     "operation": "reading-time"
-  },,
+  },
   {
     "slug": "json-to-js-object",
     "name": "JSON 转 JavaScript 对象",
