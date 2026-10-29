@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tools } from '../../data/tools';
+---
+<BaseLayout title="关于本站 - 工具箱">
+  <section class="simple-page"><span class="eyebrow">ABOUT</span><h1>关于工具箱</h1><p>工具箱致力于把常用的小工具放在一个简单、清晰、易访问的页面中。当前提供 {tools.length} 个工具入口，覆盖文本、开发、编码、时间、数学、颜色、网络与日常实用功能。</p><h2>隐私与安全</h2><p>多数工具在浏览器本地运行，不需要把输入内容发送到服务器。部分工具使用浏览器 Web Crypto API。请勿把工具结果当作专业法律、医疗、财务或安全审计建议。</p><h2>反馈与改进</h2><p>你可以通过项目 GitHub 仓库提交问题和建议。新增工具前请确认它有真实用途、清晰说明和可测试的结果。</p><a class="primary-link" href="/">返回首页 →</a></section>
+</BaseLayout>
