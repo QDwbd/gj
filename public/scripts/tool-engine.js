@@ -11,6 +11,14 @@ if (root) {
     const wrap = document.createElement('label'); wrap.textContent = label;
     const el = document.createElement('input'); el.id=id; el.type=type; el.value=value; wrap.appendChild(el); controls.appendChild(wrap); return el;
   };
+  const addTextArea = (id, label, value='') => { const wrap=document.createElement('label'); wrap.textContent=label; const el=document.createElement('textarea'); el.id=id; el.value=value; el.rows=4; wrap.appendChild(el); controls.appendChild(wrap); return el; };
+  if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
+  if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
+  if (op === 'text-filter') { addInput('filter-pattern','正则表达式','error|warn'); addInput('filter-flags','正则标志','i'); }
+  if (op === 'text-prefix') addInput('line-prefix','添加的前缀','');
+  if (op === 'text-suffix') addInput('line-suffix','添加的后缀','');
+  if (op === 'text-wrap-quotes') addInput('line-quote','每行使用的引号','"');
+  if (op === 'substring-extract') { addInput('substring-start','开始标记','<title>'); addInput('substring-end','结束标记','</title>'); }
   if (['text-replace'].includes(op)) { addInput('find-text','查找内容'); addInput('replace-text','替换为'); }
   if (['regex-test'].includes(op)) { addInput('regex-pattern','正则表达式','\\w+'); addInput('regex-flags','标志','gi'); }
   if (['caesar'].includes(op)) addInput('shift','偏移量','3','number');
@@ -244,10 +252,39 @@ if (root) {
       case 'word-frequency': {const a=(s.toLowerCase().match(/[a-z0-9']+/g)||[]),m={};a.forEach(w=>m[w]=(m[w]||0)+1);return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([w,c])=>`${w}: ${c}`).join('\n');}
       case 'reading-time': {const cjk=(s.match(/[\u3400-\u9fff\uf900-\ufaff]/g)||[]).length;const english=words(s.replace(/[\u3400-\u9fff\uf900-\ufaff]/g,' ')).length;const minutes=cjk/300+english/200;if(!s.trim())throw Error('请输入需要估算的文章内容');return `约 ${Math.max(0.1,minutes).toFixed(1)} 分钟（中文按每分钟 300 字、其他文本按每分钟 200 词粗略估算）。`;}
 
+
+      case 'json-to-js-object': { const x=JSON.parse(s); const emit=v=>Array.isArray(v)?'['+v.map(emit).join(', ')+']':v&&typeof v==='object'?'{ '+Object.entries(v).map(([k,z])=>((/^[A-Za-z_$][\w$]*$/.test(k)&&k!=='__proto__')?k:JSON.stringify(k))+': '+emit(z)).join(', ')+' }':JSON.stringify(v); return 'const data = '+emit(x)+';'; }
+      case 'json-to-csharp': { const x=JSON.parse(s),o=Array.isArray(x)?x[0]:x;if(!o||typeof o!=='object'||Array.isArray(o))throw Error('请输入 JSON 对象或对象数组');const nm=k=>{let n=k.replace(/[^\p{L}\p{N}_]+/gu,' ').trim().split(/\s+/).map(t=>t[0]?.toUpperCase()+t.slice(1)).join('');return /^[\p{L}_]/u.test(n)?n:'Field'+n};const ty=v=>v===null?'object?':typeof v==='string'?'string':typeof v==='boolean'?'bool':typeof v==='number'?(Number.isInteger(v)?'long':'double'):Array.isArray(v)?'List<object>':'Dictionary<string, object>';return 'using System;\nusing System.Collections.Generic;\n\npublic class Root\n{\n'+Object.entries(o).map(([k,v])=>'    public '+ty(v)+' '+nm(k)+' { get; set; }'+(typeof v==='string'?' = "";':'')).join('\n')+'\n}';}
+      case 'json-to-java': { const x=JSON.parse(s),o=Array.isArray(x)?x[0]:x;if(!o||typeof o!=='object'||Array.isArray(o))throw Error('请输入 JSON 对象或对象数组');const nm=k=>k.replace(/[^\p{L}\p{N}_$]+/gu,' ').trim().split(/\s+/).map((t,i)=>i?t[0].toUpperCase()+t.slice(1):t).join('');const ty=v=>v===null?'Object':typeof v==='string'?'String':typeof v==='boolean'?'Boolean':typeof v==='number'?(Number.isInteger(v)?'Long':'Double'):Array.isArray(v)?'List<Object>':'Map<String, Object>';return 'import java.util.*;\n\npublic class Root {\n'+Object.entries(o).map(([k,v])=>'    private '+ty(v)+' '+nm(k)+';').join('\n')+'\n}';}
+      case 'json-to-php': { const x=JSON.parse(s),q=v=>"'"+String(v).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'",emit=v=>Array.isArray(v)?'['+v.map(emit).join(', ')+']':v&&typeof v==='object'?'['+Object.entries(v).map(([k,z])=>q(k)+' => '+emit(z)).join(', ')+']':typeof v==='string'?q(v):v===null?'null':String(v);return '<?php\n$data = '+emit(x)+';\n';}
+      case 'json-pick-fields': {const x=JSON.parse(s),keys=v('json-fields').split(',').map(k=>k.trim()).filter(Boolean);if(!keys.length)throw Error('请输入要提取的字段');const pick=o=>o&&typeof o==='object'&&!Array.isArray(o)?Object.fromEntries(keys.filter(k=>Object.prototype.hasOwnProperty.call(o,k)).map(k=>[k,o[k]])):o;return JSON.stringify(Array.isArray(x)?x.map(pick):pick(x),null,2);}
+      case 'json-merge': {const a=JSON.parse(s),b=JSON.parse(v('json-second'));if(!a||Array.isArray(a)||typeof a!=='object'||!b||Array.isArray(b)||typeof b!=='object')throw Error('两份输入都必须是 JSON 对象');const merge=(x,y)=>{const o={...x};for(const [k,z] of Object.entries(y))o[k]=z&&typeof z==='object'&&!Array.isArray(z)&&x[k]&&typeof x[k]==='object'&&!Array.isArray(x[k])?merge(x[k],z):z;return o;};return JSON.stringify(merge(a,b),null,2);}
+      case 'json-lines-merge': {const lines=s.split(/\r?\n/).filter(x=>x.trim()),out=[];for(let i=0;i<lines.length;i++){try{out.push(JSON.parse(lines[i]));}catch{throw Error('第 '+(i+1)+' 行不是有效 JSON');}}return JSON.stringify(out,null,2);}
+      case 'json-to-array': {const x=JSON.parse(s);if(Array.isArray(x))return JSON.stringify(x,null,2);if(!x||typeof x!=='object')throw Error('请输入 JSON 对象或数组');return JSON.stringify(Object.values(x),null,2);}
+      case 'text-filter': {const p=v('filter-pattern');if(!p)throw Error('请输入筛选正则表达式');let re;try{re=new RegExp(p,v('filter-flags').replace(/[^dgimsuvy]/g,''));}catch(e){throw Error('正则表达式无效：'+e.message);}return s.split(/\r?\n/).filter(line=>{re.lastIndex=0;return re.test(line);}).join('\n');}
+      case 'text-prefix': return s.split(/\r?\n/).map(line=>v('line-prefix')+line).join('\n');
+      case 'text-suffix': return s.split(/\r?\n/).map(line=>line+v('line-suffix')).join('\n');
+      case 'text-wrap-quotes': {const q=v('line-quote');if(!q)throw Error('请输入要使用的引号');return s.split(/\r?\n/).map(line=>q+line.replace(/\\/g,'\\\\').split(q).join('\\'+q)+q).join('\n');}
+      case 'substring-extract': {const a=v('substring-start'),b=v('substring-end');if(!a||!b)throw Error('请填写开始和结束标记');const i=s.indexOf(a);if(i<0)throw Error('未找到开始标记：'+a);const j=s.indexOf(b,i+a.length);if(j<0)throw Error('未找到结束标记：'+b);return s.slice(i+a.length,j);}
+      case 'text-diff': {const a=s.split(/\r?\n/),b=v('diff-second').split(/\r?\n/);if(a.length*b.length>1000000)throw Error('文本过大，请将每份文本控制在约 1000 行以内');const dp=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);const out=[];let i=0,j=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){out.push('  '+a[i]);i++;j++;}else if(dp[i+1][j]>=dp[i][j+1])out.push('- '+a[i++]);else out.push('+ '+b[j++]);}while(i<a.length)out.push('- '+a[i++]);while(j<b.length)out.push('+ '+b[j++]);return out.join('\n');}
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
   const examples = {
+    "json-to-js-object":"{\"name\":\"Alice\",\"age\":30}",
+    "json-to-csharp":"{\"name\":\"Alice\",\"age\":30}",
+    "json-to-java":"{\"name\":\"Alice\",\"age\":30}",
+    "json-to-php":"{\"name\":\"Alice\",\"age\":30}",
+    "json-pick-fields":"[{\"id\":1,\"name\":\"Alice\",\"secret\":\"x\"}]",
+    "json-merge":"{\"a\":1,\"nested\":{\"x\":1}}",
+    "json-lines-merge":"{\"id\":1}\n{\"id\":2}",
+    "json-to-array":"{\"a\":1,\"b\":2}",
+    "text-filter":"INFO startup\nERROR request failed\nWARN slow response",
+    "text-prefix":"apple\nbanana",
+    "text-suffix":"apple\nbanana",
+    "text-wrap-quotes":"apple\nbanana",
+    "substring-extract":"<title>Example Page</title>",
+    "text-diff":"apple\nbanana\norange",
     'text-count':'粘贴要统计的文本…','csv-clean':'每行 CSV 内容…','slugify':'输入标题，例如 My New Tool','qr-text':'输入准备编码进二维码的文本…','image-dimensions':'粘贴 data:image/... 开头的图片 Data URL','html-color-name':'#4263eb 或 rgb(66, 99, 235)','punycode-info':'example.com 或 https://例子.测试','url-safe-base64':'输入要进行 URL-safe Base64 编码的文本','text-to-binary':'输入文本以查看 UTF-8 字节数、十六进制和二进制','markdown-table':'Name,Age\nAlice,30','markdown-preview-text':'粘贴 Markdown 文本…','text-escape-html':'<p>需要转义的文本</p>','text-unescape-html':'&lt;p&gt;已转义的文本&lt;/p&gt;','text-escape-regex':'a+b?','text-unique-words':'输入要提取唯一单词的文本…','xml-escape':'<root>文本</root>','html-encode':'需要编码的 HTML 文本','html-decode':'&lt;div&gt;文本&lt;/div&gt;','css-gradient':'#4263eb #a5b4fc','json-format':'{\n  \"name\": \"Alice\",\n  \"count\": 3\n}', 'json-minify':'{\"name\":\"Alice\",\"count\":3}',
     'json-validate':'{\"ok\":true}', 'json-to-yaml':'{\"site\":\"demo\",\"enabled\":true}', 'yaml-to-json':'site: demo\nenabled: true',
     'url-parse':'https://example.com/path?a=1#top','querystring-parse':'?q=hello&page=2','querystring-build':'{\"q\":\"hello world\",\"page\":2}',
