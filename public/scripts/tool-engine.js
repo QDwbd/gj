@@ -218,24 +218,17 @@ if (root) {
       case 'color-palette': {let h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('输入 6 位 HEX 色值');const n=parseInt(h,16);return [-40,-20,0,20,40].map(d=>{let r=Math.max(0,Math.min(255,((n>>16)&255)+d)),g=Math.max(0,Math.min(255,((n>>8)&255)+d)),b=Math.max(0,Math.min(255,(n&255)+d));return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}).join('\n');}
       case 'color-invert': {const h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('请输入 6 位 HEX 色值');return '#'+(0xffffff-parseInt(h,16)).toString(16).padStart(6,'0').toUpperCase();}
       case 'color-luminance': {const h=s.trim().replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))throw Error('请输入 6 位 HEX 色值');const c=h.match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return String(.2126*c[0]+.7152*c[1]+.0722*c[2]);}
-      case 'css-gradient': {const colors=s.trim().split(/\s+/);if(colors.length!==2||!colors.every(c=>/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)))throw Error('请输入两个 HEX 色值，例如 #4263eb #a5b4fc');return `background: linear-gradient(135deg, ${colors[0]}, ${colors[1]});`;}
       case 'password-strength': {let score=0;if(s.length>=12)score++;if(s.length>=16)score++;if(/[a-z]/.test(s)&&/[A-Z]/.test(s))score++;if(/\d/.test(s))score++;if(/[^A-Za-z0-9]/.test(s))score++;return `长度：${s.length}\n强度估算：${['很弱','较弱','一般','较强','强','很强'][score]}\n提示：这是本地启发式估算，不代表密码绝对安全。`;}
-      case 'lorem': {const para='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec sed odio dui. Cras mattis consectetur purus sit amet fermentum.';return Array.from({length:Math.max(1,Math.min(20,Number(s)||3))},()=>para).join('\n\n');}
-
       case 'base64-url-encode': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       case 'url-safe-base64': return b64encode(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 
       case 'aspect-ratio': {const m=s.match(/\d+(?:\.\d+)?/g)?.map(Number);if(!m||m.length<2)throw Error('请输入宽和高，例如 1920 1080');const g=gcd(Math.round(m[0]),Math.round(m[1]));return `宽高比：${m[0]/g}:${m[1]/g}\n小数比例：${(m[0]/m[1]).toFixed(4)}`;}
-      case 'html-meta': {const [title='',desc='',url='']=s.split('\n');return `<title>${htmlEscape(title)}</title>\n<meta name="description" content="${htmlEscape(desc)}">\n<link rel="canonical" href="${htmlEscape(url)}">`;}
-      case 'robots-txt': return 'User-agent: *\nAllow: /\nSitemap: '+(s.trim()||'https://example.com/sitemap-index.xml');
-      case 'sitemap-url': return `<?xml version="1.0" encoding="UTF-8"?>\n<url><loc>${htmlEscape(s.trim())}</loc></url>`;
       case 'http-status': {const map={'200':'OK - 请求成功','201':'Created - 已创建','301':'Moved Permanently - 永久重定向','302':'Found - 临时重定向','400':'Bad Request - 请求错误','401':'Unauthorized - 未授权','403':'Forbidden - 禁止访问','404':'Not Found - 未找到','429':'Too Many Requests - 请求过多','500':'Internal Server Error - 服务器错误','502':'Bad Gateway - 网关错误','503':'Service Unavailable - 服务不可用'};return map[s.trim()]||'未内置此状态码，请查阅 HTTP 状态码文档。';}
       case 'mime-type': {const ext=s.trim().split('.').pop().toLowerCase();return ({json:'application/json',html:'text/html',css:'text/css',js:'text/javascript',ts:'text/typescript',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',svg:'image/svg+xml',pdf:'application/pdf',txt:'text/plain',csv:'text/csv',xml:'application/xml',webp:'image/webp',mp3:'audio/mpeg',mp4:'video/mp4',zip:'application/zip'})[ext]||'未内置该扩展名的 MIME 类型';}
       case 'ip-format': {const a=s.trim().split('.');return a.length===4&&a.every(x=>/^\d{1,3}$/.test(x)&&+x<=255)?'IPv4 格式有效':'不是有效的 IPv4 格式';}
       case 'email-validate': return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim())?'邮箱格式看起来有效（未验证是否真实可收信）':'邮箱格式无效';
       case 'svg-minify': return s.replace(/>\s+</g,'><').replace(/\s{2,}/g,' ').trim();
       case 'svg-to-data-uri': return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s.trim());
-      case 'design-token': return `:root {\n  --color-primary: ${s.trim()||'#4263eb'};\n  --space-1: 4px;\n  --space-2: 8px;\n  --space-3: 12px;\n  --space-4: 16px;\n  --radius-card: 12px;\n}`;
       case 'list-to-json': return JSON.stringify(s.split(/\r?\n/).filter(x=>x.length),null,2);
       case 'json-to-list': {const a=JSON.parse(s);if(!Array.isArray(a))throw Error('输入必须是 JSON 数组');return a.join('\n');}
       case 'number-format': return finite(s.trim()).toLocaleString('en-US');
