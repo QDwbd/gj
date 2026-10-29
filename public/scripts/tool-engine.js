@@ -500,6 +500,46 @@ if (root) {
         }).join(' ').replace(/\s*,\s*/g, ', ').replace(/^\n+/, '').replace(/\n{2,}/g, '\n');
         return out.split('\n').map(line => line.trim()).join('\n');
       }
+      case 'ini-to-json': {
+        const out = {}, section = () => {
+          const name = currentSection;
+          if (name && !Object.prototype.hasOwnProperty.call(out, name)) out[name] = {};
+          return name ? out[name] : out;
+        };
+        let currentSection = '';
+        for (const [index, raw] of s.split(/\r?\n/).entries()) {
+          const line = raw.trim();
+          if (!line || line.startsWith(';') || line.startsWith('#')) continue;
+          if (line.startsWith('[') && line.endsWith(']')) {
+            currentSection = line.slice(1, -1).trim();
+            if (!currentSection) throw Error('第 ' + (index + 1) + ' 行分组名称为空');
+            if (Object.prototype.hasOwnProperty.call(out, currentSection) && (typeof out[currentSection] !== 'object' || Array.isArray(out[currentSection]))) throw Error('分组名称与键冲突：' + currentSection);
+            if (!out[currentSection]) out[currentSection] = {};
+            continue;
+          }
+          const eq = line.indexOf('=');
+          if (eq < 1) throw Error('第 ' + (index + 1) + ' 行缺少 key=value');
+          const key = line.slice(0, eq).trim(), value = line.slice(eq + 1).trim();
+          if (!key) throw Error('第 ' + (index + 1) + ' 行键名为空');
+          const target = section();
+          if (Object.prototype.hasOwnProperty.call(target, key)) target[key] = Array.isArray(target[key]) ? [...target[key], value] : [target[key], value];
+          else target[key] = value;
+        }
+        return JSON.stringify(out, null, 2);
+      }
+      case 'json-to-ini': {
+        const value = JSON.parse(s);
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('请输入 JSON 对象');
+        const scalar = v => v === null ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v);
+        const root = [], sections = [];
+        for (const [key, val] of Object.entries(value)) {
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            const lines = Object.entries(val).map(([k, v]) => k + '=' + scalar(v));
+            sections.push('[' + key + ']' + (lines.length ? '\n' + lines.join('\n') : ''));
+          } else root.push(key + '=' + scalar(val));
+        }
+        return [...(root.length ? [root.join('\n')] : []), ...sections].join('\n\n');
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
