@@ -43,8 +43,8 @@ if (root) {
     input.value = op === 'qr-generator' ? 'https://example.com' : '5901234123457';
     document.querySelector('#barcode-scale').value = '3';
     document.querySelector('#barcode-padding').value = '10';
-    document.querySelector('#barcode-height').value = '15';
-    document.querySelector('#barcode-human-readable').checked = true;
+    const height = document.querySelector('#barcode-height'); if (height) height.value = '15';
+    const humanReadable = document.querySelector('#barcode-human-readable'); if (humanReadable) humanReadable.checked = true;
     document.querySelector('#barcode-background').value = '#ffffff';
     document.querySelector('#barcode-foreground').value = '#000000';
     if (op === 'barcode-generator') document.querySelector('#barcode-type').value = 'code128';
