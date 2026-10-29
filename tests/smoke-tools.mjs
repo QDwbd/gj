@@ -3,11 +3,12 @@ import vm from 'node:vm';
 import { webcrypto } from 'node:crypto';
 
 const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url), 'utf8');
-const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png'].includes(op));
+const operations = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator'].includes(op));
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const mediaSource = fs.readFileSync(new URL('../public/scripts/media-tools.js', import.meta.url), 'utf8');
 const imageEditorSource = fs.readFileSync(new URL('../public/scripts/image-editor.js', import.meta.url), 'utf8');
 const pageSource = fs.readFileSync(new URL('../src/pages/tools/[slug].astro', import.meta.url), 'utf8');
+const barcodeSource = fs.readFileSync(new URL('../src/scripts/barcode-tools.js', import.meta.url), 'utf8');
 const samples = {
   'csv-clean':' a \n b ','html-color-name':'rgb(255, 0, 0)','url-safe-base64':'hello','markdown-preview-text':'# Title\n**bold**','text-escape-regex':'a+b?','text-unique-words':'one two one','xml-escape':'<x>','html-encode':'<x>','html-decode':'&lt;x&gt;','text-count':'A😀B','line-sort':'b\na','line-dedupe':'a\na\nb','line-reverse':'a\nb','trim-lines':' a \n b ','blank-lines':'a\n\n b',
   'case-upper':'hello','case-lower':'HELLO','case-title':'hello world','case-sentence':'hello. world','text-reverse':'hello','text-replace':'foo foo','text-to-slug':'中文工具 测试!','comma-to-lines':'a, b','lines-to-comma':'a\nb','text-clean':'hello',
@@ -37,7 +38,7 @@ Object.assign(samples, {"cookie-to-json":"session=abc%20123; theme=dark; session
 Object.assign(expectedContains, {"cookie-to-json":"\"theme\": \"dark\"","json-array-dedupe":"\"a\": 1","list-chunk":"a\nb\nc\n\nd\ne","json-to-go":"type Root struct","json-to-kotlin":"data class Root","json-to-sql-table":"CREATE TABLE \"items\"","json-to-html-table":"<table>"});
 Object.assign(samples, {"content-type-lookup":".json","tcp-port-lookup":"443","http-method-reference":"GET","unicode-escape":"Hi","unicode-unescape":"\\u4e2d\\u6587","list-random-pick":"a\nb\nc\nd","list-group-random":"a\nb\nc\nd\ne","json-to-rust":"{\"name\":\"Ada\",\"active\":true}","json-to-cpp":"{\"name\":\"Ada\",\"age\":30}"});
 Object.assign(expectedContains, {"content-type-lookup":"application/json","tcp-port-lookup":"HTTPS","http-method-reference":"获取资源","unicode-escape":"\\u0048\\u0069","unicode-unescape":"中文","list-group-random":"第 1 组","json-to-rust":"pub struct Root","json-to-cpp":"struct Root"});
-const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png'].includes(op));
+const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator'].includes(op));
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
 let passed=0; const failures=[];
@@ -60,6 +61,7 @@ for (const op of operations) {
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
 try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
+if (!barcodeSource.includes("import bwipjs from 'bwip-js'") || !barcodeSource.includes('bwipjs.toCanvas') || !pageSource.includes('id=\\"barcode-workbench\\"')) failures.push({op:'QR/barcode UI coverage',status:'FAIL',detail:'Missing barcode generator UI or implementation'});
 if (!mediaSource.includes("op === 'image-to-base64'") || !mediaSource.includes("op === 'base64-to-image'") || !mediaSource.includes("op === 'svg-to-png'") || !pageSource.includes('id=\"media-workbench\"')) failures.push({op:'media tools UI coverage',status:'FAIL',detail:'Missing browser-side media handlers or UI'});
 console.log(`Smoke test: ${passed}/${operations.length} operations returned success.`);
 if(failures.length) { console.log(JSON.stringify(failures,null,2)); process.exitCode=1; }
