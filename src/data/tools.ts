@@ -1054,4 +1054,12 @@ export const tools: Tool[] = [
     "description": "将对象数组转换为可复制的 HTML table 标记",
     "operation": "json-to-html-table"
   }
+,
+  {
+    "slug": "image-editor",
+    "name": "在线图片编辑器",
+    "category": "图片工具",
+    "description": "在浏览器中裁剪、旋转、翻转、调色、像素化、添加水印并导出 PNG/JPEG/WebP",
+    "operation": "image-editor"
+  }
 ];
