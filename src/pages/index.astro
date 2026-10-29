@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { tools } from '../data/tools';
 const categories = [...new Set(tools.map(t => t.category))];
-const featuredSlugs = ['json-format','json-validate','base64-encode','url-encode','text-count','text-replace','csv-to-json','json-to-csv','calculator','timestamp-date','color-contrast','css-gradient'];
+const featuredSlugs = ['json-format','json-validate','base64-encode','url-encode','text-count','text-replace','csv-to-json','json-to-csv','calculator','timestamp-date','color-contrast','json-merge'];
 const featured = featuredSlugs.map(slug => tools.find(tool => tool.slug === slug)).filter(Boolean);
 ---
 <BaseLayout title="工具箱 — 免费在线工具集合" description="集合文本、开发、编码、时间、数学、颜色等实用在线工具。">
