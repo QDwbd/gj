@@ -470,6 +470,36 @@ if (root) {
         const makeUuid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
         return Array.from({length: count}, makeUuid).join('\n');
       }
+      case 'css-format': {
+        const css = s.trim();
+        if (!css) throw Error('请输入 CSS');
+        let out = '', depth = 0, token = '', quote = '', comment = false;
+        const flush = () => { const value = token.trim(); if (value) { out += '  '.repeat(depth) + value; token = ''; } };
+        for (let i = 0; i < css.length; i++) {
+          const ch = css[i], next = css[i + 1];
+          if (comment) { token += ch; if (ch === '*' && next === '/') { token += '/'; i++; comment = false; } continue; }
+          if (quote) { token += ch; if (ch === '\\' && next) { token += next; i++; } else if (ch === quote) quote = ''; continue; }
+          if (ch === '/' && next === '*') { token += '/*'; i++; comment = true; continue; }
+          if (ch === '"' || ch === "'") { quote = ch; token += ch; continue; }
+          if (ch === '{') { flush(); out += ' {\n'; depth++; }
+          else if (ch === ';') { token = token.trimEnd() + ';'; flush(); out += '\n'; }
+          else if (ch === '}') { flush(); depth = Math.max(0, depth - 1); if (out && !out.endsWith('\n')) out += '\n'; out += '  '.repeat(depth) + '}\n'; }
+          else token += ch;
+        }
+        flush();
+        return out.trim();
+      }
+      case 'sql-format': {
+        const sql = s.trim();
+        if (!sql) throw Error('请输入 SQL');
+        const parts = sql.split(/('(?:''|[^'])*'|"(?:\"\"|[^"])*"|--[^\n]*|\/\*[\s\S]*?\*\/)/g);
+        const clauses = /\b(SELECT|FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|OFFSET|UNION(?:\s+ALL)?|INSERT\s+INTO|VALUES|UPDATE|SET|DELETE\s+FROM|LEFT\s+JOIN|RIGHT\s+JOIN|INNER\s+JOIN|FULL\s+JOIN|JOIN|ON|AND|OR)\b/gi;
+        const out = parts.map((part, index) => {
+          if (index % 2 === 1) return part;
+          return part.replace(/\s+/g, ' ').replace(clauses, match => '\n' + match.toUpperCase()).trim();
+        }).join('').replace(/\s*,\s*/g, ', ').replace(/^\n+/, '').replace(/\n{2,}/g, '\n');
+        return out.split('\n').map(line => line.trim()).join('\n');
+      }
       default: throw Error(`此工具尚未实现：${op}。请反馈此页面，避免输出看似成功的错误结果。`);
     }
   }
