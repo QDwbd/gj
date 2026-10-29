@@ -1062,4 +1062,26 @@ export const tools: Tool[] = [
     "description": "在浏览器中裁剪、旋转、翻转、调色、像素化、添加水印并导出 PNG/JPEG/WebP",
     "operation": "image-editor"
   }
+,
+  {
+    "slug": "image-to-base64",
+    "name": "图片转 Base64",
+    "category": "图片工具",
+    "description": "上传本地图片并转换为 Data URL，可复制结果",
+    "operation": "image-to-base64"
+  },
+  {
+    "slug": "base64-to-image",
+    "name": "Base64 转图片",
+    "category": "图片工具",
+    "description": "解码图片 Base64 或 Data URL，预览并下载图片",
+    "operation": "base64-to-image"
+  },
+  {
+    "slug": "svg-to-png",
+    "name": "SVG 转 PNG",
+    "category": "图片工具",
+    "description": "将 SVG 标记渲染为可下载的 PNG 图片",
+    "operation": "svg-to-png"
+  }
 ];
