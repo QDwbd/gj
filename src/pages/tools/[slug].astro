@@ -47,7 +47,32 @@ const { tool } = Astro.props;
       <p class="muted">说明：裁剪采用居中裁剪；GIF 等动图会按浏览器解码后的静态帧处理。复杂透明图像导出为 JPEG 时会由浏览器按其默认方式处理透明区域。</p>
     </section>}
 
-    <section class="workbench" style={tool.operation === "image-editor" ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {['image-to-base64', 'base64-to-image', 'svg-to-png'].includes(tool.operation) && <section id="media-workbench" class="workbench media-workbench" data-media-operation={tool.operation} style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>图片转换工作台</strong></div><span class="privacy-label">本地浏览器处理</span></div>
+      {tool.operation === 'image-to-base64' && <div>
+        <label class="field-label" for="media-image-file">选择图片（PNG / JPEG / WebP / GIF / AVIF，最大 20 MB）</label>
+        <input id="media-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" />
+        <div class="action-row"><button id="media-convert" class="primary-button" type="button">转换为 Base64</button><button id="media-clear" class="secondary-button" type="button">清空</button></div>
+        <label class="field-label" for="media-base64-output">Data URL 结果</label><textarea id="media-base64-output" rows="8" readonly spellcheck="false"></textarea>
+        <button id="media-copy" class="secondary-button" type="button">复制结果</button>
+      </div>}
+      {tool.operation === 'base64-to-image' && <div>
+        <label class="field-label" for="media-base64-input">Base64 或 Data URL</label><textarea id="media-base64-input" rows="7" spellcheck="false" placeholder="粘贴 data:image/png;base64,... 或纯 Base64"></textarea>
+        <label class="field-label" for="media-mime">纯 Base64 的图片格式</label><select id="media-mime"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option><option value="image/gif">GIF</option><option value="image/avif">AVIF</option></select>
+        <div class="action-row"><button id="media-convert" class="primary-button" type="button">解码预览</button><button id="media-download" class="secondary-button" type="button" disabled>下载图片</button><button id="media-clear" class="secondary-button" type="button">清空</button></div>
+        <img id="media-image-preview" alt="Base64 解码后的图片预览" style="display:block;max-width:100%;max-height:600px;margin:16px auto" />
+      </div>}
+      {tool.operation === 'svg-to-png' && <div>
+        <label class="field-label" for="media-svg-input">SVG 源码</label><textarea id="media-svg-input" rows="9" spellcheck="false" placeholder="<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;300&quot; height=&quot;100&quot;><rect width=&quot;300&quot; height=&quot;100&quot; fill=&quot;#4263eb&quot;/></svg>"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin:12px 0"><label>宽度 px <input id="media-svg-width" type="number" min="1" max="4096" value="600" /></label><label>高度 px <input id="media-svg-height" type="number" min="1" max="4096" value="300" /></label></div>
+        <div class="action-row"><button id="media-convert" class="primary-button" type="button">渲染 PNG</button><button id="media-download" class="secondary-button" type="button" disabled>下载 PNG</button><button id="media-clear" class="secondary-button" type="button">清空</button></div>
+        <canvas id="media-svg-canvas" hidden style="max-width:100%;height:auto;margin:16px auto"></canvas>
+      </div>}
+      <p id="media-status" role="status">选择文件或输入内容开始转换。数据不会主动上传到服务器。</p>
+    </section>}
+
+    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
