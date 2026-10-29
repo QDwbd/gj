@@ -154,7 +154,24 @@ const { tool } = Astro.props;
       <div id="sqlite-results" style="margin-top:16px"></div>
     </section>}
 
-    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images", "audio-player", "video-speed", "screen-recorder", "sqlite-browser"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
+
+    {['excel-to-json', 'excel-to-html'].includes(tool.operation) && <section id="excel-workbench" class="workbench excel-workbench" data-excel-operation={tool.operation} style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>{tool.operation === 'excel-to-json' ? 'Excel 转 JSON 工作台' : 'Excel 转 HTML 工作台'}</strong></div><span class="privacy-label">本地浏览器处理</span></div>
+      <label class="field-label" for="excel-file">选择 XLSX 文件（最大 50 MB；不支持旧版 XLS）</label><input id="excel-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+      <label class="field-label" for="excel-sheet">工作表</label><select id="excel-sheet"></select>
+      <div class="action-row"><button id="excel-convert" class="primary-button" type="button">转换</button><button id="excel-copy" class="secondary-button" type="button">复制结果</button></div>
+      <label class="field-label" for="excel-result">转换结果</label><textarea id="excel-result" rows="12" readonly spellcheck="false" placeholder="转换结果会显示在这里…"></textarea>
+      <p id="excel-status" role="status">请选择 XLSX 文件开始。</p>
+    </section>}
+    {tool.operation === 'json-to-excel' && <section id="excel-workbench" class="workbench excel-workbench" data-excel-operation={tool.operation} style="display:block">
+      <div class="workbench-head"><div><span class="status-dot"></span><strong>JSON 转 Excel 工作台</strong></div><span class="privacy-label">本地生成文件</span></div>
+      <label class="field-label" for="excel-json">JSON 对象数组</label><textarea id="excel-json" rows="10" spellcheck="false" placeholder="[{&quot;name&quot;:&quot;Ada&quot;,&quot;age&quot;:30}]"></textarea>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:16px 0"><label>工作表名称 <input id="excel-sheet-name" type="text" maxlength="31" value="Sheet1" /></label><label>文件名 <input id="excel-filename" type="text" value="export.xlsx" /></label></div>
+      <div class="action-row"><button id="excel-export" class="primary-button" type="button">生成并下载 XLSX</button></div>
+      <p id="excel-status" role="status">输入 JSON 对象数组即可生成工作簿。</p>
+    </section>}
+
+    <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images", "audio-player", "video-speed", "screen-recorder", "sqlite-browser", "excel-to-json", "excel-to-html", "json-to-excel"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
       <div id="tool-controls" class="tool-controls"></div>
       <label class="field-label" for="tool-input">输入内容</label>
@@ -175,4 +192,5 @@ const { tool } = Astro.props;
   <script src="../../scripts/pdf-render.js"></script>
   <script src="../../scripts/media-playback.js"></script>
   <script src="../../scripts/sqlite-browser.js"></script>
+  <script src="../../scripts/excel-tools.js"></script>
 </BaseLayout>
