@@ -54,7 +54,7 @@
 .image-preview-placeholder strong{font-size:12px;color:#7e899b}
 .image-preview-placeholder small{font-size:10px}
 .image-result-card{overflow:hidden;border:1px solid #e7eaf0;border-radius:11px;background:#fff;box-shadow:0 3px 12px #24365b08}
-.image-result-card>img{display:block;width:100%;height:170px;object-fit:contain;background:repeating-conic-gradient(#f4f5f7 0% 25%,#fff 0% 50%) 50% / 16px 16px}
+.image-result-card>.image-result-thumb{display:block;width:100%;height:88px;object-fit:contain;padding:5px;background:repeating-conic-gradient(#f4f5f7 0% 25%,#fff 0% 50%) 50% / 16px 16px}
 .image-result-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 8px;padding:10px}
 .image-result-meta strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
 .image-result-meta small{font-size:9px;color:#929aaa}
