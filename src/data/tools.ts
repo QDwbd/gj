@@ -1177,6 +1177,7 @@ export const tools: Tool[] = [
   { "slug": "image-pixelate", "name": "图片像素化", "category": "图片工具", "description": "将图片转换为马赛克像素效果", "operation": "image-lab" },
   { "slug": "image-emboss", "name": "浮雕效果生成器", "category": "图片工具", "description": "将图片转换为具有明暗立体感的浮雕效果", "operation": "image-lab" },
   { "slug": "image-brightness", "name": "图片亮度调整", "category": "图片工具", "description": "调整图片整体亮度", "operation": "image-lab" },
+  { "slug": "image-crop", "name": "图片尺寸裁切", "category": "图片工具", "description": "自动识别原图尺寸，按指定裁切区域和输出尺寸裁切，可锁定原始比例或自适应填充", "operation": "image-lab" },
   { "slug": "image-resize", "name": "图片尺寸调整", "category": "图片工具", "description": "自定义宽度和高度调整图片尺寸", "operation": "image-lab" },
   { "slug": "image-icon-maker", "name": "多尺寸图标生成器", "category": "图片工具", "description": "按指定尺寸生成图标图片", "operation": "image-lab" },
   { "slug": "image-mirror", "name": "镜像图片生成器", "category": "图片工具", "description": "生成图片的左右镜像拼接效果", "operation": "image-lab" },
