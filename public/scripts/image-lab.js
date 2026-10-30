@@ -41,7 +41,7 @@ if (root) {
   else if (slug.includes('watermark')) amountLabel.textContent='水印字号';
   else if (slug.includes('grayscale')) amountLabel.textContent='灰度级数';
   else amountLabel.textContent='处理强度';
-  const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value');
+  const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value'), amountNumber=root.querySelector('#lab-amount-number'), amountUnit=root.querySelector('#lab-amount-unit');
   const transformMode=root.querySelector('#lab-transform-mode'), sizeMode=root.querySelector('#lab-size-mode');
   const syncGroupedSettings=()=>{
     if(slug==='image-transform'){
@@ -56,7 +56,7 @@ if (root) {
       root.querySelector('[data-setting="dimensions"]').hidden=mode==='scale-up'||mode==='scale-down';
       root.querySelector('[data-setting="amount"]').hidden=mode!=='scale-up'&&mode!=='scale-down';
       root.querySelector('#lab-amount-label').textContent=mode==='scale-up'?'放大比例':mode==='scale-down'?'缩小比例':'缩放比例';
-      amountInput.min=mode==='scale-down'?'1':'100';amountInput.max=mode==='scale-down'?'100':'800';
+      amountInput.min=mode==='scale-down'?'1':'100';amountInput.max=mode==='scale-down'?'100':'800';if(amountNumber){amountNumber.min=amountInput.min;amountNumber.max=amountInput.max;}
       if(mode==='scale-up'&&Number(amountInput.value)<100)amountInput.value='150';
       if(mode==='scale-down'&&Number(amountInput.value)>100)amountInput.value='50';
       syncAmount();
@@ -64,9 +64,15 @@ if (root) {
   };
   transformMode?.addEventListener('change',syncGroupedSettings);sizeMode?.addEventListener('change',syncGroupedSettings);
   const thresholdInput=root.querySelector('#lab-threshold'), featherInput=root.querySelector('#lab-feather');
-  if(thresholdInput)thresholdInput.addEventListener('input',()=>root.querySelector('#lab-threshold-value').textContent=thresholdInput.value);
-  if(featherInput)featherInput.addEventListener('input',()=>root.querySelector('#lab-feather-value').textContent=featherInput.value);
-  const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette')?'%':'');
+  const thresholdNumber=root.querySelector('#lab-threshold-number'), featherNumber=root.querySelector('#lab-feather-number');
+  const syncRangePair=(range,number,output)=>{if(!range||!number)return;const update=()=>{number.value=range.value;if(output)output.textContent=range.value;};range.addEventListener('input',update);number.addEventListener('input',()=>{if(number.value!=='' ){const n=Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value)));range.value=String(n);if(output)output.textContent=String(n);}});number.addEventListener('change',()=>{const n=Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value)||0));number.value=String(n);range.value=String(n);if(output)output.textContent=String(n);});update();};
+  syncRangePair(thresholdInput,thresholdNumber,root.querySelector('#lab-threshold-value'));
+  syncRangePair(featherInput,featherNumber,root.querySelector('#lab-feather-value'));
+  const isPercent=()=>slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette');
+  const syncAmount=()=>{const suffix=isPercent()?'%':'';amountValue.textContent=amountInput.value+suffix;if(amountNumber)amountNumber.value=amountInput.value;if(amountUnit)amountUnit.textContent=suffix;};
+  amountInput.addEventListener('input',syncAmount);
+  amountNumber?.addEventListener('input',()=>{if(amountNumber.value!==''){const n=Math.min(Number(amountInput.max),Math.max(Number(amountInput.min),Number(amountNumber.value)));amountInput.value=String(n);syncAmount();}});
+  amountNumber?.addEventListener('change',()=>{const n=Math.min(Number(amountInput.max),Math.max(Number(amountInput.min),Number(amountNumber.value)||0));amountNumber.value=String(n);amountInput.value=String(n);syncAmount();});
   amountInput.min='0';
   if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.min='1'; amountInput.max='100'; }
   else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.min='100'; amountInput.max='800'; }
@@ -78,7 +84,8 @@ if (root) {
   else if(slug.includes('sharpen')) { amountInput.value='65'; amountInput.max='200'; }
   else if(slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')) { amountInput.value='100'; amountInput.max='200'; }
   else if(slug.includes('quality')) { amountInput.value='82'; amountInput.max='100'; }
-  amountInput.addEventListener('input',syncAmount); syncAmount();syncGroupedSettings();
+  if(amountNumber){amountNumber.min=amountInput.min;amountNumber.max=amountInput.max;}
+  syncAmount();syncGroupedSettings();
   const formatSelect=root.querySelector('#lab-format');
   if(slug.includes('quality')&&formatSelect)formatSelect.value='image/jpeg';
   if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')) {
