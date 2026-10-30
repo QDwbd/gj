@@ -1,6 +1,8 @@
 const root = document.querySelector('.workbench');
 if (root) {
-  const op = root.dataset.operation;
+  let op = root.dataset.operation;
+  const textOperation = document.querySelector('#text-operation');
+  if (op === 'text-workbench') op = textOperation?.value || 'text-count';
   const input = document.querySelector('#tool-input');
   const output = document.querySelector('#tool-output');
   const status = document.querySelector('#tool-status');
@@ -12,6 +14,25 @@ if (root) {
     const el = document.createElement('input'); el.id=id; el.type=type; el.value=value; wrap.appendChild(el); controls.appendChild(wrap); return el;
   };
   const addTextArea = (id, label, value='') => { const wrap=document.createElement('label'); wrap.textContent=label; const el=document.createElement('textarea'); el.id=id; el.value=value; el.rows=4; wrap.appendChild(el); controls.appendChild(wrap); return el; };
+  const renderTextControls = () => {
+    if (!textOperation) return;
+    op = textOperation.value;
+    controls.innerHTML = '';
+    if (op === 'text-diff') addTextArea('diff-second','对比文本（第二份）','');
+    if (op === 'text-filter') { addInput('filter-pattern','正则表达式','error|warn'); addInput('filter-flags','正则标志','i'); }
+    if (op === 'text-prefix') addInput('line-prefix','添加的前缀','');
+    if (op === 'text-suffix') addInput('line-suffix','添加的后缀','');
+    if (op === 'text-wrap-quotes') addInput('line-quote','每行使用的引号','"');
+    if (op === 'substring-extract') { addInput('substring-start','开始标记','<title>'); addInput('substring-end','结束标记','</title>'); }
+    if (op === 'text-replace') { addInput('find-text','查找内容'); addInput('replace-text','替换为'); }
+    if (op === 'list-chunk') addInput('chunk-size','每组数量','5','number');
+    if (op === 'list-random-pick') addInput('pick-count','抽取数量','1','number');
+    if (op === 'list-group-random') addInput('group-count','分组数量','3','number');
+    const label = textOperation.options[textOperation.selectedIndex]?.textContent || '文本处理';
+    root.querySelector('.workbench-head strong').textContent = label + '工作台';
+    input.placeholder = op === 'text-count' ? '粘贴需要统计的文本…' : '输入或粘贴需要处理的文本…';
+  };
+  if (textOperation) { textOperation.addEventListener('change',renderTextControls); renderTextControls(); }
   if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
   if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
   if (op === 'text-diff') addTextArea('diff-second','对比文本（第二份）','');
