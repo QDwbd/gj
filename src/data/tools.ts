@@ -8,49 +8,14 @@ export const tools: Tool[] = [
     "description": "在一个工作台中完成文本统计、行处理、大小写转换、查找替换、正则过滤、列表整理和文本比较",
     "operation": "text-workbench"
   },
+  {
+    "slug": "json-workbench",
+    "name": "JSON 与数据格式工具箱",
+    "category": "开发者工具",
+    "description": "集中处理 JSON 格式化、校验、转换、结构整理、字段操作、XML/YAML/CSV/INI 转换及代码模型生成",
+    "operation": "json-workbench"
+  },
 
-  {
-    "slug": "json-format",
-    "name": "JSON 格式化",
-    "category": "开发者工具",
-    "description": "格式化 JSON 并显示缩进",
-    "operation": "json-format"
-  },
-  {
-    "slug": "json-minify",
-    "name": "JSON 压缩",
-    "category": "开发者工具",
-    "description": "压缩 JSON 去除空白",
-    "operation": "json-minify"
-  },
-  {
-    "slug": "json-validate",
-    "name": "JSON 校验",
-    "category": "开发者工具",
-    "description": "验证 JSON 是否有效",
-    "operation": "json-validate"
-  },
-  {
-    "slug": "json-to-yaml",
-    "name": "JSON 转 YAML",
-    "category": "开发者工具",
-    "description": "将 JSON 数据转换为基础 YAML",
-    "operation": "json-to-yaml"
-  },
-  {
-    "slug": "yaml-to-json",
-    "name": "YAML 转 JSON（基础）",
-    "category": "开发者工具",
-    "description": "解析简单键值 YAML 并转换为 JSON",
-    "operation": "yaml-to-json"
-  },
-  {
-    "slug": "xml-escape",
-    "name": "XML 转义",
-    "category": "开发者工具",
-    "description": "转义 XML 特殊字符",
-    "operation": "xml-escape"
-  },
   {
     "slug": "url-encode",
     "name": "URL 编码",
@@ -218,20 +183,6 @@ export const tools: Tool[] = [
     "category": "开发者工具",
     "description": "按偏移量进行凯撒字母位移",
     "operation": "caesar"
-  },
-  {
-    "slug": "csv-to-json",
-    "name": "CSV 转 JSON",
-    "category": "开发者工具",
-    "description": "将基础 CSV 表格转换为 JSON 数组",
-    "operation": "csv-to-json"
-  },
-  {
-    "slug": "json-to-csv",
-    "name": "JSON 转 CSV",
-    "category": "开发者工具",
-    "description": "将 JSON 对象数组转换为 CSV",
-    "operation": "json-to-csv"
   },
   {
     "slug": "markdown-preview-text",
@@ -514,20 +465,6 @@ export const tools: Tool[] = [
     "operation": "svg-to-data-uri"
   },
   {
-    "slug": "list-to-json",
-    "name": "列表转 JSON",
-    "category": "开发者工具",
-    "description": "将逐行文本转换为 JSON 字符串数组",
-    "operation": "list-to-json"
-  },
-  {
-    "slug": "json-to-list",
-    "name": "JSON 数组转列表",
-    "category": "开发者工具",
-    "description": "将 JSON 数组转换为逐行文本",
-    "operation": "json-to-list"
-  },
-  {
     "slug": "number-format",
     "name": "数字千分位格式化",
     "category": "开发者工具",
@@ -556,83 +493,6 @@ export const tools: Tool[] = [
     "operation": "table-to-markdown"
   },
   {
-    "slug": "json-key-sort",
-    "name": "JSON 键排序",
-    "category": "开发者工具",
-    "description": "递归按键名排序 JSON 对象",
-    "operation": "json-key-sort"
-  },
-  {
-    "slug": "json-stringify",
-    "name": "JSON 字符串化",
-    "category": "开发者工具",
-    "description": "将输入文本包装为 JSON 字符串",
-    "operation": "json-stringify"
-  },
-  {
-    "slug": "json-unstringify",
-    "name": "JSON 字符串还原",
-    "category": "开发者工具",
-    "description": "还原 JSON 中的字符串内容",
-    "operation": "json-unstringify"
-  },
-  {
-    "slug": "json-to-js-object",
-    "name": "JSON 转 JavaScript 对象",
-    "category": "开发者工具",
-    "description": "将 JSON 转换为 JavaScript 对象字面量",
-    "operation": "json-to-js-object"
-  },
-  {
-    "slug": "json-to-csharp",
-    "name": "JSON 转 C# 模型",
-    "category": "开发者工具",
-    "description": "根据 JSON 示例生成 C# 类和属性类型",
-    "operation": "json-to-csharp"
-  },
-  {
-    "slug": "json-to-java",
-    "name": "JSON 转 Java 模型",
-    "category": "开发者工具",
-    "description": "根据 JSON 示例生成 Java DTO 字段和类型",
-    "operation": "json-to-java"
-  },
-  {
-    "slug": "json-to-php",
-    "name": "JSON 转 PHP 数组",
-    "category": "开发者工具",
-    "description": "将 JSON 转换为可用的 PHP 数组表达式",
-    "operation": "json-to-php"
-  },
-  {
-    "slug": "json-pick-fields",
-    "name": "JSON 字段提取",
-    "category": "开发者工具",
-    "description": "按字段名从 JSON 对象或对象数组中提取字段",
-    "operation": "json-pick-fields"
-  },
-  {
-    "slug": "json-merge",
-    "name": "JSON 深度合并",
-    "category": "开发者工具",
-    "description": "深度合并两个 JSON 对象，后一个对象覆盖同名值",
-    "operation": "json-merge"
-  },
-  {
-    "slug": "json-lines-merge",
-    "name": "JSON 行合并",
-    "category": "开发者工具",
-    "description": "将每行一个 JSON 值合并成标准 JSON 数组并定位错误行",
-    "operation": "json-lines-merge"
-  },
-  {
-    "slug": "json-to-array",
-    "name": "JSON 对象转数组",
-    "category": "开发者工具",
-    "description": "提取 JSON 对象的字段值并转换为数组",
-    "operation": "json-to-array"
-  },
-  {
     "slug": "base64url-encode",
     "name": "Base64URL 编码",
     "category": "开发者工具",
@@ -646,76 +506,13 @@ export const tools: Tool[] = [
     "description": "解码 Base64URL 文本并还原 UTF-8 内容",
     "operation": "base64url-decode"
   },
-  {
-    "slug": "json-flatten",
-    "name": "JSON 展平",
-    "category": "开发者工具",
-    "description": "将嵌套 JSON 转为 JSON Pointer 路径与值的映射",
-    "operation": "json-flatten"
-  },
-  {
-    "slug": "json-unflatten",
-    "name": "JSON 还原嵌套结构",
-    "category": "开发者工具",
-    "description": "将 JSON Pointer 路径映射还原为嵌套对象与数组",
-    "operation": "json-unflatten"
-  },
-  {
-    "slug": "xml-unescape",
-    "name": "XML 反转义",
-    "category": "开发者工具",
-    "description": "将 XML 实体还原为普通文本",
-    "operation": "xml-unescape"
-  },
 
-  {
-    "slug": "json-to-xml",
-    "name": "JSON 转 XML",
-    "category": "开发者工具",
-    "description": "将 JSON 对象或数组转换为 XML，支持自定义根节点名称",
-    "operation": "json-to-xml"
-  },
-  {
-    "slug": "xml-to-json",
-    "name": "XML 转 JSON",
-    "category": "开发者工具",
-    "description": "将简单 XML 文档转换为 JSON，保留属性、文本和重复节点",
-    "operation": "xml-to-json"
-  },
-  {
-    "slug": "xml-format",
-    "name": "XML 格式化",
-    "category": "开发者工具",
-    "description": "缩进排版 XML 文档，便于阅读和调试",
-    "operation": "xml-format"
-  },
-  {
-    "slug": "xml-minify",
-    "name": "XML 压缩",
-    "category": "开发者工具",
-    "description": "移除 XML 标签之间的多余空白并压缩文档",
-    "operation": "xml-minify"
-  },
   {
     "slug": "rot47",
     "name": "ROT47 编码/解码",
     "category": "开发者工具",
     "description": "对 ASCII 可打印字符执行 ROT47 替换；同一操作可编码和解码",
     "operation": "rot47"
-  },
-  {
-    "slug": "url-params-to-json",
-    "name": "URL 参数转 JSON",
-    "category": "开发者工具",
-    "description": "提取 URL 查询参数并转换为 JSON，重复参数会转换为数组",
-    "operation": "url-params-to-json"
-  },
-  {
-    "slug": "json-to-typescript",
-    "name": "JSON 转 TypeScript 接口",
-    "category": "开发者工具",
-    "description": "根据 JSON 对象生成 TypeScript interface，支持嵌套对象和数组",
-    "operation": "json-to-typescript"
   },
   {
     "slug": "uuid-bulk",
@@ -740,62 +537,6 @@ export const tools: Tool[] = [
     "operation": "sql-format"
   },
 
-  {
-    "slug": "ini-to-json",
-    "name": "INI 转 JSON",
-    "category": "开发者工具",
-    "description": "解析 INI 配置文件中的键值与分组并转换为 JSON",
-    "operation": "ini-to-json"
-  },
-  {
-    "slug": "json-to-ini",
-    "name": "JSON 转 INI",
-    "category": "开发者工具",
-    "description": "将 JSON 对象转换为常见 INI 键值和分组格式",
-    "operation": "json-to-ini"
-  },
-  {
-    "slug": "cookie-to-json",
-    "name": "Cookie 转 JSON",
-    "category": "开发者工具",
-    "description": "将 Cookie 请求头解析为 JSON，保留重复键",
-    "operation": "cookie-to-json"
-  },
-  {
-    "slug": "json-array-dedupe",
-    "name": "JSON 数组去重",
-    "category": "开发者工具",
-    "description": "按 JSON 值去重数组元素并保留首次出现顺序",
-    "operation": "json-array-dedupe"
-  },
-  {
-    "slug": "json-to-go",
-    "name": "JSON 转 Go struct",
-    "category": "开发者工具",
-    "description": "根据 JSON 示例生成 Go struct 和 json 标签",
-    "operation": "json-to-go"
-  },
-  {
-    "slug": "json-to-kotlin",
-    "name": "JSON 转 Kotlin data class",
-    "category": "开发者工具",
-    "description": "根据 JSON 示例生成 Kotlin data class",
-    "operation": "json-to-kotlin"
-  },
-  {
-    "slug": "json-to-sql-table",
-    "name": "JSON 转 SQL 建表语句",
-    "category": "开发者工具",
-    "description": "根据 JSON 对象字段推断 SQL 列类型并生成 CREATE TABLE",
-    "operation": "json-to-sql-table"
-  },
-  {
-    "slug": "json-to-html-table",
-    "name": "JSON 转 HTML 表格",
-    "category": "开发者工具",
-    "description": "将对象数组转换为可复制的 HTML table 标记",
-    "operation": "json-to-html-table"
-  }
 ,
   {
     "slug": "image-editor",
@@ -862,20 +603,6 @@ export const tools: Tool[] = [
     "description": "将文本中的反斜线 uXXXX 序列还原为字符",
     "operation": "unicode-unescape"
   },
-  {
-    "slug": "json-to-rust",
-    "name": "JSON 转 Rust struct",
-    "category": "开发者工具",
-    "description": "根据 JSON 对象生成 Rust struct 和 serde 字段标记",
-    "operation": "json-to-rust"
-  },
-  {
-    "slug": "json-to-cpp",
-    "name": "JSON 转 C++ struct",
-    "category": "开发者工具",
-    "description": "根据 JSON 对象生成 C++ struct 字段及常见类型",
-    "operation": "json-to-cpp"
-  }
 ,
   {
     "slug": "qr-generator",
