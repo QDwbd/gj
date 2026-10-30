@@ -39,7 +39,8 @@ if (root) {
   };
   fileInput.addEventListener('change',async()=>{
     const file=fileInput.files&&fileInput.files[0];
-    db=null;exportButton.disabled=true;runButton.disabled=true;clearResults();
+    if(db){db.close();db=null;}
+    exportButton.disabled=true;runButton.disabled=true;clearResults();
     if(!file)return;
     if(file.size>50*1024*1024){setStatus('数据库文件不能超过 50 MB');fileInput.value='';return;}
     if(!/\.(db|sqlite|sqlite3)$/i.test(file.name)&&file.type!=='application/x-sqlite3'&&file.type!=='application/vnd.sqlite3'){setStatus('请选择 .db、.sqlite 或 .sqlite3 文件');return;}
@@ -53,7 +54,7 @@ if (root) {
       const sets=db.exec(sqlInput.value);
       const rows=renderResults(sets);
       setStatus('数据库已打开：'+filename+'。已列出 '+rows+' 条 schema 记录；可执行 SQL 并导出修改后的数据库。');
-    }catch(e){db=null;runButton.disabled=true;exportButton.disabled=true;setStatus('打开失败：文件可能不是 SQLite 数据库、已损坏或超过浏览器可用内存。');}
+    }catch(e){if(db){db.close();db=null;}runButton.disabled=true;exportButton.disabled=true;setStatus('打开失败：文件可能不是 SQLite 数据库、已损坏或超过浏览器可用内存。');}
   });
   runButton.addEventListener('click',()=>{
     if(!db){setStatus('请先打开 SQLite 数据库文件');return;}
