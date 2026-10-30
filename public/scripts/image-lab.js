@@ -11,7 +11,7 @@ if (root) {
   const dropzone = root.querySelector('#lab-dropzone');
   let selectedFiles = [];
   const settings = {
-    amount: slug==='image-size' || ['grayscale','sharpen','emboss','engrave','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality'].some(k=>slug.includes(k)),
+    amount: slug==='image-size' || ['grayscale','sharpen','emboss','engrave','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality','tint'].some(k=>slug.includes(k)),
     threshold: slug.includes('remove-background') || slug.includes('replace-color'),
     feather: slug.includes('remove-background') || slug.includes('cutout'),
     color: ['remove-background','replace-color','tint','watermark','border','background','rectangle-fit'].some(k=>slug.includes(k)),
@@ -36,6 +36,7 @@ if (root) {
   if (slug.includes('brightness')) amountLabel.textContent='亮度';
   else if (slug.includes('contrast')) amountLabel.textContent='对比度';
   else if (slug.includes('saturation')) amountLabel.textContent='饱和度';
+  else if (slug.includes('tint')) amountLabel.textContent='颜色深浅';
   else if (slug.includes('quality')) amountLabel.textContent='导出质量';
   else if (slug.includes('scale-')) amountLabel.textContent='缩放百分比';
   else if (slug.includes('vignette')) amountLabel.textContent='暗角强度';
@@ -71,7 +72,7 @@ if (root) {
   syncRangePair(featherInput,featherNumber,root.querySelector('#lab-feather-value'));
   const opacityInput=root.querySelector('#lab-opacity'),opacityNumber=root.querySelector('#lab-opacity-number');
   syncRangePair(opacityInput,opacityNumber,root.querySelector('#lab-opacity-value'));
-  const isPercent=()=>slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette');
+  const isPercent=()=>slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette')||slug.includes('tint');
   const syncAmount=()=>{const suffix=isPercent()?'%':'';amountValue.textContent=amountInput.value+suffix;if(amountNumber)amountNumber.value=amountInput.value;if(amountUnit)amountUnit.textContent=suffix;};
   amountInput.addEventListener('input',syncAmount);
   amountNumber?.addEventListener('input',()=>{if(amountNumber.value!==''){const n=Math.min(Number(amountInput.max),Math.max(Number(amountInput.min),Number(amountNumber.value)));amountInput.value=String(n);syncAmount();}});
@@ -87,6 +88,7 @@ if (root) {
   else if(slug.includes('sharpen')) { amountInput.value='65'; amountInput.max='200'; }
   else if(slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')) { amountInput.value='100'; amountInput.max='200'; }
   else if(slug.includes('quality')) { amountInput.value='82'; amountInput.max='100'; }
+  else if(slug.includes('tint')) { amountInput.value='100'; amountInput.max='100'; }
   if(amountNumber){amountNumber.min=amountInput.min;amountNumber.max=amountInput.max;}
   syncAmount();syncGroupedSettings();
   const formatSelect=root.querySelector('#lab-format');
@@ -252,7 +254,7 @@ if (root) {
       else {const scale=Math.min(targetW/w,targetH/h),dw=w*scale,dh=h*scale;ox.drawImage(c,(targetW-dw)/2,(targetH-dh)/2,dw,dh);}
       return {canvas:out,name:file.name};
     } else if(slug.includes('color')||slug.includes('tint')) {
-      const target=rgb(color);for(let i=0;i<d.length;i+=4){d[i]=Math.round(d[i]*target[0]/255);d[i+1]=Math.round(d[i+1]*target[1]/255);d[i+2]=Math.round(d[i+2]*target[2]/255);}
+      const target=rgb(color),strength=slug.includes('tint')?Math.max(0,Math.min(100,amount))/100:1;for(let i=0;i<d.length;i+=4){for(let ch=0;ch<3;ch++){const tinted=d[i+ch]*target[ch]/255;d[i+ch]=Math.round(d[i+ch]+(tinted-d[i+ch])*strength);}}
     } else if(slug.includes('mirror')) {
       const out=document.createElement('canvas');out.width=w*2;out.height=h;const ox=out.getContext('2d');ox.drawImage(c,0,0);ox.save();ox.translate(w*2,0);ox.scale(-1,1);ox.drawImage(c,0,0);ox.restore();return {canvas:out,name:file.name};
     } else if(slug.includes('noise')) {
