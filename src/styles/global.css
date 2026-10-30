@@ -215,3 +215,10 @@ footer{margin-top:25px;border-color:#e7ebf2;background:#fff;padding:32px 24px}
 .workbench button:disabled{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none}
 .workbench [role=status]{line-height:1.75}
 @media(max-width:760px){.image-range-control{grid-template-columns:minmax(0,1fr) 72px}.image-lab-sidebar{padding:17px}.image-settings{gap:14px}}
+
+/* Main image editor value labels and slider alignment */
+.image-editor-range{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px 12px;color:#59677d;font-size:11px;font-weight:650}
+.image-editor-range>output{justify-self:end;min-width:48px;padding:4px 7px;border-radius:7px;background:#eef1ff;color:#4f63dc;text-align:center;font-size:10px;font-variant-numeric:tabular-nums}
+.image-editor-range .image-range-control{width:100%}
+.image-workbench>div[style*="grid-template-columns"]{align-items:center}
+.image-workbench canvas{max-width:100%;height:auto;border-radius:10px}
