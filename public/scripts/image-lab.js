@@ -8,7 +8,55 @@ if (root) {
   const preview = root.querySelector('#lab-preview');
   const download = root.querySelector('#lab-download');
   let outputs = [];
-  let source = null;
+  const fileList = root.querySelector('#lab-file-list');
+  const countLabel = root.querySelector('#lab-preview-count');
+  const dropzone = root.querySelector('#lab-dropzone');
+  let selectedFiles = [];
+  const settings = {
+    amount: ['grayscale','sharpen','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality'].some(k=>slug.includes(k)),
+    threshold: slug.includes('remove-background') || slug.includes('replace-color'),
+    color: ['remove-background','replace-color','tint','watermark','border','background','rectangle-fit'].some(k=>slug.includes(k)),
+    color2: slug.includes('replace-color'),
+    angle: slug.includes('rotate'),
+    radius: slug.includes('round') || slug.includes('border'),
+    text: slug.includes('watermark'),
+    count: slug.includes('copy') || slug.includes('duplicate'),
+    dimensions: ['resize','icon','background','rectangle-fit'].some(k=>slug.includes(k)),
+    mode: slug.includes('grayscale') || slug.includes('copy'),
+    format: slug.includes('format') || slug.includes('convert') || slug.includes('quality')
+  };
+  root.querySelectorAll('[data-setting]').forEach(el => { el.hidden = !settings[el.dataset.setting]; });
+  const amountLabel = root.querySelector('#lab-amount-label');
+  if (slug.includes('brightness')) amountLabel.textContent='亮度';
+  else if (slug.includes('contrast')) amountLabel.textContent='对比度';
+  else if (slug.includes('saturation')) amountLabel.textContent='饱和度';
+  else if (slug.includes('quality')) amountLabel.textContent='导出质量';
+  else if (slug.includes('scale-')) amountLabel.textContent='缩放百分比';
+  else if (slug.includes('vignette')) amountLabel.textContent='暗角强度';
+  else if (slug.includes('watermark')) amountLabel.textContent='水印字号';
+  else if (slug.includes('grayscale')) amountLabel.textContent='灰度级数';
+  else amountLabel.textContent='处理强度';
+  const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value');
+  const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug.includes('vignette')?'%':'');
+  amountInput.addEventListener('input',syncAmount); syncAmount();
+  if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')) {
+    root.querySelector('#lab-width').value=1200; root.querySelector('#lab-height').value=800;
+    root.querySelector('#lab-radius-label').textContent='边框 / 圆角宽度';
+  }
+  if(slug.includes('border')) root.querySelector('#lab-radius-label').textContent='边框宽度';
+  if(slug.includes('round')) root.querySelector('#lab-radius-label').textContent='圆角半径';
+  const setFiles = files => {
+    selectedFiles=[...files].filter(f=>f.type.startsWith('image/')).slice(0,100);
+    const dt=new DataTransfer(); selectedFiles.forEach(f=>dt.items.add(f)); filesInput.files=dt.files;
+    fileList.innerHTML='';
+    if(!selectedFiles.length){fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';return;}
+    selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(1)+' MB';row.append(name,size);fileList.appendChild(row);});
+    say('已添加 '+selectedFiles.length+' 张图片');countLabel.textContent=selectedFiles.length+' 张待处理';
+  };
+  dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('is-dragging');});
+  dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('is-dragging'));
+  dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.classList.remove('is-dragging');setFiles(e.dataTransfer.files);});
+  filesInput.addEventListener('change',()=>setFiles(filesInput.files));
   const val = id => root.querySelector('#' + id).value;
   const num = id => Math.max(0, Number(val(id)) || 0);
   const say = s => status.textContent = s;
@@ -62,6 +110,10 @@ if (root) {
       x.putImageData(image,0,0);const text=val('lab-text')||'©';x.save();x.globalAlpha=.22;x.fillStyle=val('lab-color');x.font='bold '+Math.max(12,amount)+'px sans-serif';x.rotate(-Math.PI/6);for(let yy=-h;yy<h*2;yy+=Math.max(80,amount*4))for(let xx=-w;xx<w*2;xx+=Math.max(140,amount*8))x.fillText(text,xx,yy);x.restore();
     } else if(slug.includes('tile')||slug.includes('duplicate')||slug.includes('copy')) {
       const count=Math.max(1,Math.min(10,Math.floor(num('lab-count')||2))), vertical=val('lab-mode')==='vertical';const out=document.createElement('canvas');out.width=vertical?w:Math.round(w*count);out.height=vertical?Math.round(h*count):h;const ox=out.getContext('2d');for(let i=0;i<count;i++)ox.drawImage(c,vertical?0:i*w,vertical?i*h:0);return {canvas:out,name:file.name};
+    } else if(slug.includes('scale-up')||slug.includes('scale-down')) {
+      const percent=Math.max(1,Math.min(800,num('lab-amount')||100))/100;
+      const factor=slug.includes('scale-down')?Math.min(1,percent):Math.max(1,percent);
+      const out=document.createElement('canvas');out.width=Math.max(1,Math.min(8192,Math.round(w*factor)));out.height=Math.max(1,Math.min(8192,Math.round(h*factor)));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
     } else if(slug.includes('resize')||slug.includes('icon')) {
       const nw=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),nh=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
       const out=document.createElement('canvas');out.width=nw;out.height=nh;out.getContext('2d').drawImage(c,0,0,nw,nh);return {canvas:out,name:file.name};
@@ -76,7 +128,7 @@ if (root) {
       const strength=Math.min(100,amount)/100;
       for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],sr=.393*r+.769*g+.189*b,sg=.349*r+.686*g+.168*b,sb=.272*r+.534*g+.131*b;d[i]=r+(sr-r)*strength;d[i+1]=g+(sg-g)*strength;d[i+2]=b+(sb-b)*strength;}
     } else if(slug.includes('contrast')) {
-      const factor=(259*(amount+255))/(255*(259-amount));for(let i=0;i<d.length;i+=4)for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,factor*(d[i+ch]-128)+128));
+      x.filter='contrast('+Math.max(0,Math.min(200,amount))+'%)';x.drawImage(c,0,0);x.filter='none';image=x.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('saturation')||slug.includes('vibrance')) {
       x.filter='saturate('+Math.max(0,amount)/100+')';x.drawImage(c,0,0);x.filter='none';image=x.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('vignette')) {
@@ -91,7 +143,7 @@ if (root) {
       const size=Math.min(500,num('lab-radius')||20),out=document.createElement('canvas');out.width=w+size*2;out.height=h+size*2;const ox=out.getContext('2d');ox.fillStyle=val('lab-color');ox.fillRect(0,0,out.width,out.height);ox.drawImage(c,size,size);return {canvas:out,name:file.name};
     } else if(slug.includes('background')||slug.includes('rectangle-fit')) {
       const nw=Math.max(1,Math.min(8192,num('lab-width')||w)),nh=Math.max(1,Math.min(8192,num('lab-height')||h)),out=document.createElement('canvas');out.width=nw;out.height=nh;const ox=out.getContext('2d');ox.fillStyle=val('lab-color');ox.fillRect(0,0,nw,nh);const scale=Math.min(nw/w,nh/h);ox.drawImage(c,(nw-w*scale)/2,(nh-h*scale)/2,w*scale,h*scale);return {canvas:out,name:file.name};
-    } else if(slug.includes('resize')||slug.includes('icon')||slug.includes('scale-up')||slug.includes('scale-down')) {
+    } else if(slug.includes('resize')||slug.includes('icon')) {
       const percent=slug.includes('scale-')?Math.max(1,num('lab-amount')||100)/100:1;
       const nw=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w*percent))),nh=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h*percent)));
       const out=document.createElement('canvas');out.width=nw;out.height=nh;out.getContext('2d').drawImage(c,0,0,nw,nh);return {canvas:out,name:file.name};
@@ -106,15 +158,16 @@ if (root) {
   root.querySelector('#lab-process').addEventListener('click',async()=>{
     const files=[...(filesInput.files||[])];if(!files.length){say('请先选择图片文件');return;}
     if(files.length>100){say('一次最多处理 100 张图片');return;}
-    outputs=[];preview.innerHTML='';download.disabled=true;say('正在处理 '+files.length+' 张图片…');
-    for(const file of files){try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const img=document.createElement('img');img.src=result.canvas.toDataURL('image/png');img.alt=file.name;img.style.cssText='max-width:180px;max-height:160px;object-fit:contain;border:1px solid #ddd;border-radius:8px;margin:6px';preview.appendChild(img);}catch(e){say(String(e.message||e));}}
-    if(outputs.length){canvas.width=outputs[0].canvas.width;canvas.height=outputs[0].canvas.height;ctx.drawImage(outputs[0].canvas,0,0);canvas.hidden=false;download.disabled=false;say('完成：成功处理 '+outputs.length+' 张图片。可逐张下载或下载全部。');}
+    outputs=[];preview.innerHTML='';download.disabled=true;countLabel.textContent='处理中…';say('正在处理 '+files.length+' 张图片，请稍候…');
+    let failed=0;
+    for(let i=0;i<files.length;i++){const file=files[i];try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const card=document.createElement('article');card.className='image-result-card';const img=document.createElement('img');img.src=result.canvas.toDataURL('image/png');img.alt=file.name;const meta=document.createElement('div');meta.className='image-result-meta';const title=document.createElement('strong');title.textContent=file.name;const dims=document.createElement('small');dims.textContent=result.canvas.width+' × '+result.canvas.height+' px';const btn=document.createElement('button');btn.type='button';btn.className='secondary-button';btn.textContent='下载';btn.addEventListener('click',async()=>{const type=mime(),blob=await blobOf(result.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,result.name.replace(/\\.[^.]+$/,'')+'.'+ext(type));});meta.append(title,dims,btn);card.append(img,meta);preview.appendChild(card);say('处理进度 '+(i+1)+' / '+files.length+' 张');}catch(e){failed++;}}
+    if(outputs.length){canvas.width=outputs[0].canvas.width;canvas.height=outputs[0].canvas.height;ctx.drawImage(outputs[0].canvas,0,0);canvas.hidden=false;download.disabled=false;countLabel.textContent=outputs.length+' 张已完成';say('处理完成：成功 '+outputs.length+' 张'+(failed?'，失败 '+failed+' 张':'')+'。可在每张预览卡片中单独下载。');}
+    else {countLabel.textContent='没有可预览的结果';say('处理失败，请确认文件格式受浏览器支持。');}
   });
   root.querySelector('#lab-download').addEventListener('click',async()=>{
     if(!outputs.length)return;const type=mime();
     for(let i=0;i<outputs.length;i++){const blob=await blobOf(outputs[i].canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,outputs[i].name.replace(/\.[^.]+$/,'')+'.'+ext(type));}
     say('已开始下载 '+outputs.length+' 个处理结果。');
   });
-  root.querySelector('#lab-reset').addEventListener('click',()=>{filesInput.value='';preview.innerHTML='';canvas.hidden=true;outputs=[];download.disabled=true;say('已重置。请选择图片开始。');});
-  filesInput.addEventListener('change',()=>say('已选择 '+filesInput.files.length+' 张图片。支持批量处理。'));
+  root.querySelector('#lab-reset').addEventListener('click',()=>{filesInput.value='';selectedFiles=[];fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';preview.innerHTML='<div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div>';canvas.hidden=true;outputs=[];download.disabled=true;countLabel.textContent='等待导入图片';say('已重置。请选择图片开始。');});
 }
