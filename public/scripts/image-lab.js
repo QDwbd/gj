@@ -59,8 +59,6 @@ if (root) {
       amountInput.min=mode==='scale-down'?'1':'100';amountInput.max=mode==='scale-down'?'100':'800';
       if(mode==='scale-up'&&Number(amountInput.value)<100)amountInput.value='150';
       if(mode==='scale-down'&&Number(amountInput.value)>100)amountInput.value='50';
-      if(mode==='crop'){widthField.value='';heightField.value='';}
-      else if(mode==='resize'&&sourceDimensions){widthField.value=sourceDimensions.width;heightField.value=sourceDimensions.height;}
       syncAmount();
     }
   };
@@ -121,6 +119,7 @@ if (root) {
   const cropX=root.querySelector('#lab-crop-x'), cropY=root.querySelector('#lab-crop-y');
   const cropW=root.querySelector('#lab-crop-width'), cropH=root.querySelector('#lab-crop-height');
   const ratioLocked=()=>root.querySelector('#lab-ratio-lock')?.checked!==false;
+  sizeMode?.addEventListener('change',()=>{if(sizeMode.value==='crop'){widthField.value='';heightField.value='';}else if(sizeMode.value==='resize'&&sourceDimensions){widthField.value=sourceDimensions.width;heightField.value=sourceDimensions.height;}});
   const fitMode=()=>root.querySelector('#lab-fit-mode')?.value||'contain';
   // Width and height are shared target dimensions; every source image keeps its own aspect ratio independently.
     const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => {
