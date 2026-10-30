@@ -228,6 +228,9 @@ if (root) {
         x.save();x.translate(px,py);x.rotate(-Math.PI/6);x.strokeText(text,0,0);x.fillText(text,0,0);x.restore();
       }
       x.restore();
+      // Return the composited canvas directly. The common putImageData below
+      // would otherwise overwrite the watermark with the original pixel buffer.
+      return {canvas:c,name:file.name};
     } else if(slug.includes('watermark')) {
       x.putImageData(image,0,0);const text=val('lab-text')||'©';x.save();x.globalAlpha=.32;x.fillStyle=val('lab-color');x.font='bold '+Math.max(12,amount)+'px sans-serif';x.rotate(-Math.PI/6);for(let yy=-h;yy<h*2;yy+=Math.max(80,amount*4))for(let xx=-w;xx<w*2;xx+=Math.max(140,amount*8))x.fillText(text,xx,yy);x.restore();
     } else if(slug.includes('tile')||slug.includes('duplicate')||slug.includes('copy')) {
