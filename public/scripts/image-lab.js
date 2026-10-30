@@ -220,6 +220,9 @@ if (root) {
       const offset=(amount-100)*1.8;for(let i=0;i<d.length;i+=4){for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,d[i+ch]+offset));}
     } else if(slug.includes('round')) {
       x.putImageData(image,0,0);drawRounded(c,num('lab-radius'));
+      // Return the rounded canvas directly; the common putImageData below would
+      // restore the original opaque corner pixels and erase the transparent clipping.
+      return {canvas:c,name:file.name};
     } else if(slug==='image-watermark-tile') {
       x.putImageData(image,0,0);
       const text=val('lab-text')||'©',fontSize=Math.max(12,Math.min(160,amount));
