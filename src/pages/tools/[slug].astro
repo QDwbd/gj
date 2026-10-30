@@ -21,12 +21,12 @@ const { tool } = Astro.props;
       <label class="field-label" for="image-file">选择图片（PNG / JPEG / WebP，最大 25 MB）</label>
       <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" />
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0">
-        <label>亮度 <input id="image-brightness" type="range" min="0" max="200" value="100" /></label>
-        <label>对比度 <input id="image-contrast" type="range" min="0" max="200" value="100" /></label>
+        <label class="image-editor-range">亮度 <output id="image-brightness-value">100%</output><div class="image-range-control"><input id="image-brightness" type="range" min="0" max="200" value="100" /><div class="image-range-number"><input id="image-brightness-number" type="number" min="0" max="200" value="100" aria-label="精确输入亮度百分比" /><span class="image-range-unit">%</span></div></div></label>
+        <label class="image-editor-range">对比度 <output id="image-contrast-value">100%</output><div class="image-range-control"><input id="image-contrast" type="range" min="0" max="200" value="100" /><div class="image-range-number"><input id="image-contrast-number" type="number" min="0" max="200" value="100" aria-label="精确输入对比度百分比" /><span class="image-range-unit">%</span></div></div></label>
         <label>旋转 <select id="image-rotation"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>
-        <label>像素化强度 <input id="image-pixelate" type="range" min="1" max="40" value="1" /></label>
-        <label>裁剪宽度（中心裁剪 %） <input id="image-crop-width" type="range" min="10" max="100" value="100" /></label>
-        <label>裁剪高度（中心裁剪 %） <input id="image-crop-height" type="range" min="10" max="100" value="100" /></label>
+        <label class="image-editor-range">像素化强度 <output id="image-pixelate-value">1</output><div class="image-range-control"><input id="image-pixelate" type="range" min="1" max="40" value="1" /><input id="image-pixelate-number" type="number" min="1" max="40" value="1" aria-label="精确输入像素化强度" /></div></label>
+        <label class="image-editor-range">裁剪宽度（中心裁剪） <output id="image-crop-width-value">100%</output><div class="image-range-control"><input id="image-crop-width" type="range" min="10" max="100" value="100" /><div class="image-range-number"><input id="image-crop-width-number" type="number" min="10" max="100" value="100" aria-label="精确输入裁剪宽度百分比" /><span class="image-range-unit">%</span></div></div></label>
+        <label class="image-editor-range">裁剪高度（中心裁剪） <output id="image-crop-height-value">100%</output><div class="image-range-control"><input id="image-crop-height" type="range" min="10" max="100" value="100" /><div class="image-range-number"><input id="image-crop-height-number" type="number" min="10" max="100" value="100" aria-label="精确输入裁剪高度百分比" /><span class="image-range-unit">%</span></div></div></label>
         <label>水印文字 <input id="image-watermark" type="text" maxlength="120" placeholder="可选：输入水印文字" /></label>
         <label>导出格式 <select id="image-format"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></label>
       </div>
