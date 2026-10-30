@@ -87,21 +87,42 @@ if (root) {
     original.src = sourceUrl;
     setStatus('正在读取图片…');
   });
-  root.querySelectorAll('input[type=range], input[type=checkbox], input[type=text]').forEach(el => {
+  const rangePairs = [
+    ['image-brightness','image-brightness-number','image-brightness-value','%'],
+    ['image-contrast','image-contrast-number','image-contrast-value','%'],
+    ['image-pixelate','image-pixelate-number','image-pixelate-value',''],
+    ['image-crop-width','image-crop-width-number','image-crop-width-value','%'],
+    ['image-crop-height','image-crop-height-number','image-crop-height-value','%']
+  ];
+  const syncRangePair = (rangeId,numberId,outputId,suffix) => {
+    const range=root.querySelector('#'+rangeId),number=root.querySelector('#'+numberId),output=root.querySelector('#'+outputId);
+    const sync=()=>{number.value=range.value;output.textContent=range.value+suffix;};
+    range.addEventListener('input',()=>{sync();render();});
+    number.addEventListener('input',()=>{if(number.value!==''){range.value=String(Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value))));output.textContent=range.value+suffix;render();}});
+    number.addEventListener('change',()=>{range.value=String(Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value)||0)));sync();render();});
+    sync();
+  };
+  rangePairs.forEach(pair=>syncRangePair(...pair));
+  root.querySelectorAll('input[type=checkbox], input[type=text]').forEach(el => {
     el.addEventListener('input', render);
     el.addEventListener('change', render);
   });
   document.querySelector('#image-reset').addEventListener('click', () => {
     document.querySelector('#image-brightness').value = '100';
+    document.querySelector('#image-brightness-number').value = '100';
     document.querySelector('#image-contrast').value = '100';
+    document.querySelector('#image-contrast-number').value = '100';
     document.querySelector('#image-rotation').value = '0';
     document.querySelector('#image-flip-x').checked = false;
     document.querySelector('#image-flip-y').checked = false;
     document.querySelector('#image-grayscale').checked = false;
     document.querySelector('#image-sepia').checked = false;
     document.querySelector('#image-pixelate').value = '1';
+    document.querySelector('#image-pixelate-number').value = '1';
     document.querySelector('#image-crop-width').value = '100';
+    document.querySelector('#image-crop-width-number').value = '100';
     document.querySelector('#image-crop-height').value = '100';
+    document.querySelector('#image-crop-height-number').value = '100';
     document.querySelector('#image-watermark').value = '';
     render();
   });
