@@ -181,7 +181,7 @@ const { tool } = Astro.props;
         <label>颜色容差 <input id="lab-threshold" type="number" min="0" max="255" value="35" /></label>
         <label>目标颜色 <input id="lab-color" type="color" value="#ffffff" /></label>
         <label>替换颜色 <input id="lab-color2" type="color" value="#4263eb" /></label>
-        <label>圆角半径 px <input id="lab-radius" type="number" min="0" max="2000" value="40" /></label>
+        <label>角度 / 边框宽度 px <input id="lab-angle" type="number" min="-360" max="360" value="90" /></label>\n        <label>圆角半径 / 边框宽度 px <input id="lab-radius" type="number" min="0" max="2000" value="40" /></label>
         <label>水印文字 <input id="lab-text" type="text" maxlength="80" value="©" /></label>
         <label>复制数量 <input id="lab-count" type="number" min="1" max="10" value="2" /></label>
         <label>输出宽度 px <input id="lab-width" type="number" min="1" max="8192" value="512" /></label>
