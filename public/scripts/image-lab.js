@@ -38,6 +38,10 @@ if (root) {
   else amountLabel.textContent='处理强度';
   const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value');
   const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug.includes('vignette')?'%':'');
+  if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.max='100'; }
+  else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.max='200'; }
+  else if(slug.includes('noise')||slug.includes('sepia')||slug.includes('vignette')) amountInput.max='100';
+  else if(slug.includes('quality')) { amountInput.value='90'; amountInput.max='100'; }
   amountInput.addEventListener('input',syncAmount); syncAmount();
   if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')) {
     root.querySelector('#lab-width').value=1200; root.querySelector('#lab-height').value=800;
@@ -46,12 +50,14 @@ if (root) {
   if(slug.includes('border')) root.querySelector('#lab-radius-label').textContent='边框宽度';
   if(slug.includes('round')) root.querySelector('#lab-radius-label').textContent='圆角半径';
   const setFiles = files => {
-    selectedFiles=[...files].filter(f=>f.type.startsWith('image/')).slice(0,100);
+    const incoming=[...files].filter(f=>f.type.startsWith('image/'));
+    const oversized=incoming.filter(f=>f.size>25*1024*1024);
+    selectedFiles=incoming.filter(f=>f.size<=25*1024*1024).slice(0,100);
     const dt=new DataTransfer(); selectedFiles.forEach(f=>dt.items.add(f)); filesInput.files=dt.files;
     fileList.innerHTML='';
     if(!selectedFiles.length){fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';return;}
     selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(1)+' MB';row.append(name,size);fileList.appendChild(row);});
-    say('已添加 '+selectedFiles.length+' 张图片');countLabel.textContent=selectedFiles.length+' 张待处理';
+    say('已添加 '+selectedFiles.length+' 张图片'+(oversized.length?'；已跳过 '+oversized.length+' 张超过 25 MB 的文件':''));countLabel.textContent=selectedFiles.length+' 张待处理';
   };
   dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('is-dragging');});
   dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('is-dragging'));
