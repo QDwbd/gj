@@ -44,10 +44,17 @@ if (root) {
   if(thresholdInput)thresholdInput.addEventListener('input',()=>root.querySelector('#lab-threshold-value').textContent=thresholdInput.value);
   if(featherInput)featherInput.addEventListener('input',()=>root.querySelector('#lab-feather-value').textContent=featherInput.value);
   const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug.includes('vignette')?'%':'');
-  if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.max='100'; }
-  else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.max='200'; }
-  else if(slug.includes('noise')||slug.includes('sepia')||slug.includes('vignette')) amountInput.max='100';
-  else if(slug.includes('quality')) { amountInput.value='90'; amountInput.max='100'; }
+  amountInput.min='0';
+  if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.min='1'; amountInput.max='100'; }
+  else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.min='100'; amountInput.max='800'; }
+  else if(slug.includes('noise')) { amountInput.value='18'; amountInput.max='100'; }
+  else if(slug.includes('sepia')) { amountInput.value='100'; amountInput.max='100'; }
+  else if(slug.includes('vignette')) { amountInput.value='35'; amountInput.max='100'; }
+  else if(slug.includes('blur')) { amountInput.value='8'; amountInput.max='40'; }
+  else if(slug.includes('pixel')) { amountInput.value='12'; amountInput.max='80'; }
+  else if(slug.includes('sharpen')) { amountInput.value='65'; amountInput.max='200'; }
+  else if(slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')) { amountInput.value='100'; amountInput.max='200'; }
+  else if(slug.includes('quality')) { amountInput.value='82'; amountInput.max='100'; }
   amountInput.addEventListener('input',syncAmount); syncAmount();
   if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')||slug.includes('crop')) {
     root.querySelector('#lab-width').value=1200; root.querySelector('#lab-height').value=800;
@@ -87,7 +94,12 @@ if (root) {
   const ratioLocked=()=>root.querySelector('#lab-ratio-lock')?.checked!==false;
   const fitMode=()=>root.querySelector('#lab-fit-mode')?.value||'contain';
   // Width and height are shared target dimensions; every source image keeps its own aspect ratio independently.
-    const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => c.toBlob(resolve,type,quality));
+    const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => {
+    if(type!=='image/jpeg'){c.toBlob(resolve,type,quality);return;}
+    const flat=document.createElement('canvas');flat.width=c.width;flat.height=c.height;
+    const fx=flat.getContext('2d');fx.fillStyle='#fff';fx.fillRect(0,0,flat.width,flat.height);fx.drawImage(c,0,0);
+    flat.toBlob(resolve,'image/jpeg',quality);
+  });
   const mime = () => { if(slug.includes('png-to-jpg')||slug.includes('webp-to-jpg')) return 'image/jpeg'; if(slug.includes('jpg-to-webp')||slug.includes('png-to-webp')) return 'image/webp'; return val('lab-format'); };
   const ext = t => ({'image/jpeg':'jpg','image/webp':'webp','image/png':'png'}[t] || 'png');
   const downloadBlob = (blob,name) => { const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500); };
@@ -123,7 +135,7 @@ if (root) {
       const mode=val('lab-mode'), weights=mode==='601'?[.299,.587,.114]:mode==='average'?[1/3,1/3,1/3]:[.2126,.7152,.0722];
       for(let i=0;i<d.length;i+=4){const g=d[i]*weights[0]+d[i+1]*weights[1]+d[i+2]*weights[2];const v=amount>0?Math.round(g/(256/Math.max(2,amount))* (256/Math.max(2,amount))):g;d[i]=d[i+1]=d[i+2]=v;}
     } else if(slug.includes('alpha')||slug.includes('transparent')) {
-      for(let i=0;i<d.length;i+=4){if(d[i+3]<128)d[i+3]=255;else d[i+3]=0;}
+      for(let i=3;i<d.length;i+=4)d[i]=255-d[i];
     } else if(slug.includes('invert')||slug.includes('negative')) {
       for(let i=0;i<d.length;i+=4){d[i]=255-d[i];d[i+1]=255-d[i+1];d[i+2]=255-d[i+2];}
     } else if(slug.includes('remove-background')||slug.includes('cutout')) {
@@ -144,14 +156,14 @@ if (root) {
     } else if(slug.includes('replace-color')) {
       const target=rgb(val('lab-color')), replacement=rgb(val('lab-color2'));for(let i=0;i<d.length;i+=4){if(Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2])<=threshold*1.75){d[i]=replacement[0];d[i+1]=replacement[1];d[i+2]=replacement[2];}}
     } else if(slug.includes('sharpen')||slug.includes('emboss')||slug.includes('engrave')) {
-      const src=new Uint8ClampedArray(d), kernel=slug.includes('sharpen')?[0,-1,0,-1,5,-1,0,-1,0]:[-2,-1,0,-1,1,1,0,1,2];
-      for(let y=1;y<h-1;y++)for(let xx=1;xx<w-1;xx++)for(let ch=0;ch<3;ch++){let sum=0,k=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)sum+=src[((y+dy)*w+xx+dx)*4+ch]*kernel[k++];const i=(y*w+xx)*4+ch;d[i]=Math.max(0,Math.min(255,128+(sum-128)*Math.max(.1,amount/100))); }
+      const src=new Uint8ClampedArray(d), isSharp=slug.includes('sharpen'), kernel=isSharp?[0,-1,0,-1,5,-1,0,-1,0]:[-2,-1,0,-1,1,1,0,1,2], strength=Math.max(0,amount)/100;
+      for(let y=1;y<h-1;y++)for(let xx=1;xx<w-1;xx++)for(let ch=0;ch<3;ch++){let sum=0,k=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)sum+=src[((y+dy)*w+xx+dx)*4+ch]*kernel[k++];const i=(y*w+xx)*4+ch,original=src[i],filtered=isSharp?sum:128+sum;d[i]=Math.max(0,Math.min(255,isSharp?original+(filtered-original)*strength:128+(filtered-128)*Math.min(2,strength)));}
     } else if(slug.includes('blur')) {
-      const small=document.createElement('canvas');small.width=Math.max(1,Math.round(w/Math.max(2,amount/5)));small.height=Math.max(1,Math.round(h/Math.max(2,amount/5)));small.getContext('2d').drawImage(c,0,0,small.width,small.height);x.clearRect(0,0,w,h);x.imageSmoothingEnabled=true;x.drawImage(small,0,0,w,h);image=x.getImageData(0,0,w,h);d=image.data;
+      const radius=Math.max(.5,Math.min(40,amount)),blurred=document.createElement('canvas');blurred.width=w;blurred.height=h;const bx=blurred.getContext('2d');bx.filter='blur('+radius+'px)';bx.drawImage(c,0,0);x.clearRect(0,0,w,h);x.drawImage(blurred,0,0);image=x.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('pixel')) {
       const small=document.createElement('canvas');small.width=Math.max(1,Math.round(w/Math.max(2,amount/2)));small.height=Math.max(1,Math.round(h/Math.max(2,amount/2)));small.getContext('2d').drawImage(c,0,0,small.width,small.height);x.clearRect(0,0,w,h);x.imageSmoothingEnabled=false;x.drawImage(small,0,0,w,h);image=x.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('brightness')) {
-      const factor=amount/100;for(let i=0;i<d.length;i+=4){d[i]*=factor;d[i+1]*=factor;d[i+2]*=factor;}
+      const offset=(amount-100)*1.8;for(let i=0;i<d.length;i+=4){for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,d[i+ch]+offset));}
     } else if(slug.includes('round')) {
       x.putImageData(image,0,0);drawRounded(c,num('lab-radius'));
     } else if(slug.includes('watermark')) {
@@ -174,13 +186,13 @@ if (root) {
     } else if(slug.includes('mirror')) {
       const out=document.createElement('canvas');out.width=w*2;out.height=h;const ox=out.getContext('2d');ox.drawImage(c,0,0);ox.save();ox.translate(w*2,0);ox.scale(-1,1);ox.drawImage(c,0,0);ox.restore();return {canvas:out,name:file.name};
     } else if(slug.includes('noise')) {
-      const strength=Math.min(100,amount)/100*90;
-      for(let i=0;i<d.length;i+=4)for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,d[i+ch]+(Math.random()*2-1)*strength));
+      const strength=Math.min(100,amount)/100*72;
+      for(let i=0;i<d.length;i+=4){const n=(Math.random()*2-1)*strength;for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,d[i+ch]+n));}
     } else if(slug.includes('sepia')) {
       const strength=Math.min(100,amount)/100;
       for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],sr=.393*r+.769*g+.189*b,sg=.349*r+.686*g+.168*b,sb=.272*r+.534*g+.131*b;d[i]=r+(sr-r)*strength;d[i+1]=g+(sg-g)*strength;d[i+2]=b+(sb-b)*strength;}
     } else if(slug.includes('contrast')) {
-      const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='contrast('+Math.max(0,Math.min(200,amount))+'%)';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
+      const factor=(259*(amount+255))/(255*(259-amount));for(let i=0;i<d.length;i+=4)for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,factor*(d[i+ch]-128)+128));
     } else if(slug.includes('saturation')||slug.includes('vibrance')) {
       const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='saturate('+Math.max(0,amount)/100+')';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('vignette')) {
