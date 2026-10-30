@@ -625,13 +625,6 @@ export const tools: Tool[] = [
     "operation": "image-lab"
   },
   {
-    "slug": "image-sepia",
-    "name": "棕褐色调滤镜",
-    "category": "图片工具",
-    "description": "为图片添加经典复古棕褐色调",
-    "operation": "image-lab"
-  },
-  {
     "slug": "image-contrast",
     "name": "图片对比度调整",
     "category": "图片工具",
