@@ -56,6 +56,8 @@ if (root) {
   else if(slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')) { amountInput.value='100'; amountInput.max='200'; }
   else if(slug.includes('quality')) { amountInput.value='82'; amountInput.max='100'; }
   amountInput.addEventListener('input',syncAmount); syncAmount();
+  const formatSelect=root.querySelector('#lab-format');
+  if(slug.includes('quality')&&formatSelect)formatSelect.value='image/jpeg';
   if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')||slug.includes('crop')) {
     root.querySelector('#lab-width').value=1200; root.querySelector('#lab-height').value=800;
     root.querySelector('#lab-radius-label').textContent='边框 / 圆角宽度';
@@ -172,8 +174,8 @@ if (root) {
       const count=Math.max(1,Math.min(10,Math.floor(num('lab-count')||2))), vertical=val('lab-mode')==='vertical';const out=document.createElement('canvas');out.width=vertical?w:Math.round(w*count);out.height=vertical?Math.round(h*count):h;const ox=out.getContext('2d');for(let i=0;i<count;i++)ox.drawImage(c,vertical?0:i*w,vertical?i*h:0);return {canvas:out,name:file.name};
     } else if(slug.includes('scale-up')||slug.includes('scale-down')) {
       const percent=Math.max(1,Math.min(800,num('lab-amount')||100))/100;
-      const factor=slug.includes('scale-down')?Math.min(1,percent):Math.max(1,percent);
-      const out=document.createElement('canvas');out.width=Math.max(1,Math.min(8192,Math.round(w*factor)));out.height=Math.max(1,Math.min(8192,Math.round(h*factor)));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
+      const requested=slug.includes('scale-down')?Math.min(1,percent):Math.max(1,percent),factor=Math.min(requested,8192/w,8192/h);
+      const out=document.createElement('canvas');out.width=Math.max(1,Math.round(w*factor));out.height=Math.max(1,Math.round(h*factor));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
     } else if(slug.includes('resize')||slug.includes('icon')) {
       const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
       const mode=fitMode(),out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
@@ -192,7 +194,7 @@ if (root) {
       const strength=Math.min(100,amount)/100;
       for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],sr=.393*r+.769*g+.189*b,sg=.349*r+.686*g+.168*b,sb=.272*r+.534*g+.131*b;d[i]=r+(sr-r)*strength;d[i+1]=g+(sg-g)*strength;d[i+2]=b+(sb-b)*strength;}
     } else if(slug.includes('contrast')) {
-      const factor=(259*(amount+255))/(255*(259-amount));for(let i=0;i<d.length;i+=4)for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,factor*(d[i+ch]-128)+128));
+      const delta=(amount-100)*1.2,factor=(259*(delta+255))/(255*(259-delta));for(let i=0;i<d.length;i+=4)for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,factor*(d[i+ch]-128)+128));
     } else if(slug.includes('saturation')||slug.includes('vibrance')) {
       const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='saturate('+Math.max(0,amount)/100+')';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('vignette')) {
@@ -226,9 +228,9 @@ if (root) {
     const files=[...(filesInput.files||[])];if(!files.length){say('请先选择图片文件');return;}
     if(files.length>100){say('一次最多处理 100 张图片');return;}
     outputs=[];preview.innerHTML='';download.disabled=true;countLabel.textContent='处理中…';say('正在处理 '+files.length+' 张图片，请稍候…');
-    let failed=0;
-    for(let i=0;i<files.length;i++){const file=files[i];try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const card=document.createElement('article');card.className='image-result-card';const meta=document.createElement('div');meta.className='image-result-meta';const title=document.createElement('strong');title.textContent=file.name;const dims=document.createElement('small');dims.textContent=result.canvas.width+' × '+result.canvas.height+' px';const btn=document.createElement('button');btn.type='button';btn.className='secondary-button';btn.textContent='下载';btn.addEventListener('click',async()=>{const type=mime(),blob=await blobOf(result.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,result.name.replace(/\\.[^.]+$/,'')+'.'+ext(type));});meta.append(title,dims,btn);card.append(meta);preview.appendChild(card);say('处理进度 '+(i+1)+' / '+files.length+' 张');}catch(e){failed++;}}
-    if(outputs.length){download.disabled=false;countLabel.textContent=outputs.length+' 张已完成';say('处理完成：成功 '+outputs.length+' 张'+(failed?'，失败 '+failed+' 张':'')+'。可在每条结果记录中单独下载。');}
+    let failed=0;const totalBytes=files.reduce((n,f)=>n+f.size,0);
+    for(let i=0;i<files.length;i++){const file=files[i];try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const card=document.createElement('article');card.className='image-result-card';const meta=document.createElement('div');meta.className='image-result-meta';const title=document.createElement('strong');title.textContent=file.name;const dims=document.createElement('small');dims.textContent=result.canvas.width+' × '+result.canvas.height+' px · 原图 '+(file.size/1024/1024).toFixed(2)+' MB';const btn=document.createElement('button');btn.type='button';btn.className='secondary-button';btn.textContent='下载';btn.addEventListener('click',async()=>{const type=mime(),blob=await blobOf(result.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,result.name.replace(/\\.[^.]+$/,'')+'.'+ext(type));});meta.append(title,dims,btn);card.append(meta);preview.appendChild(card);say('处理进度 '+(i+1)+' / '+files.length+' 张');}catch(e){failed++;}}
+    if(outputs.length){download.disabled=false;countLabel.textContent=outputs.length+' 张已完成';say('处理完成：成功 '+outputs.length+' 张'+(failed?'，失败 '+failed+' 张':'')+'；输入总计 '+(totalBytes/1024/1024).toFixed(2)+' MB。可逐张下载。');}
     else {countLabel.textContent='没有可预览的结果';say('处理失败，请确认文件格式受浏览器支持。');}
   });
   root.querySelector('#lab-download').addEventListener('click',async()=>{
