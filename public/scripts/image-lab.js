@@ -60,7 +60,7 @@ if (root) {
     const dt=new DataTransfer(); selectedFiles.forEach(f=>dt.items.add(f)); filesInput.files=dt.files;
     fileList.innerHTML='';
     if(!selectedFiles.length){fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';return;}
-    selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(1)+' MB';row.append(name,size);fileList.appendChild(row);});
+    selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(2)+' MB · 读取尺寸…';row.append(name,size);fileList.appendChild(row);load(f).then(img=>{size.textContent=img.naturalWidth+' × '+img.naturalHeight+' px · '+(f.size/1024/1024).toFixed(2)+' MB';}).catch(()=>{size.textContent='无法读取尺寸';});});
     say('已添加 '+selectedFiles.length+' 张图片'+(oversized.length?'；已跳过 '+oversized.length+' 张超过 25 MB 的文件':''));countLabel.textContent=selectedFiles.length+' 张待处理';
     if(selectedFiles[0]) detectSourceDimensions(selectedFiles[0]);
   };
