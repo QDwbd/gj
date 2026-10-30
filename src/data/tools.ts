@@ -219,13 +219,6 @@ export const tools: Tool[] = [
     "operation": "regex-test"
   },
   {
-    "slug": "uuid-gen",
-    "name": "UUID 生成器",
-    "category": "开发者工具",
-    "description": "生成随机 UUID v4",
-    "operation": "uuid-gen"
-  },
-  {
     "slug": "password-gen",
     "name": "随机密码生成器",
     "category": "开发者工具",
