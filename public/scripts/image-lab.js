@@ -234,7 +234,13 @@ if (root) {
     } else if(slug.includes('vertical-flip')||(slug==='image-transform'&&val('lab-transform-mode')==='vertical')) {
       const out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d');ox.translate(0,h);ox.scale(1,-1);ox.drawImage(c,0,0);return {canvas:out,name:file.name};
     } else if(slug.includes('rotate')||(slug==='image-transform'&&val('lab-transform-mode')==='rotate')) {
-      const angle=(Number(val('lab-angle'))||0)*Math.PI/180,sw=Math.abs(Math.cos(angle)),sh=Math.abs(Math.sin(angle));const out=document.createElement('canvas');out.width=Math.min(8192,Math.ceil(w*sw+h*sh));out.height=Math.min(8192,Math.ceil(h*sw+w*sh));const ox=out.getContext('2d');ox.translate(out.width/2,out.height/2);ox.rotate(angle);ox.drawImage(c,-w/2,-h/2);return {canvas:out,name:file.name};
+      const degrees=((Number(val('lab-angle'))||0)%360+360)%360,angle=degrees*Math.PI/180;
+      const snap=n=>Math.abs(n)<1e-10?0:Math.abs(1-n)<1e-10?1:n;
+      const cos=snap(Math.abs(Math.cos(angle))),sin=snap(Math.abs(Math.sin(angle)));
+      const boundsW=Math.ceil(w*cos+h*sin),boundsH=Math.ceil(h*cos+w*sin);
+      const scale=Math.min(1,8192/boundsW,8192/boundsH);
+      const out=document.createElement('canvas');out.width=Math.max(1,Math.ceil(boundsW*scale));out.height=Math.max(1,Math.ceil(boundsH*scale));
+      const ox=out.getContext('2d');ox.translate(out.width/2,out.height/2);ox.scale(scale,scale);ox.rotate(angle);ox.drawImage(c,-w/2,-h/2);return {canvas:out,name:file.name};
     } else if(slug.includes('border')) {
       const size=Math.min(500,num('lab-radius')||20),out=document.createElement('canvas');out.width=w+size*2;out.height=h+size*2;const ox=out.getContext('2d');ox.fillStyle=val('lab-color');ox.fillRect(0,0,out.width,out.height);ox.drawImage(c,size,size);return {canvas:out,name:file.name};
     } else if(slug.includes('background')||slug.includes('rectangle-fit')) {
