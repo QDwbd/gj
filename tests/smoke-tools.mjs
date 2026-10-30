@@ -63,7 +63,7 @@ for (const op of operations) {
     for (const el of controls.children) { const input=el.children[0]; if(input) input.value=controlDefaults[input.id] ?? input.value; }
     await elements.get('#run-tool').listeners.click();
     const status=elements.get('#tool-status').textContent;
-    if(status==='完成') { const expected=expectedContains[op]; const actual=elements.get('#tool-output').value; if(expected && !actual.includes(expected)) failures.push({op,status:'WRONG OUTPUT',detail:`expected to include ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`}); else passed++; } else failures.push({op,status,detail:elements.get('#output-meta').textContent});
+    if(status==='处理完成') { const expected=expectedContains[op]; const actual=elements.get('#tool-output').value; if(expected && !actual.includes(expected)) failures.push({op,status:'WRONG OUTPUT',detail:`expected to include ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`}); else passed++; } else failures.push({op,status,detail:elements.get('#output-meta').textContent});
   } catch(e) { failures.push({op,status:'HARNESS ERROR',detail:String(e)}); }
 }
 try { new vm.Script(mediaSource); new vm.Script(imageEditorSource); } catch (e) { failures.push({op:'browser script syntax',status:'FAIL',detail:String(e)}); }
