@@ -751,7 +751,7 @@ if (root) {
     if(!inputStats)return;
     const value=input.value;
     const chars=[...value].length;
-    const lines=value?value.split(/\\r\\n|\\r|\\n/).length:0;
+    const lines=value?value.split(/\r\n|\r|\n/).length:0;
     const bytes=new TextEncoder().encode(value).length;
     inputStats.textContent=chars.toLocaleString()+' 字符 · '+lines+' 行 · '+bytes.toLocaleString()+' 字节';
   };
