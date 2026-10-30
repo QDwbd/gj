@@ -1160,7 +1160,7 @@ export const tools: Tool[] = [
     "category": "文件工具",
     "description": "将 JSON 对象数组生成可下载的 XLSX 工作簿",
     "operation": "json-to-excel"
-  }
+  },
 
   { "slug": "image-remove-background", "name": "在线抠图工具", "category": "图片工具", "description": "移除图片中的指定背景颜色并生成透明背景", "operation": "image-lab" },
   { "slug": "image-replace-color", "name": "图片颜色替换", "category": "图片工具", "description": "将图片中的指定颜色替换为新颜色", "operation": "image-lab" },
