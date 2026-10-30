@@ -369,28 +369,28 @@ export const tools: Tool[] = [
           {
     "slug": "aspect-ratio",
     "name": "宽高比计算",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "计算宽高比和等比例尺寸",
     "operation": "aspect-ratio"
   },
   {
     "slug": "http-status",
     "name": "HTTP 状态码查询",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "查询常见 HTTP 状态码说明",
     "operation": "http-status"
   },
   {
     "slug": "my-ip",
     "name": "查询本机 IP",
-    "category": "Web 与网络",
+    "category": "数据库工具",
     "description": "查询当前网络对外显示的公网 IP 地址；不等同于路由器分配的局域网 IP",
     "operation": "my-ip"
   },
   {
     "slug": "email-validate",
     "name": "邮箱格式检查",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "检查常见邮箱格式（非投递验证）",
     "operation": "email-validate"
   },
@@ -514,21 +514,21 @@ export const tools: Tool[] = [
   {
     "slug": "content-type-lookup",
     "name": "MIME / Content-Type 查询",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "按文件扩展名或 MIME 类型查询常见媒体类型",
     "operation": "content-type-lookup"
   },
   {
     "slug": "tcp-port-lookup",
     "name": "常见端口查询",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "按 TCP/UDP 端口号或服务名查询常见端口说明",
     "operation": "tcp-port-lookup"
   },
   {
     "slug": "http-method-reference",
     "name": "HTTP 方法参考",
-    "category": "Web 与网络",
+    "category": "开发者工具",
     "description": "查询 GET、POST、PUT、PATCH、DELETE 等 HTTP 方法用途",
     "operation": "http-method-reference"
   },
