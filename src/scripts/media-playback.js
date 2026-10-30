@@ -10,10 +10,11 @@ if (playbackRoot) {
   fileInput.addEventListener('change', () => {
     const file=fileInput.files&&fileInput.files[0];
     if(!file)return;
+    const clearCurrent=()=>{player.pause();player.removeAttribute('src');player.load();if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl='';}};
     const valid=op==='audio-player'?file.type.startsWith('audio/'):file.type.startsWith('video/');
-    if(!valid){setStatus(op==='audio-player'?'请选择音频文件':'请选择视频文件');fileInput.value='';return;}
-    if(file.size>200*1024*1024){setStatus('文件不能超过 200 MB');fileInput.value='';return;}
-    if(objectUrl)URL.revokeObjectURL(objectUrl);
+    if(!valid){clearCurrent();setStatus(op==='audio-player'?'请选择音频文件':'请选择视频文件');fileInput.value='';return;}
+    if(file.size>200*1024*1024){clearCurrent();setStatus('文件不能超过 200 MB');fileInput.value='';return;}
+    clearCurrent();
     objectUrl=URL.createObjectURL(file);
     player.src=objectUrl;player.load();
     setStatus('已加载 '+file.name+'（'+Math.round(file.size/1024/1024*10)/10+' MB），文件仅在本地播放。');
