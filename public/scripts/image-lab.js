@@ -62,7 +62,7 @@ if (root) {
     if(!selectedFiles.length){fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';return;}
     selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(2)+' MB · 读取尺寸…';row.append(name,size);fileList.appendChild(row);load(f).then(img=>{size.textContent=img.naturalWidth+' × '+img.naturalHeight+' px · '+(f.size/1024/1024).toFixed(2)+' MB';}).catch(()=>{size.textContent='无法读取尺寸';});});
     say('已添加 '+selectedFiles.length+' 张图片'+(oversized.length?'；已跳过 '+oversized.length+' 张超过 25 MB 的文件':''));countLabel.textContent=selectedFiles.length+' 张待处理';
-    if(selectedFiles[0]) detectSourceDimensions(selectedFiles[0]);
+    if(sourceInfo)sourceInfo.textContent='已为 '+selectedFiles.length+' 张图片分别检测尺寸与文件大小；处理时按每张原图独立计算。';
   };
   dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('is-dragging');});
   dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('is-dragging'));
@@ -77,27 +77,19 @@ if (root) {
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('无法读取图片：' + file.name)); };
     img.src = url;
   });
-  let sourceRatio=1, sourceWidth=0, sourceHeight=0, syncingDimensions=false;
+  let syncingDimensions=false;
   const sourceInfo=root.querySelector('#lab-source-info');
   const widthField=root.querySelector('#lab-width'), heightField=root.querySelector('#lab-height');
   const cropX=root.querySelector('#lab-crop-x'), cropY=root.querySelector('#lab-crop-y');
   const cropW=root.querySelector('#lab-crop-width'), cropH=root.querySelector('#lab-crop-height');
   const ratioLocked=()=>root.querySelector('#lab-ratio-lock')?.checked!==false;
   const fitMode=()=>root.querySelector('#lab-fit-mode')?.value||'contain';
-  async function detectSourceDimensions(file){
-    try{
-      const img=await load(file);sourceWidth=img.naturalWidth;sourceHeight=img.naturalHeight;sourceRatio=sourceWidth/sourceHeight;
-      if(sourceInfo)sourceInfo.textContent='原图：'+sourceWidth+' × '+sourceHeight+' px · '+(file.size/1024/1024).toFixed(2)+' MB · 比例 '+sourceRatio.toFixed(4);
-      if(widthField&&heightField){syncingDimensions=true;widthField.value=sourceWidth;heightField.value=sourceHeight;syncingDimensions=false;}
-      if(cropX&&cropY&&cropW&&cropH){cropX.value=0;cropY.value=0;cropW.value=sourceWidth;cropH.value=sourceHeight;}
-    }catch(e){if(sourceInfo)sourceInfo.textContent='无法读取原图尺寸';}
-  }
-  function syncOutputFromWidth(){if(syncingDimensions||!ratioLocked()||!sourceRatio)return;syncingDimensions=true;heightField.value=Math.max(1,Math.round(Number(widthField.value||sourceWidth)/sourceRatio));syncingDimensions=false;}
-  function syncOutputFromHeight(){if(syncingDimensions||!ratioLocked()||!sourceRatio)return;syncingDimensions=true;widthField.value=Math.max(1,Math.round(Number(heightField.value||sourceHeight)*sourceRatio));syncingDimensions=false;}
-  widthField?.addEventListener('input',syncOutputFromWidth);heightField?.addEventListener('input',syncOutputFromHeight);
-  cropW?.addEventListener('input',()=>{if(ratioLocked()&&sourceRatio){cropH.value=Math.max(1,Math.round(Number(cropW.value||1)/sourceRatio));}});
-  cropH?.addEventListener('input',()=>{if(ratioLocked()&&sourceRatio){cropW.value=Math.max(1,Math.round(Number(cropH.value||1)*sourceRatio));}});
-  const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => c.toBlob(resolve,type,quality));
+  function syncOutputFromWidth(){if(syncingDimensions||!ratioLocked())return;const w=Math.max(1,Number(widthField.value)||1);syncingDimensions=true;heightField.value=Math.max(1,Math.round(w));syncingDimensions=false;}
+  function syncOutputFromHeight(){if(syncingDimensions||!ratioLocked())return;const h=Math.max(1,Number(heightField.value)||1);syncingDimensions=true;widthField.value=Math.max(1,Math.round(h));syncingDimensions=false;}
+  // Width/height are target bounds. The actual counterpart is calculated per source image inside process().
+  widthField?.addEventListener('input',()=>{if(ratioLocked())syncOutputFromWidth();});
+  heightField?.addEventListener('input',()=>{if(ratioLocked())syncOutputFromHeight();});
+    const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => c.toBlob(resolve,type,quality));
   const mime = () => { if(slug.includes('png-to-jpg')||slug.includes('webp-to-jpg')) return 'image/jpeg'; if(slug.includes('jpg-to-webp')||slug.includes('png-to-webp')) return 'image/webp'; return val('lab-format'); };
   const ext = t => ({'image/jpeg':'jpg','image/webp':'webp','image/png':'png'}[t] || 'png');
   const downloadBlob = (blob,name) => { const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500); };
@@ -115,10 +107,20 @@ if (root) {
     let image=x.getImageData(0,0,w,h), d=image.data;
     const color=val('lab-color'), threshold=num('lab-threshold'), amount=num('lab-amount');
     if(slug.includes('crop')){
-      const sx=Math.max(0,Math.min(w-1,Math.floor(num('lab-crop-x')))),sy=Math.max(0,Math.min(h-1,Math.floor(num('lab-crop-y'))));
-      const sw=Math.max(1,Math.min(w-sx,Math.floor(num('lab-crop-width')||w))),sh=Math.max(1,Math.min(h-sy,Math.floor(num('lab-crop-height')||h)));
-      const nw=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||sw))),nh=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||sh)));
-      const out=document.createElement('canvas');out.width=nw;out.height=nh;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';ox.drawImage(c,sx,sy,sw,sh,0,0,nw,nh);return {canvas:out,name:file.name};
+      const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w)));
+      const targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
+      let sx=0,sy=0,sw=w,sh=h;
+      if(ratioLocked()){
+        const targetRatio=targetW/targetH, sourceAspect=w/h;
+        if(sourceAspect>targetRatio){sw=Math.max(1,Math.round(h*targetRatio));sx=Math.floor((w-sw)/2);}
+        else {sh=Math.max(1,Math.round(w/targetRatio));sy=Math.floor((h-sh)/2);}
+      } else {
+        sx=Math.max(0,Math.min(w-1,Math.floor(num('lab-crop-x'))));
+        sy=Math.max(0,Math.min(h-1,Math.floor(num('lab-crop-y'))));
+        sw=Math.max(1,Math.min(w-sx,Math.floor(num('lab-crop-width')||w)));
+        sh=Math.max(1,Math.min(h-sy,Math.floor(num('lab-crop-height')||h)));
+      }
+      const out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);return {canvas:out,name:file.name};
     }
     const rgb=hex=>[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)];
     if(slug.includes('grayscale')||slug.includes('black-white')) {
@@ -152,8 +154,15 @@ if (root) {
       const factor=slug.includes('scale-down')?Math.min(1,percent):Math.max(1,percent);
       const out=document.createElement('canvas');out.width=Math.max(1,Math.min(8192,Math.round(w*factor)));out.height=Math.max(1,Math.min(8192,Math.round(h*factor)));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
     } else if(slug.includes('resize')||slug.includes('icon')) {
-      const nw=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),nh=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
-      const out=document.createElement('canvas');out.width=nw;out.height=nh;out.getContext('2d').drawImage(c,0,0,nw,nh);return {canvas:out,name:file.name};
+      const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
+      const mode=fitMode();let nw=targetW,nh=targetH;
+      if(ratioLocked()){
+        const scale=mode==='cover'?Math.max(targetW/w,targetH/h):Math.min(targetW/w,targetH/h);
+        nw=Math.max(1,Math.min(8192,Math.round(w*scale)));nh=Math.max(1,Math.min(8192,Math.round(h*scale)));
+      }
+      const out=document.createElement('canvas');out.width=nw;out.height=nh;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
+      if(!ratioLocked()||mode==='stretch')ox.drawImage(c,0,0,nw,nh);else ox.drawImage(c,0,0,nw,nh);
+      return {canvas:out,name:file.name};
     } else if(slug.includes('color')||slug.includes('tint')) {
       const target=rgb(color);for(let i=0;i<d.length;i+=4){d[i]=Math.round(d[i]*target[0]/255);d[i+1]=Math.round(d[i+1]*target[1]/255);d[i+2]=Math.round(d[i+2]*target[2]/255);}
     } else if(slug.includes('mirror')) {
