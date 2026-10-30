@@ -2,6 +2,13 @@ export type Tool = { slug: string; name: string; category: string; description: 
 
 export const tools: Tool[] = [
   {
+    "slug": "color-workbench",
+    "name": "颜色与配色工具箱",
+    "category": "图片工具",
+    "description": "集中完成 HEX、RGB、HSL 颜色互转、对比度、亮度、反色、随机颜色和配色板生成",
+    "operation": "color-workbench"
+  },
+  {
     "slug": "text-workbench",
     "name": "综合文本工具箱",
     "category": "文本工具",
@@ -331,70 +338,7 @@ export const tools: Tool[] = [
     "description": "摄氏度、华氏度和开尔文换算",
     "operation": "temperature"
   },
-  {
-    "slug": "color-hex-rgb",
-    "name": "HEX 转 RGB",
-    "category": "图片工具",
-    "description": "将 HEX 颜色转换为 RGB",
-    "operation": "color-hex-rgb"
-  },
-  {
-    "slug": "color-rgb-hex",
-    "name": "RGB 转 HEX",
-    "category": "图片工具",
-    "description": "将 RGB 颜色转换为 HEX",
-    "operation": "color-rgb-hex"
-  },
-  {
-    "slug": "color-rgb-hsl",
-    "name": "RGB 转 HSL",
-    "category": "图片工具",
-    "description": "将 RGB 颜色转换为 HSL",
-    "operation": "color-rgb-hsl"
-  },
-  {
-    "slug": "color-hsl-rgb",
-    "name": "HSL 转 RGB",
-    "category": "图片工具",
-    "description": "将 HSL 颜色转换为 RGB",
-    "operation": "color-hsl-rgb"
-  },
-  {
-    "slug": "color-contrast",
-    "name": "对比度计算",
-    "category": "图片工具",
-    "description": "计算两种颜色的 WCAG 对比度",
-    "operation": "color-contrast"
-  },
-  {
-    "slug": "color-random",
-    "name": "随机颜色",
-    "category": "图片工具",
-    "description": "生成随机 HEX 颜色",
-    "operation": "color-random"
-  },
-  {
-    "slug": "color-palette",
-    "name": "配色板生成",
-    "category": "图片工具",
-    "description": "基于主色生成简单配色板",
-    "operation": "color-palette"
-  },
-  {
-    "slug": "color-invert",
-    "name": "颜色反转",
-    "category": "图片工具",
-    "description": "计算 HEX 颜色的反色",
-    "operation": "color-invert"
-  },
-  {
-    "slug": "color-luminance",
-    "name": "相对亮度",
-    "category": "图片工具",
-    "description": "计算颜色相对亮度",
-    "operation": "color-luminance"
-  },
-  {
+                    {
     "slug": "hash-sha1",
     "name": "SHA-1 计算",
     "category": "安全与生成器",
@@ -698,47 +642,27 @@ export const tools: Tool[] = [
   { "slug": "image-size", "name": "图片尺寸与裁切", "category": "图片工具", "description": "在同一工作台中裁切、调整尺寸、等比例放大或缩小图片", "operation": "image-lab" },
   { "slug": "image-replace-color", "name": "图片颜色替换", "category": "图片工具", "description": "将图片中的指定颜色替换为新颜色", "operation": "image-lab" },
   { "slug": "image-grayscale", "name": "图像灰度转换", "category": "图片工具", "description": "使用不同灰度算法将彩色图片转换为黑白图片", "operation": "image-lab" },
-  { "slug": "image-batch-grayscale", "name": "批量图像灰度转换", "category": "图片工具", "description": "一次批量将多张图片转换为灰度图", "operation": "image-lab" },
-  { "slug": "image-batch-copy", "name": "图片批量复制", "category": "图片工具", "description": "按指定数量水平或垂直复制图片", "operation": "image-lab" },
+    { "slug": "image-batch-copy", "name": "图片批量复制", "category": "图片工具", "description": "按指定数量水平或垂直复制图片", "operation": "image-lab" },
   { "slug": "image-rounded-corners", "name": "圆角图片生成器", "category": "图片工具", "description": "为图片设置圆角并导出透明背景", "operation": "image-lab" },
   { "slug": "image-alpha-invert", "name": "PNG 透明区域反转", "category": "图片工具", "description": "反转 PNG 图片的透明与不透明区域", "operation": "image-lab" },
   { "slug": "image-watermark-tile", "name": "图片平铺水印", "category": "图片工具", "description": "为图片添加重复平铺的文字水印", "operation": "image-lab" },
-  { "slug": "image-batch-watermark", "name": "批量图片水印", "category": "图片工具", "description": "为多张图片批量添加文字水印", "operation": "image-lab" },
-  { "slug": "image-sharpen", "name": "图像锐化", "category": "图片工具", "description": "增强图片边缘与细节清晰度", "operation": "image-lab" },
-  { "slug": "image-batch-sharpen", "name": "批量图像锐化", "category": "图片工具", "description": "批量增强多张图片的边缘清晰度", "operation": "image-lab" },
-  { "slug": "image-blur", "name": "图片模糊处理", "category": "图片工具", "description": "通过像素缩放实现图片柔化模糊效果", "operation": "image-lab" },
+    { "slug": "image-sharpen", "name": "图像锐化", "category": "图片工具", "description": "增强图片边缘与细节清晰度", "operation": "image-lab" },
+    { "slug": "image-blur", "name": "图片模糊处理", "category": "图片工具", "description": "通过像素缩放实现图片柔化模糊效果", "operation": "image-lab" },
   { "slug": "image-pixelate", "name": "图片像素化", "category": "图片工具", "description": "将图片转换为马赛克像素效果", "operation": "image-lab" },
   { "slug": "image-emboss", "name": "浮雕效果生成器", "category": "图片工具", "description": "将图片转换为具有明暗立体感的浮雕效果", "operation": "image-lab" },
   { "slug": "image-brightness", "name": "图片亮度调整", "category": "图片工具", "description": "调整图片整体亮度", "operation": "image-lab" },
-  { "slug": "image-crop", "name": "图片尺寸裁切", "category": "图片工具", "description": "自动识别原图尺寸，按指定裁切区域和输出尺寸裁切，可锁定原始比例或自适应填充", "operation": "image-lab" },
-  { "slug": "image-resize", "name": "图片尺寸调整", "category": "图片工具", "description": "自定义宽度和高度调整图片尺寸", "operation": "image-lab" },
-  { "slug": "image-icon-maker", "name": "多尺寸图标生成器", "category": "图片工具", "description": "按指定尺寸生成图标图片", "operation": "image-lab" },
-  { "slug": "image-mirror", "name": "镜像图片生成器", "category": "图片工具", "description": "生成图片的左右镜像拼接效果", "operation": "image-lab" },
+        { "slug": "image-mirror", "name": "镜像图片生成器", "category": "图片工具", "description": "生成图片的左右镜像拼接效果", "operation": "image-lab" },
   { "slug": "image-color-tint", "name": "图片调色工具", "category": "图片工具", "description": "使用指定颜色对图片进行整体色彩调整", "operation": "image-lab" },
-  { "slug": "image-transparent-invert", "name": "透明图像反向处理", "category": "图片工具", "description": "反转图片透明像素与不透明像素", "operation": "image-lab" },
-
+  
   { "slug": "image-noise", "name": "图片添加噪声", "category": "图片工具", "description": "向图片叠加可调强度的随机噪声效果", "operation": "image-lab" },
-  { "slug": "image-batch-noise", "name": "批量图片添加噪声", "category": "图片工具", "description": "批量为图片添加随机噪声效果", "operation": "image-lab" },
-  { "slug": "image-sepia", "name": "棕褐色调滤镜", "category": "图片工具", "description": "为图片添加经典复古棕褐色调", "operation": "image-lab" },
-  { "slug": "image-batch-sepia", "name": "批量棕褐色调滤镜", "category": "图片工具", "description": "批量为图片添加复古棕褐色调", "operation": "image-lab" },
-  { "slug": "image-contrast", "name": "图片对比度调整", "category": "图片工具", "description": "调整图片明暗对比度", "operation": "image-lab" },
-  { "slug": "image-batch-contrast", "name": "批量图片对比度调整", "category": "图片工具", "description": "批量调整多张图片对比度", "operation": "image-lab" },
-  { "slug": "image-saturation", "name": "图片饱和度调整", "category": "图片工具", "description": "调整图片色彩饱和度", "operation": "image-lab" },
-  { "slug": "image-batch-saturation", "name": "批量图片饱和度调整", "category": "图片工具", "description": "批量调整多张图片的色彩饱和度", "operation": "image-lab" },
-  { "slug": "image-vignette", "name": "图片晕影效果", "category": "图片工具", "description": "为图片四周添加暗角晕影效果", "operation": "image-lab" },
-  { "slug": "image-horizontal-flip", "name": "图片水平翻转", "category": "图片工具", "description": "将图片左右翻转", "operation": "image-lab" },
-  { "slug": "image-vertical-flip", "name": "图片垂直翻转", "category": "图片工具", "description": "将图片上下翻转", "operation": "image-lab" },
-  { "slug": "image-rotate", "name": "图片旋转", "category": "图片工具", "description": "按指定角度旋转图片", "operation": "image-lab" },
-  { "slug": "image-border", "name": "图片添加边框", "category": "图片工具", "description": "为图片添加自定义颜色边框", "operation": "image-lab" },
-  { "slug": "image-batch-border", "name": "批量图片添加边框", "category": "图片工具", "description": "批量为图片添加自定义边框", "operation": "image-lab" },
-  { "slug": "image-background", "name": "图片背景添加", "category": "图片工具", "description": "为透明图片添加纯色背景", "operation": "image-lab" },
-  { "slug": "image-rectangle-fit", "name": "图片矩形适配", "category": "图片工具", "description": "将图片等比例适配到指定矩形尺寸", "operation": "image-lab" },
-  { "slug": "image-quality", "name": "图片质量压缩", "category": "图片工具", "description": "通过调整导出质量压缩图片体积", "operation": "image-lab" },
-  { "slug": "image-scale-up", "name": "图片等比例放大", "category": "图片工具", "description": "按比例放大图片尺寸", "operation": "image-lab" },
-  { "slug": "image-scale-down", "name": "图片尺寸缩小", "category": "图片工具", "description": "按比例缩小图片尺寸", "operation": "image-lab" },
-  { "slug": "image-batch-scale-up", "name": "批量图片等比例放大", "category": "图片工具", "description": "批量按比例放大图片尺寸", "operation": "image-lab" },
-  { "slug": "image-batch-scale-down", "name": "批量图片尺寸缩小", "category": "图片工具", "description": "批量按比例缩小图片尺寸", "operation": "image-lab" },
-  { "slug": "png-to-jpg", "name": "PNG 转 JPG", "category": "图片工具", "description": "将 PNG 图片转换为 JPG 格式", "operation": "image-lab" },
+    { "slug": "image-sepia", "name": "棕褐色调滤镜", "category": "图片工具", "description": "为图片添加经典复古棕褐色调", "operation": "image-lab" },
+    { "slug": "image-contrast", "name": "图片对比度调整", "category": "图片工具", "description": "调整图片明暗对比度", "operation": "image-lab" },
+    { "slug": "image-saturation", "name": "图片饱和度调整", "category": "图片工具", "description": "调整图片色彩饱和度", "operation": "image-lab" },
+    { "slug": "image-vignette", "name": "图片晕影效果", "category": "图片工具", "description": "为图片四周添加暗角晕影效果", "operation": "image-lab" },
+        { "slug": "image-border", "name": "图片添加边框", "category": "图片工具", "description": "为图片添加自定义颜色边框", "operation": "image-lab" },
+    { "slug": "image-background", "name": "图片背景添加", "category": "图片工具", "description": "为透明图片添加纯色背景", "operation": "image-lab" },
+    { "slug": "image-quality", "name": "图片质量压缩", "category": "图片工具", "description": "通过调整导出质量压缩图片体积", "operation": "image-lab" },
+          { "slug": "png-to-jpg", "name": "PNG 转 JPG", "category": "图片工具", "description": "将 PNG 图片转换为 JPG 格式", "operation": "image-lab" },
   { "slug": "jpg-to-webp", "name": "JPG 转 WebP", "category": "图片工具", "description": "将 JPG 图片转换为 WebP 格式", "operation": "image-lab" },
   { "slug": "png-to-webp", "name": "PNG 转 WebP", "category": "图片工具", "description": "将 PNG 图片转换为 WebP 格式", "operation": "image-lab" },
   { "slug": "webp-to-jpg", "name": "WebP 转 JPG", "category": "图片工具", "description": "将 WebP 图片转换为 JPG 格式", "operation": "image-lab" },
