@@ -3,24 +3,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { tools } from '../data/tools';
 const categories = [...new Set(tools.map(t => t.category))];
 ---
-<BaseLayout title="工具箱 — 免费在线工具集合" description="集合文本、开发、编码、时间、数学、颜色等实用在线工具。">
+<BaseLayout title="工具箱 — 免费在线工具集合" description="精选文本、开发、图片、文件与日常实用工具，分类清晰，无需安装，打开即用。">
   <section class="hero">
     <div class="hero-badge"><span class="pulse"></span> YOUR DAILY DIGITAL TOOLKIT</div>
     <h1>让每一次处理，<span>简单而高效。</span></h1>
-    <p>精心整理的在线效率工具。无需安装，打开即用，让复杂操作回归简单。</p>
-    <label class="search-wrap"><span>⌕</span><input id="tool-search" type="search" placeholder="搜索工具，例如 JSON、时间戳、Base64…" autocomplete="off" /><kbd>⌕ 搜索工具</kbd></label>
+    <p>把常用能力整理成清晰、可靠的在线工作台。无需安装，打开即用。</p>
+    <label class="search-wrap"><span>⌕</span><input id="tool-search" type="search" placeholder="搜索工具，例如 JSON、日期间隔、图片水印…" autocomplete="off" /><kbd>⌕ 搜索工具</kbd></label>
     <div class="hero-stats"><span><b>{tools.length}+</b> 实用工具</span><span><b>{categories.length}</b> 个分类</span><span><b>0</b> 次安装</span></div>
   </section>
   <section class="section" id="categories">
     <div class="section-heading"><div><span class="eyebrow">BROWSE BY CATEGORY</span><h2>按分类探索</h2></div><span class="muted">找到合适的工具，从这里开始</span></div>
     <div class="category-grid">
-      {categories.map((category, i) => <a class="category-card" href={`/#cat-${i}`}><span class="category-icon">{['Aa','{}','⇄','◷','∑','◉','✳','⌘','▦','✦','⌁','◇'][i % 12]}</span><span><strong>{category}</strong><small>{tools.filter(t => t.category === category).length} 个工具</small></span><span class="arrow">↗</span></a>)}
+      {categories.map((category, i) => <a class="category-card" data-category={category} href={`/#cat-${i}`}><span class="category-icon">{['Aa','{}','⇄','◷','∑','◉','✳','⌘','▦','✦','⌁','◇'][i % 12]}</span><span><strong>{category}</strong><small>{tools.filter(t => t.category === category).length} 个工具</small></span><span class="arrow">↗</span></a>)}
     </div>
   </section>
   <section class="section" id="all-tools">
     <div class="section-heading"><div><span class="eyebrow">ALL UTILITIES</span><h2>全部工具</h2></div><span class="muted" id="result-count">共 {tools.length} 个工具</span></div>
     {categories.map((category, i) => <div class="tool-group" id={`cat-${i}`} data-category={category}>
-      <h3>{category}<span>{tools.filter(t => t.category === category).length}</span></h3>
+      <h3>{category}<span>{tools.filter(t => t.category === category).length} 项精选</span></h3>
       <div class="tool-grid">
         {tools.filter(t => t.category === category).map(t => <a class="tool-card" data-search={`${t.name} ${t.description} ${t.category} ${t.slug}`} href={`/tools/${t.slug}/`}><span class="tool-symbol">{t.name.slice(0,1)}</span><span class="tool-copy"><strong>{t.name}</strong><small>{t.description}</small></span><span class="card-arrow">→</span></a>)}
       </div>
