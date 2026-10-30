@@ -2,6 +2,8 @@ const root = document.querySelector('.workbench');
 if (root) {
   let op = root.dataset.operation;
   const textOperation = document.querySelector('#text-operation');
+  const jsonOperation = document.querySelector('#json-operation');
+  if (op === 'json-workbench') op = jsonOperation?.value || 'json-format';
   if (op === 'text-workbench') op = textOperation?.value || 'text-count';
   const input = document.querySelector('#tool-input');
   const output = document.querySelector('#tool-output');
@@ -33,6 +35,21 @@ if (root) {
     input.placeholder = op === 'text-count' ? '粘贴需要统计的文本…' : '输入或粘贴需要处理的文本…';
   };
   if (textOperation) { textOperation.addEventListener('change',renderTextControls); renderTextControls(); }
+  const renderJsonControls = () => {
+    if (!jsonOperation) return;
+    op = jsonOperation.value;
+    controls.innerHTML = '';
+    if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
+    if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
+    if (op === 'json-to-xml') addInput('xml-root-name','XML 根节点名称','root');
+    if (op === 'json-to-typescript') addInput('ts-interface-name','根接口名称','Root');
+    if (['json-to-go','json-to-kotlin','json-to-rust','json-to-cpp'].includes(op)) addInput('model-name','类型名称','Root');
+    if (op === 'json-to-sql-table') addInput('sql-table-name','表名','items');
+    const label = jsonOperation.options[jsonOperation.selectedIndex]?.textContent || 'JSON 处理';
+    root.querySelector('.workbench-head strong').textContent = label + '工作台';
+    input.placeholder = op.startsWith('xml-') ? '输入 XML 文档…' : op === 'yaml-to-json' ? '输入 YAML 文档…' : op === 'ini-to-json' ? '输入 INI 配置…' : op === 'csv-to-json' ? '输入 CSV 数据…' : '粘贴 JSON 或待转换的数据…';
+  };
+  if (jsonOperation) { jsonOperation.addEventListener('change',renderJsonControls); renderJsonControls(); }
   if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
   if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
   if (op === 'text-diff') addTextArea('diff-second','对比文本（第二份）','');
