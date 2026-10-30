@@ -81,3 +81,26 @@
 .image-result-meta small{font-size:10px}
 .image-result-meta button{grid-column:2;grid-row:1/3}
 .image-settings [data-setting][hidden]{display:none!important}
+
+/* Text tool workspace */
+.text-tool-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 18px;margin-bottom:18px;border:1px solid #e7ebf5;border-radius:12px;background:linear-gradient(110deg,#f7f8ff,#fff)}
+.text-tool-intro>div{display:grid;gap:5px}
+.text-tool-kicker{font-size:9px;font-weight:800;letter-spacing:1.6px;color:#6477d8}
+.text-tool-intro strong{font-size:14px;color:#273248}
+.text-tool-intro small{font-size:10px;color:#8993a3}
+.text-local-badge{flex:none;padding:7px 10px;border-radius:20px;background:#edf8f2;color:#32825f;font-size:10px}
+.text-tool-editor{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.text-editor-panel{min-width:0;padding:13px;border:1px solid #e7eaf0;border-radius:12px;background:#fff}
+.text-editor-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.text-editor-heading .field-label{margin:0;font-size:12px}
+.text-editor-heading>span{font-size:10px;color:#8993a3;white-space:nowrap}
+.text-editor-panel textarea{min-height:300px;height:clamp(260px,34vw,460px);resize:vertical;background:#fbfcfe;border-color:#e5e9f0;font-size:12px;line-height:1.8}
+.text-output-panel textarea{background:#f8f9fc}
+.text-editor-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;color:#9aa2af;font-size:9px}
+.text-quiet-button{border:0;background:transparent;color:#6477d8;font-size:10px;font-weight:700;cursor:pointer;padding:5px}
+.text-quiet-button:hover{color:#3153d5}
+.text-tool-actions{display:flex;align-items:center;gap:12px;margin-top:15px}
+.text-tool-actions #tool-status{font-size:11px;color:#7f8999}
+.text-tool-actions #tool-status:empty{display:none}
+.text-tool-editor+.text-tool-actions .primary-button{min-width:150px}
+@media(max-width:700px){.text-tool-editor{grid-template-columns:1fr}.text-editor-panel textarea{height:240px;min-height:200px}.text-tool-intro{align-items:flex-start;flex-direction:column}.text-local-badge{align-self:flex-start}}
