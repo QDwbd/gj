@@ -107,16 +107,14 @@ if (root) {
     if(slug.includes('crop')){
       const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w)));
       const targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
-      let sx=0,sy=0,sw=w,sh=h;
+      const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
+      const pw=Math.max(1,Math.min(100,num('lab-crop-width')||100))/100, ph=Math.max(1,Math.min(100,num('lab-crop-height')||100))/100;
+      let sx=Math.min(w-1,Math.floor(w*px)), sy=Math.min(h-1,Math.floor(h*py));
+      let sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))), sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
       if(ratioLocked()){
-        const targetRatio=targetW/targetH, sourceAspect=w/h;
-        if(sourceAspect>targetRatio){sw=Math.max(1,Math.round(h*targetRatio));sx=Math.floor((w-sw)/2);}
-        else {sh=Math.max(1,Math.round(w/targetRatio));sy=Math.floor((h-sh)/2);}
-      } else {
-        const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
-        const pw=Math.max(1,Math.min(100,num('lab-crop-width')||100))/100, ph=Math.max(1,Math.min(100,num('lab-crop-height')||100))/100;
-        sx=Math.min(w-1,Math.floor(w*px)); sy=Math.min(h-1,Math.floor(h*py));
-        sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))); sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
+        const targetRatio=targetW/targetH, regionRatio=sw/sh;
+        if(regionRatio>targetRatio){const nextW=Math.max(1,Math.round(sh*targetRatio));sx+=Math.floor((sw-nextW)/2);sw=nextW;}
+        else {const nextH=Math.max(1,Math.round(sw/targetRatio));sy+=Math.floor((sh-nextH)/2);sh=nextH;}
       }
       const out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);return {canvas:out,name:file.name};
     }
