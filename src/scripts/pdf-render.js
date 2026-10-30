@@ -38,7 +38,7 @@ if (root) {
     return [...new Set(result)];
   };
   input.addEventListener('change', async () => {
-    clearPreview(); pdfDocument=null;
+    clearPreview();if(pdfDocument){const previous=pdfDocument;pdfDocument=null;previous.destroy().catch(()=>{});}
     const file=input.files&&input.files[0];
     if(!file) return;
     if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf')) {setStatus('请选择 PDF 文件');return;}
@@ -92,6 +92,6 @@ if (root) {
     a.href=url;a.download='pdf-pages.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
   });
   document.querySelector('#pdf-image-reset').addEventListener('click',()=>{
-    input.value='';pdfDocument=null;document.querySelector('#pdf-image-pages').value='';document.querySelector('#pdf-image-scale').value='1.5';document.querySelector('#pdf-image-background').value='#ffffff';clearPreview();setStatus('已重置');
+    input.value='';if(pdfDocument){const previous=pdfDocument;pdfDocument=null;previous.destroy().catch(()=>{});}document.querySelector('#pdf-image-pages').value='';document.querySelector('#pdf-image-scale').value='1.5';document.querySelector('#pdf-image-background').value='#ffffff';clearPreview();setStatus('已重置');
   });
 }
