@@ -93,7 +93,8 @@ if (root) {
     root.querySelector('#lab-radius-label').textContent='边框 / 圆角宽度';
   }
   if(slug.includes('border')) root.querySelector('#lab-radius-label').textContent='边框宽度';
-  if(slug.includes('round')) root.querySelector('#lab-radius-label').textContent='圆角半径';
+  if(slug.includes('round')) { root.querySelector('#lab-radius-label').textContent='圆角半径（px）'; if(root.querySelector('#lab-radius').value==='40')root.querySelector('#lab-radius').value='80'; }
+  if(slug==='image-watermark-tile'){amountInput.min='12';amountInput.max='160';amountInput.value='36';if(amountNumber){amountNumber.min='12';amountNumber.max='160';amountNumber.value='36';}root.querySelector('#lab-color').value='#172033';syncAmount();}
   const setFiles = files => {
     const incoming=[...files].filter(f=>f.type.startsWith('image/'));
     const oversized=incoming.filter(f=>f.size>25*1024*1024);
@@ -139,9 +140,11 @@ if (root) {
   const ext = t => ({'image/jpeg':'jpg','image/webp':'webp','image/png':'png'}[t] || 'png');
   const downloadBlob = (blob,name) => { const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500); };
   const drawRounded = (c, radius) => {
-    const x=c.getContext('2d'), w=c.width,h=c.height,r=Math.min(radius,w/2,h/2);
+    const x=c.getContext('2d'),w=c.width,h=c.height,r=Math.max(0,Math.min(Number(radius)||0,w/2,h/2));
     const tmp=document.createElement('canvas');tmp.width=w;tmp.height=h;tmp.getContext('2d').drawImage(c,0,0);
-    x.clearRect(0,0,w,h);x.save();x.beginPath();x.moveTo(r,0);x.arcTo(w,0,w,r,r);x.arcTo(w,h,w-r,h,r);x.arcTo(0,h,0,h-r,r);x.arcTo(0,0,r,0,r);x.closePath();x.clip();x.drawImage(tmp,0,0);x.restore();
+    x.clearRect(0,0,w,h);
+    if(r<=0){x.drawImage(tmp,0,0);return;}
+    x.save();x.beginPath();x.moveTo(r,0);x.lineTo(w-r,0);x.quadraticCurveTo(w,0,w,r);x.lineTo(w,h-r);x.quadraticCurveTo(w,h,w-r,h);x.lineTo(r,h);x.quadraticCurveTo(0,h,0,h-r);x.lineTo(0,r);x.quadraticCurveTo(0,0,r,0);x.closePath();x.clip();x.drawImage(tmp,0,0);x.restore();
   };
   async function process(file) {
     const img=await load(file), max=16000000;
@@ -212,8 +215,18 @@ if (root) {
       const offset=(amount-100)*1.8;for(let i=0;i<d.length;i+=4){for(let ch=0;ch<3;ch++)d[i+ch]=Math.max(0,Math.min(255,d[i+ch]+offset));}
     } else if(slug.includes('round')) {
       x.putImageData(image,0,0);drawRounded(c,num('lab-radius'));
+    } else if(slug==='image-watermark-tile') {
+      x.putImageData(image,0,0);
+      const text=val('lab-text')||'©',fontSize=Math.max(12,Math.min(160,amount));
+      const stepX=Math.max(110,fontSize*4.2),stepY=Math.max(76,fontSize*2.8);
+      x.save();x.globalAlpha=.38;x.fillStyle=val('lab-color')||'#172033';x.font='700 '+fontSize+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
+      for(let row=-3;row<Math.ceil(h/stepY)+4;row++)for(let col=-3;col<Math.ceil(w/stepX)+4;col++){
+        const px=col*stepX+(row%2?stepX/2:0),py=row*stepY;
+        x.save();x.translate(px,py);x.rotate(-Math.PI/6);x.fillText(text,0,0);x.restore();
+      }
+      x.restore();
     } else if(slug.includes('watermark')) {
-      x.putImageData(image,0,0);const text=val('lab-text')||'©';x.save();x.globalAlpha=.22;x.fillStyle=val('lab-color');x.font='bold '+Math.max(12,amount)+'px sans-serif';x.rotate(-Math.PI/6);for(let yy=-h;yy<h*2;yy+=Math.max(80,amount*4))for(let xx=-w;xx<w*2;xx+=Math.max(140,amount*8))x.fillText(text,xx,yy);x.restore();
+      x.putImageData(image,0,0);const text=val('lab-text')||'©';x.save();x.globalAlpha=.32;x.fillStyle=val('lab-color');x.font='bold '+Math.max(12,amount)+'px sans-serif';x.rotate(-Math.PI/6);for(let yy=-h;yy<h*2;yy+=Math.max(80,amount*4))for(let xx=-w;xx<w*2;xx+=Math.max(140,amount*8))x.fillText(text,xx,yy);x.restore();
     } else if(slug.includes('tile')||slug.includes('duplicate')||slug.includes('copy')) {
       const count=Math.max(1,Math.min(10,Math.floor(num('lab-count')||2))), vertical=val('lab-mode')==='vertical';const out=document.createElement('canvas');out.width=vertical?w:Math.round(w*count);out.height=vertical?Math.round(h*count):h;const ox=out.getContext('2d');for(let i=0;i<count;i++)ox.drawImage(c,vertical?0:i*w,vertical?i*h:0);return {canvas:out,name:file.name};
     } else if(slug.includes('scale-up')||slug.includes('scale-down')||(slug==='image-size'&&['scale-up','scale-down'].includes(val('lab-size-mode')))) {
