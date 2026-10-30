@@ -112,3 +112,6 @@ if (!pageSource.includes('id="image-crop-width-number"') || !pageSource.includes
 if (!mediaSource.includes("op === 'image-to-base64'") || !mediaSource.includes("op === 'base64-to-image'") || !mediaSource.includes("op === 'svg-to-png'") || !pageSource.includes('id=\"media-workbench\"')) failures.push({op:'media tools UI coverage',status:'FAIL',detail:'Missing browser-side media handlers or UI'});
 console.log(`Smoke test: ${passed}/${operations.length} operations returned success.`);
 if(failures.length) { console.log(JSON.stringify(failures,null,2)); process.exitCode=1; }
+
+const mathCategory = [...toolText.matchAll(/\{[\s\S]*?"slug": "([^"]+)"[\s\S]*?"category": "数学与数字"[\s\S]*?\}/g)].map(m => m[1]);
+if (JSON.stringify(mathCategory) !== JSON.stringify(['date-diff','unit-convert','temperature'])) throw new Error('数学与数字分类必须且只能保留日期间隔、长度单位和温度换算');
