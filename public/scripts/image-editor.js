@@ -83,12 +83,12 @@ if (root) {
     original.onload = () => {
       if (original.naturalWidth > 12000 || original.naturalHeight > 12000 || original.naturalWidth * original.naturalHeight > 50000000) {
         setStatus('图片尺寸过大（限制为单边 12000 px 且不超过 5000 万像素）');
-        original.src = '';
+        original.src = '';if(sourceUrl){URL.revokeObjectURL(sourceUrl);sourceUrl='';}fileInput.value='';download.disabled=true;
         return;
       }
       render();
     };
-    original.onerror = () => setStatus('无法读取图片，请尝试 PNG、JPEG 或 WebP 文件');
+    original.onerror = () => {if(sourceUrl){URL.revokeObjectURL(sourceUrl);sourceUrl='';}download.disabled=true;setStatus('无法读取图片，请尝试 PNG、JPEG 或 WebP 文件');};
     original.src = sourceUrl;
     setStatus('正在读取图片…');
   });
