@@ -22,7 +22,6 @@ export const tools: Tool[] = [
     "description": "集中处理 JSON 格式化、校验、转换、结构整理、字段操作、XML/YAML/CSV/INI 转换及代码模型生成",
     "operation": "json-workbench"
   },
-
   {
     "slug": "url-encode",
     "name": "URL 编码",
@@ -156,7 +155,7 @@ export const tools: Tool[] = [
     "description": "将十六进制解码为文本",
     "operation": "hex-decode"
   },
-    {
+  {
     "slug": "unicode-inspect",
     "name": "Unicode 查看器",
     "category": "开发者工具",
@@ -205,124 +204,12 @@ export const tools: Tool[] = [
     "description": "移除标签并提取文本",
     "operation": "html-to-text"
   },
-    {
-    "slug": "timestamp-date",
-    "name": "时间戳转日期",
-    "category": "数学与数字",
-    "description": "将 Unix 秒或毫秒时间戳转换为日期",
-    "operation": "timestamp-date"
-  },
   {
-    "slug": "date-timestamp",
-    "name": "日期转时间戳",
-    "category": "数学与数字",
-    "description": "将日期字符串转换为 Unix 秒和毫秒",
-    "operation": "date-timestamp"
-  },
-      {
     "slug": "date-diff",
     "name": "日期间隔计算",
     "category": "数学与数字",
     "description": "计算两个日期之间的天数差",
     "operation": "date-diff"
-  },
-      {
-    "slug": "weekday",
-    "name": "星期计算",
-    "category": "数学与数字",
-    "description": "计算日期对应的星期几",
-    "operation": "weekday"
-  },
-    {
-    "slug": "calculator",
-    "name": "计算器",
-    "category": "数学与数字",
-    "description": "支持基础四则运算和括号",
-    "operation": "calculator"
-  },
-  {
-    "slug": "percentage",
-    "name": "百分比计算",
-    "category": "数学与数字",
-    "description": "计算一个数占另一个数的百分比",
-    "operation": "percentage"
-  },
-  {
-    "slug": "percent-change",
-    "name": "百分比变化",
-    "category": "数学与数字",
-    "description": "计算两个数之间的百分比变化",
-    "operation": "percent-change"
-  },
-  {
-    "slug": "average",
-    "name": "平均值计算",
-    "category": "数学与数字",
-    "description": "计算一组数字的平均值",
-    "operation": "average"
-  },
-  {
-    "slug": "median",
-    "name": "中位数计算",
-    "category": "数学与数字",
-    "description": "计算一组数字的中位数",
-    "operation": "median"
-  },
-  {
-    "slug": "sum",
-    "name": "求和计算",
-    "category": "数学与数字",
-    "description": "计算一组数字之和",
-    "operation": "sum"
-  },
-  {
-    "slug": "random-number",
-    "name": "随机数生成",
-    "category": "数学与数字",
-    "description": "生成指定范围的随机整数",
-    "operation": "random-number"
-  },
-  {
-    "slug": "number-base",
-    "name": "进制转换",
-    "category": "数学与数字",
-    "description": "十进制转换为二进制、八进制和十六进制",
-    "operation": "number-base"
-  },
-  {
-    "slug": "roman-numeral",
-    "name": "罗马数字转换",
-    "category": "数学与数字",
-    "description": "阿拉伯数字与罗马数字互转（1-3999）",
-    "operation": "roman-numeral"
-  },
-  {
-    "slug": "factorial",
-    "name": "阶乘计算",
-    "category": "数学与数字",
-    "description": "计算非负整数阶乘（上限 170）",
-    "operation": "factorial"
-  },
-  {
-    "slug": "prime-check",
-    "name": "质数判断",
-    "category": "数学与数字",
-    "description": "判断整数是否为质数",
-    "operation": "prime-check"
-  },
-  {
-    "slug": "gcd-lcm",
-    "name": "最大公约数与最小公倍数",
-    "category": "数学与数字",
-    "description": "计算两个整数的 GCD 与 LCM",
-    "operation": "gcd-lcm"
-  },
-  {
-    "slug": "round-number",
-    "name": "数字舍入",
-    "category": "数学与数字",
-    "description": "按指定小数位数舍入数字",
-    "operation": "round-number"
   },
   {
     "slug": "unit-convert",
@@ -338,7 +225,7 @@ export const tools: Tool[] = [
     "description": "摄氏度、华氏度和开尔文换算",
     "operation": "temperature"
   },
-                    {
+  {
     "slug": "hash-sha1",
     "name": "SHA-1 计算",
     "category": "安全与生成器",
@@ -366,7 +253,7 @@ export const tools: Tool[] = [
     "description": "根据长度和字符种类给出本地估算",
     "operation": "password-strength"
   },
-          {
+  {
     "slug": "aspect-ratio",
     "name": "宽高比计算",
     "category": "开发者工具",
@@ -450,7 +337,6 @@ export const tools: Tool[] = [
     "description": "解码 Base64URL 文本并还原 UTF-8 内容",
     "operation": "base64url-decode"
   },
-
   {
     "slug": "rot47",
     "name": "ROT47 编码/解码",
@@ -465,7 +351,6 @@ export const tools: Tool[] = [
     "description": "按指定数量生成 UUID v4，每行一个",
     "operation": "uuid-bulk"
   },
-
   {
     "slug": "css-format",
     "name": "CSS 格式化",
@@ -480,7 +365,6 @@ export const tools: Tool[] = [
     "description": "格式化常见 SQL 查询语句，突出 SELECT、FROM、WHERE、JOIN 等子句",
     "operation": "sql-format"
   },
-
   {
     "slug": "image-editor",
     "name": "在线图片编辑器",
@@ -488,7 +372,6 @@ export const tools: Tool[] = [
     "description": "在浏览器中裁剪、旋转、翻转、调色、像素化、添加水印并导出 PNG/JPEG/WebP",
     "operation": "image-editor"
   },
-
   {
     "slug": "image-to-base64",
     "name": "图片转 Base64",
@@ -510,7 +393,6 @@ export const tools: Tool[] = [
     "description": "将 SVG 标记渲染为可下载的 PNG 图片",
     "operation": "svg-to-png"
   },
-
   {
     "slug": "content-type-lookup",
     "name": "MIME / Content-Type 查询",
@@ -546,7 +428,6 @@ export const tools: Tool[] = [
     "description": "将文本中的反斜线 uXXXX 序列还原为字符",
     "operation": "unicode-unescape"
   },
-
   {
     "slug": "qr-generator",
     "name": "二维码生成器",
@@ -561,7 +442,6 @@ export const tools: Tool[] = [
     "description": "生成 Code 128、EAN-13、EAN-8、UPC-A、ITF-14 等常见条码并导出 PNG",
     "operation": "barcode-generator"
   },
-
   {
     "slug": "pdf-page-editor",
     "name": "PDF 页面整理",
@@ -576,7 +456,6 @@ export const tools: Tool[] = [
     "description": "在浏览器中合并多个 PDF 文件并下载结果",
     "operation": "pdf-merge"
   },
-
   {
     "slug": "pdf-to-images",
     "name": "PDF 转图片",
@@ -584,7 +463,6 @@ export const tools: Tool[] = [
     "description": "将 PDF 指定页面渲染为 PNG，支持缩放、背景颜色、预览和 ZIP 批量下载",
     "operation": "pdf-to-images"
   },
-
   {
     "slug": "audio-player",
     "name": "本地音频播放器",
@@ -606,7 +484,6 @@ export const tools: Tool[] = [
     "description": "通过浏览器屏幕共享权限录制屏幕并下载 WebM 文件",
     "operation": "screen-recorder"
   },
-
   {
     "slug": "sqlite-browser",
     "name": "SQLite 浏览与编辑",
@@ -614,7 +491,6 @@ export const tools: Tool[] = [
     "description": "在浏览器中打开 SQLite 数据库、执行 SQL 查询与修改并导出数据库",
     "operation": "sqlite-browser"
   },
-
   {
     "slug": "excel-to-json",
     "name": "Excel 转 JSON",
@@ -636,34 +512,200 @@ export const tools: Tool[] = [
     "description": "将 JSON 对象数组生成可下载的 XLSX 工作簿",
     "operation": "json-to-excel"
   },
-
-  { "slug": "image-remove-background", "name": "在线抠图工具", "category": "图片工具", "description": "移除图片中的指定背景颜色并生成透明背景", "operation": "image-lab" },
-  { "slug": "image-transform", "name": "图片旋转与翻转", "category": "图片工具", "description": "在同一工作台中自由旋转图片，并进行水平或垂直翻转", "operation": "image-lab" },
-  { "slug": "image-size", "name": "图片尺寸与裁切", "category": "图片工具", "description": "在同一工作台中裁切、调整尺寸、等比例放大或缩小图片", "operation": "image-lab" },
-  { "slug": "image-replace-color", "name": "图片颜色替换", "category": "图片工具", "description": "将图片中的指定颜色替换为新颜色", "operation": "image-lab" },
-  { "slug": "image-grayscale", "name": "图像灰度转换", "category": "图片工具", "description": "使用不同灰度算法将彩色图片转换为黑白图片", "operation": "image-lab" },
-    { "slug": "image-batch-copy", "name": "图片批量复制", "category": "图片工具", "description": "按指定数量水平或垂直复制图片", "operation": "image-lab" },
-  { "slug": "image-rounded-corners", "name": "圆角图片生成器", "category": "图片工具", "description": "为图片设置圆角并导出透明背景", "operation": "image-lab" },
-  { "slug": "image-alpha-invert", "name": "PNG 透明区域反转", "category": "图片工具", "description": "反转 PNG 图片的透明与不透明区域", "operation": "image-lab" },
-  { "slug": "image-watermark-tile", "name": "图片平铺水印", "category": "图片工具", "description": "为图片添加重复平铺的文字水印", "operation": "image-lab" },
-    { "slug": "image-sharpen", "name": "图像锐化", "category": "图片工具", "description": "增强图片边缘与细节清晰度", "operation": "image-lab" },
-    { "slug": "image-blur", "name": "图片模糊处理", "category": "图片工具", "description": "通过像素缩放实现图片柔化模糊效果", "operation": "image-lab" },
-  { "slug": "image-pixelate", "name": "图片像素化", "category": "图片工具", "description": "将图片转换为马赛克像素效果", "operation": "image-lab" },
-  { "slug": "image-emboss", "name": "浮雕效果生成器", "category": "图片工具", "description": "将图片转换为具有明暗立体感的浮雕效果", "operation": "image-lab" },
-  { "slug": "image-brightness", "name": "图片亮度调整", "category": "图片工具", "description": "调整图片整体亮度", "operation": "image-lab" },
-        { "slug": "image-mirror", "name": "镜像图片生成器", "category": "图片工具", "description": "生成图片的左右镜像拼接效果", "operation": "image-lab" },
-  { "slug": "image-color-tint", "name": "图片调色工具", "category": "图片工具", "description": "使用指定颜色对图片进行整体色彩调整", "operation": "image-lab" },
-  
-  { "slug": "image-noise", "name": "图片添加噪声", "category": "图片工具", "description": "向图片叠加可调强度的随机噪声效果", "operation": "image-lab" },
-    { "slug": "image-sepia", "name": "棕褐色调滤镜", "category": "图片工具", "description": "为图片添加经典复古棕褐色调", "operation": "image-lab" },
-    { "slug": "image-contrast", "name": "图片对比度调整", "category": "图片工具", "description": "调整图片明暗对比度", "operation": "image-lab" },
-    { "slug": "image-saturation", "name": "图片饱和度调整", "category": "图片工具", "description": "调整图片色彩饱和度", "operation": "image-lab" },
-    { "slug": "image-vignette", "name": "图片晕影效果", "category": "图片工具", "description": "为图片四周添加暗角晕影效果", "operation": "image-lab" },
-        { "slug": "image-border", "name": "图片添加边框", "category": "图片工具", "description": "为图片添加自定义颜色边框", "operation": "image-lab" },
-    { "slug": "image-background", "name": "图片背景添加", "category": "图片工具", "description": "为透明图片添加纯色背景", "operation": "image-lab" },
-    { "slug": "image-quality", "name": "图片质量压缩", "category": "图片工具", "description": "通过调整导出质量压缩图片体积", "operation": "image-lab" },
-          { "slug": "png-to-jpg", "name": "PNG 转 JPG", "category": "图片工具", "description": "将 PNG 图片转换为 JPG 格式", "operation": "image-lab" },
-  { "slug": "jpg-to-webp", "name": "JPG 转 WebP", "category": "图片工具", "description": "将 JPG 图片转换为 WebP 格式", "operation": "image-lab" },
-  { "slug": "png-to-webp", "name": "PNG 转 WebP", "category": "图片工具", "description": "将 PNG 图片转换为 WebP 格式", "operation": "image-lab" },
-  { "slug": "webp-to-jpg", "name": "WebP 转 JPG", "category": "图片工具", "description": "将 WebP 图片转换为 JPG 格式", "operation": "image-lab" },
+  {
+    "slug": "image-remove-background",
+    "name": "在线抠图工具",
+    "category": "图片工具",
+    "description": "移除图片中的指定背景颜色并生成透明背景",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-transform",
+    "name": "图片旋转与翻转",
+    "category": "图片工具",
+    "description": "在同一工作台中自由旋转图片，并进行水平或垂直翻转",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-size",
+    "name": "图片尺寸与裁切",
+    "category": "图片工具",
+    "description": "在同一工作台中裁切、调整尺寸、等比例放大或缩小图片",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-replace-color",
+    "name": "图片颜色替换",
+    "category": "图片工具",
+    "description": "将图片中的指定颜色替换为新颜色",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-grayscale",
+    "name": "图像灰度转换",
+    "category": "图片工具",
+    "description": "使用不同灰度算法将彩色图片转换为黑白图片",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-batch-copy",
+    "name": "图片批量复制",
+    "category": "图片工具",
+    "description": "按指定数量水平或垂直复制图片",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-rounded-corners",
+    "name": "圆角图片生成器",
+    "category": "图片工具",
+    "description": "为图片设置圆角并导出透明背景",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-alpha-invert",
+    "name": "PNG 透明区域反转",
+    "category": "图片工具",
+    "description": "反转 PNG 图片的透明与不透明区域",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-watermark-tile",
+    "name": "图片平铺水印",
+    "category": "图片工具",
+    "description": "为图片添加重复平铺的文字水印",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-sharpen",
+    "name": "图像锐化",
+    "category": "图片工具",
+    "description": "增强图片边缘与细节清晰度",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-blur",
+    "name": "图片模糊处理",
+    "category": "图片工具",
+    "description": "通过像素缩放实现图片柔化模糊效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-pixelate",
+    "name": "图片像素化",
+    "category": "图片工具",
+    "description": "将图片转换为马赛克像素效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-emboss",
+    "name": "浮雕效果生成器",
+    "category": "图片工具",
+    "description": "将图片转换为具有明暗立体感的浮雕效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-brightness",
+    "name": "图片亮度调整",
+    "category": "图片工具",
+    "description": "调整图片整体亮度",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-mirror",
+    "name": "镜像图片生成器",
+    "category": "图片工具",
+    "description": "生成图片的左右镜像拼接效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-color-tint",
+    "name": "图片调色工具",
+    "category": "图片工具",
+    "description": "使用指定颜色对图片进行整体色彩调整",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-noise",
+    "name": "图片添加噪声",
+    "category": "图片工具",
+    "description": "向图片叠加可调强度的随机噪声效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-sepia",
+    "name": "棕褐色调滤镜",
+    "category": "图片工具",
+    "description": "为图片添加经典复古棕褐色调",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-contrast",
+    "name": "图片对比度调整",
+    "category": "图片工具",
+    "description": "调整图片明暗对比度",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-saturation",
+    "name": "图片饱和度调整",
+    "category": "图片工具",
+    "description": "调整图片色彩饱和度",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-vignette",
+    "name": "图片晕影效果",
+    "category": "图片工具",
+    "description": "为图片四周添加暗角晕影效果",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-border",
+    "name": "图片添加边框",
+    "category": "图片工具",
+    "description": "为图片添加自定义颜色边框",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-background",
+    "name": "图片背景添加",
+    "category": "图片工具",
+    "description": "为透明图片添加纯色背景",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "image-quality",
+    "name": "图片质量压缩",
+    "category": "图片工具",
+    "description": "通过调整导出质量压缩图片体积",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "png-to-jpg",
+    "name": "PNG 转 JPG",
+    "category": "图片工具",
+    "description": "将 PNG 图片转换为 JPG 格式",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "jpg-to-webp",
+    "name": "JPG 转 WebP",
+    "category": "图片工具",
+    "description": "将 JPG 图片转换为 WebP 格式",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "png-to-webp",
+    "name": "PNG 转 WebP",
+    "category": "图片工具",
+    "description": "将 PNG 图片转换为 WebP 格式",
+    "operation": "image-lab"
+  },
+  {
+    "slug": "webp-to-jpg",
+    "name": "WebP 转 JPG",
+    "category": "图片工具",
+    "description": "将 WebP 图片转换为 JPG 格式",
+    "operation": "image-lab"
+  }
 ];
