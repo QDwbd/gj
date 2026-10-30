@@ -753,7 +753,7 @@ if (root) {
     const chars=[...value].length;
     const lines=value?value.split(/\\r\\n|\\r|\\n/).length:0;
     const bytes=new TextEncoder().encode(value).length;
-    inputStats.textContent=`${chars.toLocaleString()} 字符 · `NaN 行 · `NaN 字节`;
+    inputStats.textContent=chars.toLocaleString()+' 字符 · '+lines+' 行 · '+bytes.toLocaleString()+' 字节';
   };
   input.addEventListener('input',updateTextStats);
   updateTextStats();
@@ -764,7 +764,7 @@ if (root) {
       output.value=String(result);
       status.textContent='处理完成';
       meta.textContent=`${[...output.value].length.toLocaleString()} 个字符`;
-      if(outputStats)outputStats.textContent=`${[...output.value].length.toLocaleString()} 字符 · `NaN 行`;
+      if(outputStats)outputStats.textContent=[...output.value].length.toLocaleString()+' 字符 · '+(output.value?output.value.split(/\\r\\n|\\r|\\n/).length:0)+' 行';
     } catch(e) {
       output.value='';
       status.textContent='处理失败';
