@@ -1161,4 +1161,25 @@ export const tools: Tool[] = [
     "description": "将 JSON 对象数组生成可下载的 XLSX 工作簿",
     "operation": "json-to-excel"
   }
+
+  { "slug": "image-remove-background", "name": "在线抠图工具", "category": "图片工具", "description": "移除图片中的指定背景颜色并生成透明背景", "operation": "image-lab" },
+  { "slug": "image-replace-color", "name": "图片颜色替换", "category": "图片工具", "description": "将图片中的指定颜色替换为新颜色", "operation": "image-lab" },
+  { "slug": "image-grayscale", "name": "图像灰度转换", "category": "图片工具", "description": "使用不同灰度算法将彩色图片转换为黑白图片", "operation": "image-lab" },
+  { "slug": "image-batch-grayscale", "name": "批量图像灰度转换", "category": "图片工具", "description": "一次批量将多张图片转换为灰度图", "operation": "image-lab" },
+  { "slug": "image-batch-copy", "name": "图片批量复制", "category": "图片工具", "description": "按指定数量水平或垂直复制图片", "operation": "image-lab" },
+  { "slug": "image-rounded-corners", "name": "圆角图片生成器", "category": "图片工具", "description": "为图片设置圆角并导出透明背景", "operation": "image-lab" },
+  { "slug": "image-alpha-invert", "name": "PNG 透明区域反转", "category": "图片工具", "description": "反转 PNG 图片的透明与不透明区域", "operation": "image-lab" },
+  { "slug": "image-watermark-tile", "name": "图片平铺水印", "category": "图片工具", "description": "为图片添加重复平铺的文字水印", "operation": "image-lab" },
+  { "slug": "image-batch-watermark", "name": "批量图片水印", "category": "图片工具", "description": "为多张图片批量添加文字水印", "operation": "image-lab" },
+  { "slug": "image-sharpen", "name": "图像锐化", "category": "图片工具", "description": "增强图片边缘与细节清晰度", "operation": "image-lab" },
+  { "slug": "image-batch-sharpen", "name": "批量图像锐化", "category": "图片工具", "description": "批量增强多张图片的边缘清晰度", "operation": "image-lab" },
+  { "slug": "image-blur", "name": "图片模糊处理", "category": "图片工具", "description": "通过像素缩放实现图片柔化模糊效果", "operation": "image-lab" },
+  { "slug": "image-pixelate", "name": "图片像素化", "category": "图片工具", "description": "将图片转换为马赛克像素效果", "operation": "image-lab" },
+  { "slug": "image-emboss", "name": "浮雕效果生成器", "category": "图片工具", "description": "将图片转换为具有明暗立体感的浮雕效果", "operation": "image-lab" },
+  { "slug": "image-brightness", "name": "图片亮度调整", "category": "图片工具", "description": "调整图片整体亮度", "operation": "image-lab" },
+  { "slug": "image-resize", "name": "图片尺寸调整", "category": "图片工具", "description": "自定义宽度和高度调整图片尺寸", "operation": "image-lab" },
+  { "slug": "image-icon-maker", "name": "多尺寸图标生成器", "category": "图片工具", "description": "按指定尺寸生成图标图片", "operation": "image-lab" },
+  { "slug": "image-mirror", "name": "镜像图片生成器", "category": "图片工具", "description": "生成图片的左右镜像拼接效果", "operation": "image-lab" },
+  { "slug": "image-color-tint", "name": "图片调色工具", "category": "图片工具", "description": "使用指定颜色对图片进行整体色彩调整", "operation": "image-lab" },
+  { "slug": "image-transparent-invert", "name": "透明图像反向处理", "category": "图片工具", "description": "反转图片透明像素与不透明像素", "operation": "image-lab" },
 ];
