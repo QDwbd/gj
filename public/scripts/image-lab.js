@@ -2,8 +2,6 @@ const root = document.querySelector('#image-lab-workbench');
 if (root) {
   const slug = root.dataset.imageSlug;
   const filesInput = root.querySelector('#lab-files');
-  const canvas = root.querySelector('#lab-canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const status = root.querySelector('#lab-status');
   const preview = root.querySelector('#lab-preview');
   const download = root.querySelector('#lab-download');
@@ -15,6 +13,7 @@ if (root) {
   const settings = {
     amount: ['grayscale','sharpen','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality'].some(k=>slug.includes(k)),
     threshold: slug.includes('remove-background') || slug.includes('replace-color'),
+    feather: slug.includes('remove-background') || slug.includes('cutout'),
     color: ['remove-background','replace-color','tint','watermark','border','background','rectangle-fit'].some(k=>slug.includes(k)),
     color2: slug.includes('replace-color'),
     angle: slug.includes('rotate'),
@@ -41,6 +40,9 @@ if (root) {
   else if (slug.includes('grayscale')) amountLabel.textContent='灰度级数';
   else amountLabel.textContent='处理强度';
   const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value');
+  const thresholdInput=root.querySelector('#lab-threshold'), featherInput=root.querySelector('#lab-feather');
+  if(thresholdInput)thresholdInput.addEventListener('input',()=>root.querySelector('#lab-threshold-value').textContent=thresholdInput.value);
+  if(featherInput)featherInput.addEventListener('input',()=>root.querySelector('#lab-feather-value').textContent=featherInput.value);
   const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug.includes('vignette')?'%':'');
   if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.max='100'; }
   else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.max='200'; }
@@ -111,10 +113,10 @@ if (root) {
         if(sourceAspect>targetRatio){sw=Math.max(1,Math.round(h*targetRatio));sx=Math.floor((w-sw)/2);}
         else {sh=Math.max(1,Math.round(w/targetRatio));sy=Math.floor((h-sh)/2);}
       } else {
-        sx=Math.max(0,Math.min(w-1,Math.floor(num('lab-crop-x'))));
-        sy=Math.max(0,Math.min(h-1,Math.floor(num('lab-crop-y'))));
-        sw=Math.max(1,Math.min(w-sx,Math.floor(num('lab-crop-width')||w)));
-        sh=Math.max(1,Math.min(h-sy,Math.floor(num('lab-crop-height')||h)));
+        const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
+        const pw=Math.max(1,Math.min(100,num('lab-crop-width')||100))/100, ph=Math.max(1,Math.min(100,num('lab-crop-height')||100))/100;
+        sx=Math.min(w-1,Math.floor(w*px)); sy=Math.min(h-1,Math.floor(h*py));
+        sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))); sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
       }
       const out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);return {canvas:out,name:file.name};
     }
@@ -127,7 +129,20 @@ if (root) {
     } else if(slug.includes('invert')||slug.includes('negative')) {
       for(let i=0;i<d.length;i+=4){d[i]=255-d[i];d[i+1]=255-d[i+1];d[i+2]=255-d[i+2];}
     } else if(slug.includes('remove-background')||slug.includes('cutout')) {
-      const target=rgb(color);for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);if(dist<=threshold*1.75)d[i+3]=0;}
+      // Edge-connected color segmentation: only remove background-colored pixels connected to the image border.
+      const target=rgb(color), tolerance=Math.max(0,threshold*1.75), feather=Math.max(0,num('lab-feather')*1.5);
+      const total=w*h, visited=new Uint8Array(total), queue=new Uint32Array(total);
+      let head=0,tail=0;
+      const distanceAt=p=>{const i=p*4;return Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);};
+      const enqueue=p=>{if(p<0||p>=total||visited[p])return;visited[p]=1;if(distanceAt(p)<=tolerance+feather)queue[tail++]=p;};
+      for(let xx=0;xx<w;xx++){enqueue(xx);if(h>1)enqueue((h-1)*w+xx);}
+      for(let yy=1;yy<h-1;yy++){enqueue(yy*w);if(w>1)enqueue(yy*w+w-1);}
+      while(head<tail){
+        const p=queue[head++], x0=p%w, y0=(p-x0)/w, i=p*4, dist=distanceAt(p);
+        if(dist<=tolerance)d[i+3]=0;
+        else if(feather>0)d[i+3]=Math.round(d[i+3]*Math.max(0,Math.min(1,(dist-tolerance)/feather)));
+        if(x0>0)enqueue(p-1);if(x0<w-1)enqueue(p+1);if(y0>0)enqueue(p-w);if(y0<h-1)enqueue(p+w);
+      }
     } else if(slug.includes('replace-color')) {
       const target=rgb(val('lab-color')), replacement=rgb(val('lab-color2'));for(let i=0;i<d.length;i+=4){if(Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2])<=threshold*1.75){d[i]=replacement[0];d[i+1]=replacement[1];d[i+2]=replacement[2];}}
     } else if(slug.includes('sharpen')||slug.includes('emboss')||slug.includes('engrave')) {
@@ -202,15 +217,15 @@ if (root) {
     if(files.length>100){say('一次最多处理 100 张图片');return;}
     outputs=[];preview.innerHTML='';download.disabled=true;countLabel.textContent='处理中…';say('正在处理 '+files.length+' 张图片，请稍候…');
     let failed=0;
-    for(let i=0;i<files.length;i++){const file=files[i];try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const card=document.createElement('article');card.className='image-result-card';const img=document.createElement('img');img.src=result.canvas.toDataURL('image/png');img.alt=file.name;const meta=document.createElement('div');meta.className='image-result-meta';const title=document.createElement('strong');title.textContent=file.name;const dims=document.createElement('small');dims.textContent=result.canvas.width+' × '+result.canvas.height+' px';const btn=document.createElement('button');btn.type='button';btn.className='secondary-button';btn.textContent='下载';btn.addEventListener('click',async()=>{const type=mime(),blob=await blobOf(result.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,result.name.replace(/\\.[^.]+$/,'')+'.'+ext(type));});meta.append(title,dims,btn);card.append(img,meta);preview.appendChild(card);say('处理进度 '+(i+1)+' / '+files.length+' 张');}catch(e){failed++;}}
-    if(outputs.length){canvas.width=outputs[0].canvas.width;canvas.height=outputs[0].canvas.height;ctx.drawImage(outputs[0].canvas,0,0);canvas.hidden=false;download.disabled=false;countLabel.textContent=outputs.length+' 张已完成';say('处理完成：成功 '+outputs.length+' 张'+(failed?'，失败 '+failed+' 张':'')+'。可在每张预览卡片中单独下载。');}
+    for(let i=0;i<files.length;i++){const file=files[i];try{const result=await process(file);outputs.push({canvas:result.canvas,name:result.name});const card=document.createElement('article');card.className='image-result-card';const meta=document.createElement('div');meta.className='image-result-meta';const title=document.createElement('strong');title.textContent=file.name;const dims=document.createElement('small');dims.textContent=result.canvas.width+' × '+result.canvas.height+' px';const btn=document.createElement('button');btn.type='button';btn.className='secondary-button';btn.textContent='下载';btn.addEventListener('click',async()=>{const type=mime(),blob=await blobOf(result.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,result.name.replace(/\\.[^.]+$/,'')+'.'+ext(type));});meta.append(title,dims,btn);card.append(meta);preview.appendChild(card);say('处理进度 '+(i+1)+' / '+files.length+' 张');}catch(e){failed++;}}
+    if(outputs.length){download.disabled=false;countLabel.textContent=outputs.length+' 张已完成';say('处理完成：成功 '+outputs.length+' 张'+(failed?'，失败 '+failed+' 张':'')+'。可在每条结果记录中单独下载。');}
     else {countLabel.textContent='没有可预览的结果';say('处理失败，请确认文件格式受浏览器支持。');}
   });
   root.querySelector('#lab-download').addEventListener('click',async()=>{
     if(!outputs.length)return;const type=mime(),item=outputs[0];
     const blob=await blobOf(item.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));
     if(blob)downloadBlob(blob,item.name.replace(/\.[^.]+$/,'')+'.'+ext(type));
-    say('已下载第一张结果。其余图片请点击对应预览卡片上的“下载”。');
+    say('已下载第一张结果。其余图片请点击对应结果记录中的“下载”。');
   });
-  root.querySelector('#lab-reset').addEventListener('click',()=>{filesInput.value='';selectedFiles=[];fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';preview.innerHTML='<div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div>';canvas.hidden=true;outputs=[];download.disabled=true;countLabel.textContent='等待导入图片';say('已重置。请选择图片开始。');});
+  root.querySelector('#lab-reset').addEventListener('click',()=>{filesInput.value='';selectedFiles=[];fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';preview.innerHTML='<div class="image-preview-placeholder"><strong>暂无处理结果</strong><small>处理完成后显示文件信息和下载入口，不加载大图预览</small></div>';outputs=[];download.disabled=true;countLabel.textContent='等待导入图片';say('已重置。请选择图片开始。');});
 }
