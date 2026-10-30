@@ -188,9 +188,9 @@ const { tool } = Astro.props;
           <div class="image-lab-divider"></div>
           <div class="image-lab-section-title"><span>02</span><div><strong>调整参数</strong><small>根据当前工具显示相关选项</small></div></div>
           <div class="image-settings">
-            <label data-setting="amount"><span id="lab-amount-label">处理强度</span><input id="lab-amount" type="range" min="0" max="200" value="100" /><output id="lab-amount-value">100</output></label>
-            <label data-setting="threshold"><span>背景颜色容差</span><output id="lab-threshold-value">35</output><input id="lab-threshold" type="range" min="0" max="255" value="35" /></label>
-             <label data-setting="feather"><span>边缘柔化</span><output id="lab-feather-value">24</output><input id="lab-feather" type="range" min="0" max="100" value="24" /></label>
+            <label data-setting="amount" class="image-range-setting"><span id="lab-amount-label">处理强度</span><output id="lab-amount-value">100</output><div class="image-range-control"><input id="lab-amount" type="range" min="0" max="200" value="100" /><div class="image-range-number"><input id="lab-amount-number" type="number" min="0" max="200" value="100" aria-label="精确输入处理数值" /><span class="image-range-unit" id="lab-amount-unit">%</span></div></div></label>
+            <label data-setting="threshold" class="image-range-setting"><span>背景颜色容差</span><output id="lab-threshold-value">35</output><div class="image-range-control"><input id="lab-threshold" type="range" min="0" max="255" value="35" /><input id="lab-threshold-number" type="number" min="0" max="255" value="35" aria-label="精确输入背景颜色容差" /></div></label>
+            <label data-setting="feather" class="image-range-setting"><span>边缘柔化</span><output id="lab-feather-value">24</output><div class="image-range-control"><input id="lab-feather" type="range" min="0" max="100" value="24" /><input id="lab-feather-number" type="number" min="0" max="100" value="24" aria-label="精确输入边缘柔化数值" /></div></label>
             <label data-setting="color"><span id="lab-color-label">目标颜色</span><input id="lab-color" type="color" value="#ffffff" /></label>
             <label data-setting="color2">替换颜色<input id="lab-color2" type="color" value="#4263eb" /></label>
             <label data-setting="transform-mode">变换方式<select id="lab-transform-mode"><option value="rotate">旋转</option><option value="horizontal">水平翻转</option><option value="vertical">垂直翻转</option></select></label>
