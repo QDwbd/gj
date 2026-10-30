@@ -11,5 +11,9 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Report dependency security advisories
+        run: |
+          npm audit --json > /tmp/npm-audit.json || true
+          node --input-type=module -e "import fs from 'node:fs'; const a=JSON.parse(fs.readFileSync('/tmp/npm-audit.json','utf8')); console.log(JSON.stringify({metadata:a.metadata?.vulnerabilities, vulnerabilities:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable,via:v.via.map(x=>typeof x==='string'?x:{title:x.title,url:x.url,range:x.range})}))},null,2));"
       - run: npm test
       - run: npm run build
