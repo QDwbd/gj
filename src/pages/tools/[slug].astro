@@ -173,28 +173,44 @@ const { tool } = Astro.props;
 
 
     {tool.operation === 'image-lab' && <section id="image-lab-workbench" class="workbench image-lab-workbench" data-image-slug={tool.slug} style="display:block">
-      <div class="workbench-head"><div><span class="status-dot"></span><strong>图片处理工作台</strong></div><span class="privacy-label">图片仅在本地浏览器处理</span></div>
-      <label class="field-label" for="lab-files">选择图片（支持多选，最多 100 张；单张建议不超过 25 MB）</label>
-      <input id="lab-files" type="file" accept="image/*" multiple />
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0">
-        <label>处理强度 / 亮度 / 灰度级数 <input id="lab-amount" type="number" min="1" max="300" value="100" /></label>
-        <label>颜色容差 <input id="lab-threshold" type="number" min="0" max="255" value="35" /></label>
-        <label>目标颜色 <input id="lab-color" type="color" value="#ffffff" /></label>
-        <label>替换颜色 <input id="lab-color2" type="color" value="#4263eb" /></label>
-        <label>角度 / 边框宽度 px <input id="lab-angle" type="number" min="-360" max="360" value="90" /></label>
-        <label>圆角半径 / 边框宽度 px <input id="lab-radius" type="number" min="0" max="2000" value="40" /></label>
-        <label>水印文字 <input id="lab-text" type="text" maxlength="80" value="©" /></label>
-        <label>复制数量 <input id="lab-count" type="number" min="1" max="10" value="2" /></label>
-        <label>输出宽度 px <input id="lab-width" type="number" min="1" max="8192" value="512" /></label>
-        <label>输出高度 px <input id="lab-height" type="number" min="1" max="8192" value="512" /></label>
-        <label>算法 / 排列方向 <select id="lab-mode"><option value="709">BT.709 灰度 / 横向</option><option value="601">BT.601 灰度</option><option value="average">平均灰度</option><option value="vertical">纵向排列</option></select></label>
-        <label>导出格式 <select id="lab-format"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></label>
+      <div class="image-lab-top">
+        <div><span class="status-dot"></span><strong>专业图片处理台</strong><span class="image-lab-local">100% 浏览器本地处理</span></div>
+        <span class="image-lab-hint">支持 PNG、JPG、WebP、GIF、AVIF 等常见图片</span>
       </div>
-      <div class="action-row"><button id="lab-process" class="primary-button" type="button">开始处理</button><button id="lab-download" class="secondary-button" type="button" disabled>下载处理结果</button><button id="lab-reset" class="secondary-button" type="button">清空 / 重置</button></div>
-      <p id="lab-status" role="status">请选择图片开始处理。支持多张图片批量操作。</p>
-      <div id="lab-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px"></div>
-      <canvas id="lab-canvas" hidden style="max-width:100%;height:auto;margin-top:16px"></canvas>
-      <p class="muted">隐私说明：图片不会上传到服务器。处理在当前浏览器内完成；大尺寸图片会自动缩小到安全像素上限。</p>
+      <div class="image-lab-layout">
+        <aside class="image-lab-sidebar">
+          <div class="image-lab-section-title"><span>01</span><div><strong>导入图片</strong><small>单张或批量选择</small></div></div>
+          <label class="image-dropzone" id="lab-dropzone" for="lab-files">
+            <span class="image-drop-icon">＋</span><strong>点击选择或拖放图片</strong><small>最多 100 张 · 单张建议不超过 25 MB</small>
+            <input id="lab-files" type="file" accept="image/*" multiple />
+          </label>
+          <div id="lab-file-list" class="image-file-list"><span class="image-empty">尚未添加图片</span></div>
+          <div class="image-lab-divider"></div>
+          <div class="image-lab-section-title"><span>02</span><div><strong>调整参数</strong><small>根据当前工具显示相关选项</small></div></div>
+          <div class="image-settings">
+            <label data-setting="amount"><span id="lab-amount-label">处理强度</span><input id="lab-amount" type="range" min="0" max="200" value="100" /><output id="lab-amount-value">100</output></label>
+            <label data-setting="threshold">颜色容差<input id="lab-threshold" type="range" min="0" max="255" value="35" /></label>
+            <label data-setting="color"><span id="lab-color-label">目标颜色</span><input id="lab-color" type="color" value="#ffffff" /></label>
+            <label data-setting="color2">替换颜色<input id="lab-color2" type="color" value="#4263eb" /></label>
+            <label data-setting="angle">旋转角度<input id="lab-angle" type="number" min="-360" max="360" value="90" /></label>
+            <label data-setting="radius"><span id="lab-radius-label">圆角半径</span><input id="lab-radius" type="number" min="0" max="2000" value="40" /></label>
+            <label data-setting="text">水印文字<input id="lab-text" type="text" maxlength="80" value="©" /></label>
+            <label data-setting="count">复制数量<input id="lab-count" type="number" min="1" max="10" value="2" /></label>
+            <div class="image-dimensions" data-setting="dimensions"><label>输出宽度<input id="lab-width" type="number" min="1" max="8192" value="1200" /></label><label>输出高度<input id="lab-height" type="number" min="1" max="8192" value="800" /></label></div>
+            <label data-setting="mode">算法 / 排列方向<select id="lab-mode"><option value="709">BT.709 灰度 / 横向</option><option value="601">BT.601 灰度</option><option value="average">平均灰度</option><option value="vertical">纵向排列</option></select></label>
+            <label data-setting="format">导出格式<select id="lab-format"><option value="image/png">PNG · 无损</option><option value="image/jpeg">JPEG · 通用</option><option value="image/webp">WebP · 高压缩</option></select></label>
+          </div>
+          <div class="image-lab-actions"><button id="lab-process" class="primary-button" type="button">应用处理 <span>→</span></button><button id="lab-reset" class="secondary-button" type="button">重置</button></div>
+          <p class="image-privacy-note">🔒 图片只在当前设备处理，不会主动上传。大图会限制在约 1600 万像素以内以避免浏览器内存不足。</p>
+        </aside>
+        <div class="image-lab-workspace">
+          <div class="image-preview-head"><div><strong>处理预览</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载全部结果</button></div>
+          <div id="lab-status" class="image-lab-status" role="status">先添加图片，再调整参数并点击“应用处理”。</div>
+          <div id="lab-preview" class="image-result-grid"><div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div></div>
+          <canvas id="lab-canvas" hidden></canvas>
+          <div class="image-output-note">导出提示：透明背景建议选择 PNG；照片可选择 JPEG 或 WebP。批量文件可逐张下载，避免浏览器拦截多个下载。</div>
+        </div>
+      </div>
     </section>}
 
     <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images", "audio-player", "video-speed", "screen-recorder", "sqlite-browser", "excel-to-json", "excel-to-html", "json-to-excel", "image-lab"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
