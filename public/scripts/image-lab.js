@@ -94,7 +94,7 @@ if (root) {
   }
   if(slug.includes('border')) root.querySelector('#lab-radius-label').textContent='边框宽度';
   if(slug.includes('round')) { root.querySelector('#lab-radius-label').textContent='圆角半径（px）'; if(root.querySelector('#lab-radius').value==='40')root.querySelector('#lab-radius').value='80'; }
-  if(slug==='image-watermark-tile'){amountInput.min='12';amountInput.max='160';amountInput.value='36';if(amountNumber){amountNumber.min='12';amountNumber.max='160';amountNumber.value='36';}root.querySelector('#lab-color').value='#172033';syncAmount();}
+  if(slug==='image-watermark-tile'){amountInput.min='12';amountInput.max='160';amountInput.value='52';if(amountNumber){amountNumber.min='12';amountNumber.max='160';amountNumber.value='52';}root.querySelector('#lab-color').value='#172033';root.querySelector('#lab-text').value='请勿盗用';syncAmount();}
   const setFiles = files => {
     const incoming=[...files].filter(f=>f.type.startsWith('image/'));
     const oversized=incoming.filter(f=>f.size>25*1024*1024);
@@ -218,11 +218,11 @@ if (root) {
     } else if(slug==='image-watermark-tile') {
       x.putImageData(image,0,0);
       const text=val('lab-text')||'©',fontSize=Math.max(12,Math.min(160,amount));
-      const stepX=Math.max(110,fontSize*4.2),stepY=Math.max(76,fontSize*2.8);
-      x.save();x.globalAlpha=.38;x.fillStyle=val('lab-color')||'#172033';x.font='700 '+fontSize+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
+      const stepX=Math.max(100,fontSize*3.6),stepY=Math.max(68,fontSize*2.35);
+      x.save();x.globalAlpha=.68;x.fillStyle=val('lab-color')||'#172033';x.strokeStyle='rgba(255,255,255,.72)';x.lineWidth=Math.max(1.5,fontSize*.055);x.lineJoin='round';x.font='800 '+fontSize+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
       for(let row=-3;row<Math.ceil(h/stepY)+4;row++)for(let col=-3;col<Math.ceil(w/stepX)+4;col++){
         const px=col*stepX+(row%2?stepX/2:0),py=row*stepY;
-        x.save();x.translate(px,py);x.rotate(-Math.PI/6);x.fillText(text,0,0);x.restore();
+        x.save();x.translate(px,py);x.rotate(-Math.PI/6);x.strokeText(text,0,0);x.fillText(text,0,0);x.restore();
       }
       x.restore();
     } else if(slug.includes('watermark')) {
