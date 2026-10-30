@@ -589,14 +589,7 @@ export const tools: Tool[] = [
     "description": "根据长度和字符种类给出本地估算",
     "operation": "password-strength"
   },
-      {
-    "slug": "url-safe-base64",
-    "name": "URL 安全 Base64",
-    "category": "开发者工具",
-    "description": "进行 URL-safe Base64 编码",
-    "operation": "url-safe-base64"
-  },
-      {
+          {
     "slug": "aspect-ratio",
     "name": "宽高比计算",
     "category": "Web 与网络",
@@ -609,13 +602,6 @@ export const tools: Tool[] = [
     "category": "Web 与网络",
     "description": "查询常见 HTTP 状态码说明",
     "operation": "http-status"
-  },
-  {
-    "slug": "mime-type",
-    "name": "MIME 类型查询",
-    "category": "Web 与网络",
-    "description": "查询常见文件扩展名的 MIME 类型",
-    "operation": "mime-type"
   },
   {
     "slug": "my-ip",
