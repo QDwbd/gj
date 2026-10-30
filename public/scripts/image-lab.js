@@ -39,6 +39,8 @@ if (root) {
     if(slug.includes('grayscale')||slug.includes('black-white')) {
       const mode=val('lab-mode'), weights=mode==='601'?[.299,.587,.114]:mode==='average'?[1/3,1/3,1/3]:[.2126,.7152,.0722];
       for(let i=0;i<d.length;i+=4){const g=d[i]*weights[0]+d[i+1]*weights[1]+d[i+2]*weights[2];const v=amount>0?Math.round(g/(256/Math.max(2,amount))* (256/Math.max(2,amount))):g;d[i]=d[i+1]=d[i+2]=v;}
+    } else if(slug.includes('alpha')||slug.includes('transparent')) {
+      for(let i=0;i<d.length;i+=4){if(d[i+3]<128)d[i+3]=255;else d[i+3]=0;}
     } else if(slug.includes('invert')||slug.includes('negative')) {
       for(let i=0;i<d.length;i+=4){d[i]=255-d[i];d[i+1]=255-d[i+1];d[i+2]=255-d[i+2];}
     } else if(slug.includes('remove-background')||slug.includes('cutout')) {
@@ -65,8 +67,6 @@ if (root) {
       const out=document.createElement('canvas');out.width=nw;out.height=nh;out.getContext('2d').drawImage(c,0,0,nw,nh);return {canvas:out,name:file.name};
     } else if(slug.includes('color')||slug.includes('tint')) {
       const target=rgb(color);for(let i=0;i<d.length;i+=4){d[i]=Math.round(d[i]*target[0]/255);d[i+1]=Math.round(d[i+1]*target[1]/255);d[i+2]=Math.round(d[i+2]*target[2]/255);}
-    } else if(slug.includes('alpha')||slug.includes('transparent')) {
-      for(let i=0;i<d.length;i+=4){if(d[i+3]<128)d[i+3]=255;else d[i+3]=0;}
     } else if(slug.includes('mirror')) {
       const out=document.createElement('canvas');out.width=w*2;out.height=h;const ox=out.getContext('2d');ox.drawImage(c,0,0);ox.save();ox.translate(w*2,0);ox.scale(-1,1);ox.drawImage(c,0,0);ox.restore();return {canvas:out,name:file.name};
     }
