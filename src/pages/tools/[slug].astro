@@ -229,14 +229,19 @@ const { tool } = Astro.props;
       </select>}
       {tool.operation === 'json-workbench' && <div class="text-tool-intro"><div><span class="text-tool-kicker">JSON & DATA WORKSPACE</span><strong>JSON 与数据格式处理中心</strong><small>格式整理、结构转换、字段处理和代码模型生成集中完成</small></div><span class="text-local-badge">本地处理 · 不上传数据</span></div>}
       {tool.operation === 'json-workbench' && <label class="field-label" for="json-operation">选择处理功能</label>}
+      {tool.operation === 'color-workbench' && <label class="field-label" for="color-operation">选择颜色功能</label>}
       {tool.operation === 'json-workbench' && <select id="json-operation" class="text-operation-select">
         <optgroup label="JSON 基础"><option value="json-format">JSON 格式化</option><option value="json-minify">JSON 压缩</option><option value="json-validate">JSON 校验</option><option value="json-key-sort">JSON 键排序</option><option value="json-stringify">JSON 字符串化</option><option value="json-unstringify">JSON 字符串还原</option><option value="json-array-dedupe">JSON 数组去重</option></optgroup>
         <optgroup label="JSON 结构处理"><option value="json-pick-fields">JSON 字段提取</option><option value="json-merge">JSON 深度合并</option><option value="json-lines-merge">JSON Lines 合并</option><option value="json-to-array">JSON 对象转数组</option><option value="json-flatten">JSON 展平</option><option value="json-unflatten">JSON 还原嵌套结构</option></optgroup>
         <optgroup label="格式互转"><option value="json-to-yaml">JSON 转 YAML</option><option value="yaml-to-json">YAML 转 JSON</option><option value="json-to-xml">JSON 转 XML</option><option value="xml-to-json">XML 转 JSON</option><option value="xml-format">XML 格式化</option><option value="xml-minify">XML 压缩</option><option value="xml-escape">XML 转义</option><option value="xml-unescape">XML 反转义</option><option value="csv-to-json">CSV 转 JSON</option><option value="json-to-csv">JSON 转 CSV</option><option value="ini-to-json">INI 转 JSON</option><option value="json-to-ini">JSON 转 INI</option><option value="cookie-to-json">Cookie 转 JSON</option><option value="url-params-to-json">URL 参数转 JSON</option><option value="list-to-json">列表转 JSON</option><option value="json-to-list">JSON 数组转列表</option></optgroup>
         <optgroup label="代码模型生成"><option value="json-to-js-object">JSON 转 JavaScript 对象</option><option value="json-to-typescript">JSON 转 TypeScript 接口</option><option value="json-to-go">JSON 转 Go struct</option><option value="json-to-rust">JSON 转 Rust struct</option><option value="json-to-cpp">JSON 转 C++ struct</option><option value="json-to-java">JSON 转 Java 模型</option><option value="json-to-kotlin">JSON 转 Kotlin data class</option><option value="json-to-csharp">JSON 转 C# 模型</option><option value="json-to-php">JSON 转 PHP 数组</option><option value="json-to-sql-table">JSON 转 SQL 建表语句</option><option value="json-to-html-table">JSON 转 HTML 表格</option></optgroup>
       </select>}
+      {tool.operation === 'color-workbench' && <select id="color-operation" class="text-operation-select">
+        <optgroup label="颜色格式转换"><option value="color-hex-rgb">HEX 转 RGB</option><option value="color-rgb-hex">RGB 转 HEX</option><option value="color-rgb-hsl">RGB 转 HSL</option><option value="color-hsl-rgb">HSL 转 RGB</option></optgroup>
+        <optgroup label="颜色分析与生成"><option value="color-contrast">颜色对比度</option><option value="color-luminance">相对亮度</option><option value="color-invert">颜色反转</option><option value="color-random">随机颜色</option><option value="color-palette">配色板生成</option></optgroup>
+      </select>}
       <div id="tool-controls" class="tool-controls"></div>
-      {(tool.category === '文本工具' || tool.operation === 'json-workbench') ? <div class="text-tool-editor">
+      {(tool.category === '文本工具' || tool.operation === 'json-workbench' || tool.operation === 'color-workbench') ? <div class="text-tool-editor">
         <div class="text-editor-panel">
           <div class="text-editor-heading"><label class="field-label" for="tool-input">输入文本</label><span id="text-input-stats">0 字符 · 0 行</span></div>
           <textarea id="tool-input" rows="14" spellcheck="false" placeholder="在这里输入或粘贴文本…"></textarea>
