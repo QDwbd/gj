@@ -189,7 +189,8 @@ const { tool } = Astro.props;
           <div class="image-lab-section-title"><span>02</span><div><strong>调整参数</strong><small>根据当前工具显示相关选项</small></div></div>
           <div class="image-settings">
             <label data-setting="amount"><span id="lab-amount-label">处理强度</span><input id="lab-amount" type="range" min="0" max="200" value="100" /><output id="lab-amount-value">100</output></label>
-            <label data-setting="threshold">颜色容差<input id="lab-threshold" type="range" min="0" max="255" value="35" /></label>
+            <label data-setting="threshold"><span>背景颜色容差</span><output id="lab-threshold-value">35</output><input id="lab-threshold" type="range" min="0" max="255" value="35" /></label>
+             <label data-setting="feather"><span>边缘柔化</span><output id="lab-feather-value">24</output><input id="lab-feather" type="range" min="0" max="100" value="24" /></label>
             <label data-setting="color"><span id="lab-color-label">目标颜色</span><input id="lab-color" type="color" value="#ffffff" /></label>
             <label data-setting="color2">替换颜色<input id="lab-color2" type="color" value="#4263eb" /></label>
             <label data-setting="angle">旋转角度<input id="lab-angle" type="number" min="-360" max="360" value="90" /></label>
@@ -197,7 +198,7 @@ const { tool } = Astro.props;
             <label data-setting="text">水印文字<input id="lab-text" type="text" maxlength="80" value="©" /></label>
             <label data-setting="count">复制数量<input id="lab-count" type="number" min="1" max="10" value="2" /></label>
             <div class="image-dimensions" data-setting="dimensions"><label>输出宽度（px）<input id="lab-width" type="number" min="1" max="8192" value="1200" /></label><label>输出高度（px）<input id="lab-height" type="number" min="1" max="8192" value="800" /></label></div>
-            <div class="image-dimensions" data-setting="crop-region" hidden><label>裁切起点 X<input id="lab-crop-x" type="number" min="0" value="0" /></label><label>裁切起点 Y<input id="lab-crop-y" type="number" min="0" value="0" /></label><label>裁切宽度<input id="lab-crop-width" type="number" min="1" value="1200" /></label><label>裁切高度<input id="lab-crop-height" type="number" min="1" value="800" /></label></div>
+            <div class="image-dimensions" data-setting="crop-region" hidden><label>裁切起点 X（%）<input id="lab-crop-x" type="number" min="0" max="99" value="0" /></label><label>裁切起点 Y（%）<input id="lab-crop-y" type="number" min="0" max="99" value="0" /></label><label>裁切宽度（%）<input id="lab-crop-width" type="number" min="1" max="100" value="100" /></label><label>裁切高度（%）<input id="lab-crop-height" type="number" min="1" max="100" value="100" /></label></div>
             <label data-setting="ratio-lock" hidden class="image-ratio-lock"><input id="lab-ratio-lock" type="checkbox" checked /> 锁定原图宽高比例</label>
             <label data-setting="fit-mode" hidden>尺寸适配方式<select id="lab-fit-mode"><option value="contain">完整显示（留白）</option><option value="cover">填满尺寸（自动裁边）</option><option value="stretch">拉伸至指定尺寸</option></select></label>
             <div class="image-source-info" id="lab-source-info" data-setting="source-info" hidden>原图尺寸：等待读取</div>
@@ -208,7 +209,7 @@ const { tool } = Astro.props;
           <p class="image-privacy-note">🔒 图片只在当前设备处理，不会主动上传。大图会限制在约 1600 万像素以内以避免浏览器内存不足。</p>
         </aside>
         <div class="image-lab-workspace">
-          <div class="image-preview-head"><div><strong>处理预览</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载首张结果</button></div>
+          <div class="image-preview-head"><div><strong>处理结果</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载首张结果</button></div>
           <div id="lab-status" class="image-lab-status" role="status">先添加图片，再调整参数并点击“应用处理”。</div>
           <div id="lab-preview" class="image-result-grid"><div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div></div>
           <canvas id="lab-canvas" hidden></canvas>
