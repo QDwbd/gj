@@ -1,132 +1,13 @@
+  {
+    "slug": "text-workbench",
+    "name": "综合文本工具箱",
+    "category": "文本工具",
+    "description": "在一个工作台中完成文本统计、行处理、大小写转换、查找替换、正则过滤、列表整理和文本比较",
+    "operation": "text-workbench"
+  },
 export type Tool = { slug: string; name: string; category: string; description: string; operation: string };
 
 export const tools: Tool[] = [
-  {
-    "slug": "text-count",
-    "name": "字数统计",
-    "category": "文本工具",
-    "description": "统计字符、单词、行数和段落数",
-    "operation": "text-count"
-  },
-  {
-    "slug": "line-sort",
-    "name": "文本行排序",
-    "category": "文本工具",
-    "description": "按字母或字符顺序排序文本行",
-    "operation": "line-sort"
-  },
-  {
-    "slug": "line-dedupe",
-    "name": "文本行去重",
-    "category": "文本工具",
-    "description": "删除重复行并保留首次出现顺序",
-    "operation": "line-dedupe"
-  },
-  {
-    "slug": "line-reverse",
-    "name": "文本行反转",
-    "category": "文本工具",
-    "description": "反转文本行的排列顺序",
-    "operation": "line-reverse"
-  },
-  {
-    "slug": "trim-lines",
-    "name": "清理行首尾空格",
-    "category": "文本工具",
-    "description": "清理每一行首尾空白",
-    "operation": "trim-lines"
-  },
-  {
-    "slug": "blank-lines",
-    "name": "删除空白行",
-    "category": "文本工具",
-    "description": "移除空行和仅含空格的行",
-    "operation": "blank-lines"
-  },
-  {
-    "slug": "case-upper",
-    "name": "转大写",
-    "category": "文本工具",
-    "description": "将英文文本转换为大写",
-    "operation": "case-upper"
-  },
-  {
-    "slug": "case-lower",
-    "name": "转小写",
-    "category": "文本工具",
-    "description": "将英文文本转换为小写",
-    "operation": "case-lower"
-  },
-  {
-    "slug": "case-title",
-    "name": "标题格式转换",
-    "category": "文本工具",
-    "description": "将英文单词转换为标题式大小写",
-    "operation": "case-title"
-  },
-  {
-    "slug": "case-sentence",
-    "name": "句首大写",
-    "category": "文本工具",
-    "description": "将句子开头转换为大写",
-    "operation": "case-sentence"
-  },
-  {
-    "slug": "text-reverse",
-    "name": "文本反转",
-    "category": "文本工具",
-    "description": "反转文本中的字符",
-    "operation": "text-reverse"
-  },
-  {
-    "slug": "text-replace",
-    "name": "查找替换",
-    "category": "文本工具",
-    "description": "按指定字符串查找并替换",
-    "operation": "text-replace"
-  },
-  {
-    "slug": "text-to-slug",
-    "name": "Slug 生成器",
-    "category": "文本工具",
-    "description": "将标题转换为 URL 友好的 slug",
-    "operation": "text-to-slug"
-  },
-  {
-    "slug": "text-to-lines",
-    "name": "逗号转行",
-    "category": "文本工具",
-    "description": "将逗号分隔的文本转换为逐行列表",
-    "operation": "comma-to-lines"
-  },
-  {
-    "slug": "lines-to-comma",
-    "name": "行转逗号",
-    "category": "文本工具",
-    "description": "将多行内容转换为逗号分隔文本",
-    "operation": "lines-to-comma"
-  },
-  {
-    "slug": "text-clean",
-    "name": "文本清理",
-    "category": "文本工具",
-    "description": "去除控制字符并规范换行",
-    "operation": "text-clean"
-  },
-  {
-    "slug": "text-escape-regex",
-    "name": "正则转义",
-    "category": "文本工具",
-    "description": "转义正则表达式中的特殊字符",
-    "operation": "text-escape-regex"
-  },
-  {
-    "slug": "text-unique-words",
-    "name": "唯一单词",
-    "category": "文本工具",
-    "description": "提取文本中的不重复单词",
-    "operation": "text-unique-words"
-  },
   {
     "slug": "json-format",
     "name": "JSON 格式化",
@@ -751,48 +632,6 @@ export const tools: Tool[] = [
     "operation": "json-to-array"
   },
   {
-    "slug": "text-filter",
-    "name": "正则文本过滤",
-    "category": "文本工具",
-    "description": "使用正则表达式筛选匹配的文本行",
-    "operation": "text-filter"
-  },
-  {
-    "slug": "text-prefix",
-    "name": "批量添加前缀",
-    "category": "文本工具",
-    "description": "为每一行批量添加指定前缀",
-    "operation": "text-prefix"
-  },
-  {
-    "slug": "text-suffix",
-    "name": "批量添加后缀",
-    "category": "文本工具",
-    "description": "为每一行批量添加指定后缀",
-    "operation": "text-suffix"
-  },
-  {
-    "slug": "text-wrap-quotes",
-    "name": "逐行添加引号",
-    "category": "文本工具",
-    "description": "为每一行添加指定引号并转义内部引号",
-    "operation": "text-wrap-quotes"
-  },
-  {
-    "slug": "substring-extract",
-    "name": "子字符串提取",
-    "category": "文本工具",
-    "description": "按开始和结束标记提取两者之间的内容",
-    "operation": "substring-extract"
-  },
-  {
-    "slug": "text-diff",
-    "name": "文本差异对比",
-    "category": "文本工具",
-    "description": "逐行比较两段文本并标记新增、删除和相同行",
-    "operation": "text-diff"
-  },
-  {
     "slug": "base64url-encode",
     "name": "Base64URL 编码",
     "category": "开发者工具",
@@ -826,13 +665,6 @@ export const tools: Tool[] = [
     "category": "开发者工具",
     "description": "将 XML 实体还原为普通文本",
     "operation": "xml-unescape"
-  },
-  {
-    "slug": "list-duplicates",
-    "name": "列表重复项分析",
-    "category": "文本工具",
-    "description": "统计列表中重复项目及其出现次数，忽略首尾空格",
-    "operation": "list-duplicates"
   },
 
   {
@@ -936,20 +768,6 @@ export const tools: Tool[] = [
     "operation": "json-array-dedupe"
   },
   {
-    "slug": "list-shuffle",
-    "name": "列表随机打乱",
-    "category": "文本工具",
-    "description": "使用浏览器随机源打乱逐行列表顺序",
-    "operation": "list-shuffle"
-  },
-  {
-    "slug": "list-chunk",
-    "name": "列表分组切片",
-    "category": "文本工具",
-    "description": "按指定每组数量将逐行列表分组",
-    "operation": "list-chunk"
-  },
-  {
     "slug": "json-to-go",
     "name": "JSON 转 Go struct",
     "category": "开发者工具",
@@ -1042,20 +860,6 @@ export const tools: Tool[] = [
     "category": "开发者工具",
     "description": "将文本中的反斜线 uXXXX 序列还原为字符",
     "operation": "unicode-unescape"
-  },
-  {
-    "slug": "list-random-pick",
-    "name": "名单随机抽取",
-    "category": "文本工具",
-    "description": "从逐行名单中无重复随机抽取指定数量",
-    "operation": "list-random-pick"
-  },
-  {
-    "slug": "list-group-random",
-    "name": "名单随机分组",
-    "category": "文本工具",
-    "description": "将逐行名单随机打乱并均匀分到指定组数",
-    "operation": "list-group-random"
   },
   {
     "slug": "json-to-rust",
@@ -1163,6 +967,8 @@ export const tools: Tool[] = [
   },
 
   { "slug": "image-remove-background", "name": "在线抠图工具", "category": "图片工具", "description": "移除图片中的指定背景颜色并生成透明背景", "operation": "image-lab" },
+  { "slug": "image-transform", "name": "图片旋转与翻转", "category": "图片工具", "description": "在同一工作台中自由旋转图片，并进行水平或垂直翻转", "operation": "image-lab" },
+  { "slug": "image-size", "name": "图片尺寸与裁切", "category": "图片工具", "description": "在同一工作台中裁切、调整尺寸、等比例放大或缩小图片", "operation": "image-lab" },
   { "slug": "image-replace-color", "name": "图片颜色替换", "category": "图片工具", "description": "将图片中的指定颜色替换为新颜色", "operation": "image-lab" },
   { "slug": "image-grayscale", "name": "图像灰度转换", "category": "图片工具", "description": "使用不同灰度算法将彩色图片转换为黑白图片", "operation": "image-lab" },
   { "slug": "image-batch-grayscale", "name": "批量图像灰度转换", "category": "图片工具", "description": "一次批量将多张图片转换为灰度图", "operation": "image-lab" },
