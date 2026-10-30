@@ -26,10 +26,15 @@ if (root) {
     const input = document.querySelector('#media-base64-input');
     const preview = document.querySelector('#media-image-preview');
     const mime = document.querySelector('#media-mime');
+    let actualMime=mime.value;
     const show = () => {
       const raw = input.value.trim();
+      document.querySelector('#media-download').disabled=true;
       if (!raw) { preview.removeAttribute('src'); setStatus('请输入 Base64 或 Data URL'); return; }
-      const url = raw.startsWith('data:image/') ? raw : 'data:' + mime.value + ';base64,' + raw.replace(/\s/g, '');
+      const dataMime=raw.match(/^data:(image\/[a-z0-9.+-]+);base64,/i);
+      if(raw.startsWith('data:')&&!dataMime){preview.removeAttribute('src');setStatus('Data URL 格式无效或不是 Base64 图片');return;}
+      actualMime=dataMime?dataMime[1].toLowerCase():mime.value;
+      const url = dataMime ? raw : 'data:' + actualMime + ';base64,' + raw.replace(/\s/g, '');
       preview.onload = () => { setStatus('图片已解码：' + preview.naturalWidth + ' × ' + preview.naturalHeight + ' px'); document.querySelector('#media-download').disabled = false; };
       preview.onerror = () => { setStatus('解码失败：请检查 Base64 内容与图片 MIME 类型'); document.querySelector('#media-download').disabled = true; };
       preview.src = url;
@@ -37,7 +42,7 @@ if (root) {
     document.querySelector('#media-convert').addEventListener('click', show);
     document.querySelector('#media-download').addEventListener('click', () => {
       if (!preview.src || !preview.naturalWidth) return;
-      const a = document.createElement('a'); a.href = preview.src; a.download = 'decoded-image.' + ({'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif','image/avif':'avif'}[mime.value] || 'png'); a.click();
+      const a = document.createElement('a'); a.href = preview.src; a.download = 'decoded-image.' + ({'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif','image/avif':'avif'}[actualMime] || 'png'); a.click();
     });
     document.querySelector('#media-clear').addEventListener('click', () => { input.value = ''; preview.removeAttribute('src'); document.querySelector('#media-download').disabled = true; setStatus('已清空'); });
   }
@@ -47,6 +52,7 @@ if (root) {
     const ctx = canvas.getContext('2d');
     let ready = false;
     document.querySelector('#media-convert').addEventListener('click', () => {
+      ready=false;canvas.hidden=true;document.querySelector('#media-download').disabled=true;
       const svg = input.value.trim();
       if (!svg.startsWith('<svg') && !/^<\?xml[\s\S]*?<svg/.test(svg)) { setStatus('请输入有效的 SVG 标记'); return; }
       if (/<script\b|<foreignObject\b|\son[a-z]+\s*=|(?:href|src)\s*=\s*["']\s*(?:https?:|\/\/)|url\(\s*["']?https?:|<!DOCTYPE|<!ENTITY/i.test(svg)) { setStatus('出于安全考虑，SVG 不可包含脚本、外部资源或事件处理器'); return; }
