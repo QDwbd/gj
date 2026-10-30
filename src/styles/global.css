@@ -61,3 +61,13 @@
 .image-result-meta button{grid-column:2;grid-row:1/3;padding:7px 10px;font-size:9px}
 .image-output-note{font-size:9px;color:#9aa2af;line-height:1.7;margin-top:12px}
 @media(max-width:760px){.image-lab-layout{grid-template-columns:1fr}.image-lab-sidebar{border-right:0;border-bottom:1px solid var(--line)}.image-lab-workspace{padding:14px}.image-lab-hint{display:none}.image-result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.image-preview-placeholder{min-height:230px}}
+
+
+/* Automatic source dimensions, aspect-ratio sizing and crop controls */
+.image-ratio-lock{display:flex!important;align-items:center;gap:8px;font-size:10px;color:#586477}
+.image-ratio-lock input{accent-color:#5369dc}
+.image-source-info{padding:9px 10px;border-radius:8px;background:#f1f4ff;color:#5264b8;font-size:10px;line-height:1.6;overflow-wrap:anywhere}
+.image-settings [data-setting="fit-mode"] select{margin-top:2px}
+.image-settings [data-setting="crop-region"]{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.image-settings [data-setting="crop-region"] label{display:grid;gap:5px;font-size:10px;color:#687386}
+.image-settings [data-setting="crop-region"] input{width:100%;min-width:0;border:1px solid #dfe4ec;border-radius:8px;padding:8px;background:#fff;font-size:11px}
