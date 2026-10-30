@@ -108,6 +108,7 @@ if (root) {
     const v = id => document.querySelector('#'+id)?.value ?? '';
     const n = id => Number(v(id));
     switch(op) {
+      case 'text-workbench': return `字符数：${[...s].length}\n行数：${s ? s.split(/\r?\n/).length : 0}`;
       case 'csv-clean': return s.replace(/\r\n?/g,'\n').split('\n').map(line=>line.trim()).join('\n');
       case 'text-count': return `字符数（含空格）：${[...s].length}\n字符数（不含空白）：${[...s.replace(/\s/g,'')].length}\n单词数：${words(s).length}\n行数：${s ? s.split(/\r?\n/).length : 0}\n段落数：${s.trim() ? s.trim().split(/\n\s*\n/).length : 0}`;
       case 'line-sort': return s.split(/\r?\n/).sort((a,b)=>a.localeCompare(b)).join('\n');
