@@ -745,12 +745,40 @@ if (root) {
   }
   // A few controls used by advanced tools
   if (['hmac-sha256'].includes(op)) addInput('secret-key','HMAC 密钥');
+  const inputStats=document.querySelector('#text-input-stats');
+  const outputStats=document.querySelector('#text-output-stats');
+  const updateTextStats=()=>{
+    if(!inputStats)return;
+    const value=input.value;
+    const chars=[...value].length;
+    const lines=value?value.split(/\\r\\n|\\r|\\n/).length:0;
+    const bytes=new TextEncoder().encode(value).length;
+    inputStats.textContent=`${chars.toLocaleString()} 字符 · `NaN 行 · `NaN 字节`;
+  };
+  input.addEventListener('input',updateTextStats);
+  updateTextStats();
   document.querySelector('#run-tool')?.addEventListener('click', async () => {
     status.textContent='处理中…';
-    try { const result=await run(input.value); output.value=String(result); status.textContent='完成'; meta.textContent=`${output.value.length} 个字符`; }
-    catch(e) { output.value=''; status.textContent='处理失败'; meta.textContent=e?.message||'请检查输入格式'; }
+    try {
+      const result=await run(input.value);
+      output.value=String(result);
+      status.textContent='处理完成';
+      meta.textContent=`${[...output.value].length.toLocaleString()} 个字符`;
+      if(outputStats)outputStats.textContent=`${[...output.value].length.toLocaleString()} 字符 · `NaN 行`;
+    } catch(e) {
+      output.value='';
+      status.textContent='处理失败';
+      meta.textContent=e?.message||'请检查输入格式';
+      if(outputStats)outputStats.textContent='请检查输入格式';
+    }
   });
-  document.querySelector('#clear-tool')?.addEventListener('click',()=>{input.value='';output.value='';status.textContent='';meta.textContent='结果仅在本页显示';});
+  input.addEventListener('keydown',event=>{
+    if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){
+      event.preventDefault();
+      document.querySelector('#run-tool')?.click();
+    }
+  });
+  document.querySelector('#clear-tool')?.addEventListener('click',()=>{input.value='';output.value='';status.textContent='等待输入';meta.textContent='结果仅在本页显示';if(outputStats)outputStats.textContent='等待处理';updateTextStats();input.focus();});
   document.querySelector('#copy-tool')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.value);status.textContent='已复制';}catch{output.select();status.textContent='请手动复制';}});
   if (['color-random','uuid-gen','password-gen'].includes(op)) input.value = op==='color-random'?'#4263eb':'generate';
 }
