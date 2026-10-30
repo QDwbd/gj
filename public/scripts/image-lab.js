@@ -11,20 +11,22 @@ if (root) {
   const dropzone = root.querySelector('#lab-dropzone');
   let selectedFiles = [];
   const settings = {
-    amount: ['grayscale','sharpen','emboss','engrave','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality'].some(k=>slug.includes(k)),
+    amount: slug==='image-size' || ['grayscale','sharpen','emboss','engrave','blur','pixelate','brightness','watermark','noise','sepia','contrast','saturation','vignette','scale-up','scale-down','quality'].some(k=>slug.includes(k)),
     threshold: slug.includes('remove-background') || slug.includes('replace-color'),
     feather: slug.includes('remove-background') || slug.includes('cutout'),
     color: ['remove-background','replace-color','tint','watermark','border','background','rectangle-fit'].some(k=>slug.includes(k)),
     color2: slug.includes('replace-color'),
-    angle: slug.includes('rotate'),
+    angle: slug.includes('rotate') || slug==='image-transform',
+    'transform-mode': slug==='image-transform',
+    'size-mode': slug==='image-size',
     radius: slug.includes('round') || slug.includes('border'),
     text: slug.includes('watermark'),
     count: slug.includes('copy') || slug.includes('duplicate'),
-    dimensions: ['resize','icon','background','rectangle-fit','crop'].some(k=>slug.includes(k)),
-    'crop-region': slug.includes('crop'),
-    'ratio-lock': ['resize','icon','crop'].some(k=>slug.includes(k)),
-    'fit-mode': ['resize','icon','rectangle-fit','background'].some(k=>slug.includes(k)),
-    'source-info': ['resize','icon','crop','rectangle-fit','background'].some(k=>slug.includes(k)),
+    dimensions: slug==='image-size' || ['resize','icon','background','rectangle-fit','crop'].some(k=>slug.includes(k)),
+    'crop-region': slug.includes('crop') || slug==='image-size',
+    'ratio-lock': slug==='image-size' || ['resize','icon','crop'].some(k=>slug.includes(k)),
+    'fit-mode': slug==='image-size' || ['resize','icon','rectangle-fit','background'].some(k=>slug.includes(k)),
+    'source-info': slug==='image-size' || ['resize','icon','crop','rectangle-fit','background'].some(k=>slug.includes(k)),
     mode: slug.includes('grayscale') || slug.includes('copy'),
     format: slug.includes('format') || slug.includes('convert') || slug.includes('quality')
   };
@@ -40,10 +42,30 @@ if (root) {
   else if (slug.includes('grayscale')) amountLabel.textContent='灰度级数';
   else amountLabel.textContent='处理强度';
   const amountInput=root.querySelector('#lab-amount'), amountValue=root.querySelector('#lab-amount-value');
+  const transformMode=root.querySelector('#lab-transform-mode'), sizeMode=root.querySelector('#lab-size-mode');
+  const syncGroupedSettings=()=>{
+    if(slug==='image-transform'){
+      root.querySelector('[data-setting="angle"]').hidden=transformMode.value!=='rotate';
+    }
+    if(slug==='image-size'){
+      const mode=sizeMode.value;
+      root.querySelector('[data-setting="crop-region"]').hidden=mode!=='crop';
+      root.querySelector('[data-setting="ratio-lock"]').hidden=mode==='scale-up'||mode==='scale-down';
+      root.querySelector('[data-setting="fit-mode"]').hidden=mode==='crop'||mode==='scale-up'||mode==='scale-down';
+      root.querySelector('[data-setting="dimensions"]').hidden=mode==='scale-up'||mode==='scale-down';
+      root.querySelector('[data-setting="amount"]').hidden=mode!=='scale-up'&&mode!=='scale-down';
+      root.querySelector('#lab-amount-label').textContent=mode==='scale-up'?'放大比例':mode==='scale-down'?'缩小比例':'缩放比例';
+      amountInput.min=mode==='scale-down'?'1':'100';amountInput.max=mode==='scale-down'?'100':'800';
+      if(mode==='scale-up'&&Number(amountInput.value)<100)amountInput.value='150';
+      if(mode==='scale-down'&&Number(amountInput.value)>100)amountInput.value='50';
+      syncAmount();
+    }
+  };
+  transformMode?.addEventListener('change',syncGroupedSettings);sizeMode?.addEventListener('change',syncGroupedSettings);
   const thresholdInput=root.querySelector('#lab-threshold'), featherInput=root.querySelector('#lab-feather');
   if(thresholdInput)thresholdInput.addEventListener('input',()=>root.querySelector('#lab-threshold-value').textContent=thresholdInput.value);
   if(featherInput)featherInput.addEventListener('input',()=>root.querySelector('#lab-feather-value').textContent=featherInput.value);
-  const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug.includes('vignette')?'%':'');
+  const syncAmount=()=>amountValue.textContent=amountInput.value+(slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette')?'%':'');
   amountInput.min='0';
   if(slug.includes('scale-down')) { amountInput.value='50'; amountInput.min='1'; amountInput.max='100'; }
   else if(slug.includes('scale-up')) { amountInput.value='150'; amountInput.min='100'; amountInput.max='800'; }
@@ -55,7 +77,7 @@ if (root) {
   else if(slug.includes('sharpen')) { amountInput.value='65'; amountInput.max='200'; }
   else if(slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')) { amountInput.value='100'; amountInput.max='200'; }
   else if(slug.includes('quality')) { amountInput.value='82'; amountInput.max='100'; }
-  amountInput.addEventListener('input',syncAmount); syncAmount();
+  amountInput.addEventListener('input',syncAmount); syncAmount();syncGroupedSettings();
   const formatSelect=root.querySelector('#lab-format');
   if(slug.includes('quality')&&formatSelect)formatSelect.value='image/jpeg';
   if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')) {
@@ -118,7 +140,7 @@ if (root) {
     x.drawImage(img,0,0,w,h);
     let image=x.getImageData(0,0,w,h), d=image.data;
     const color=val('lab-color'), threshold=num('lab-threshold'), amount=num('lab-amount');
-    if(slug.includes('crop')){
+    if(slug.includes('crop')||(slug==='image-size'&&val('lab-size-mode')==='crop')){
       // Crop percentages are measured against each source image. Empty output dimensions keep the crop at its natural pixel size.
       const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
       const sx=Math.min(w-1,Math.floor(w*px)), sy=Math.min(h-1,Math.floor(h*py));
@@ -129,9 +151,9 @@ if (root) {
       let targetW=Math.max(1,Math.min(8192,requestedW||sw)), targetH=Math.max(1,Math.min(8192,requestedH||sh));
       if(ratioLocked()){
         const cropRatio=sw/sh;
-        if(requestedW>0&&requestedH<=0)targetH=Math.max(1,Math.min(8192,Math.round(targetW/cropRatio)));
-        else if(requestedH>0&&requestedW<=0)targetW=Math.max(1,Math.min(8192,Math.round(targetH*cropRatio)));
-        else if(requestedW>0&&requestedH>0)targetH=Math.max(1,Math.min(8192,Math.round(targetW/cropRatio)));
+        if(requestedW>0&&requestedH>0){const fit=Math.min(requestedW/sw,requestedH/sh,8192/sw,8192/sh);targetW=Math.max(1,Math.round(sw*fit));targetH=Math.max(1,Math.round(sh*fit));}
+        else if(requestedW>0){targetW=Math.min(8192,requestedW);targetH=Math.max(1,Math.min(8192,Math.round(targetW/cropRatio)));}
+        else if(requestedH>0){targetH=Math.min(8192,requestedH);targetW=Math.max(1,Math.min(8192,Math.round(targetH*cropRatio)));}
         else {targetW=sw;targetH=sh;}
       }
       const out=document.createElement('canvas');out.width=targetW;out.height=targetH;
@@ -179,11 +201,11 @@ if (root) {
       x.putImageData(image,0,0);const text=val('lab-text')||'©';x.save();x.globalAlpha=.22;x.fillStyle=val('lab-color');x.font='bold '+Math.max(12,amount)+'px sans-serif';x.rotate(-Math.PI/6);for(let yy=-h;yy<h*2;yy+=Math.max(80,amount*4))for(let xx=-w;xx<w*2;xx+=Math.max(140,amount*8))x.fillText(text,xx,yy);x.restore();
     } else if(slug.includes('tile')||slug.includes('duplicate')||slug.includes('copy')) {
       const count=Math.max(1,Math.min(10,Math.floor(num('lab-count')||2))), vertical=val('lab-mode')==='vertical';const out=document.createElement('canvas');out.width=vertical?w:Math.round(w*count);out.height=vertical?Math.round(h*count):h;const ox=out.getContext('2d');for(let i=0;i<count;i++)ox.drawImage(c,vertical?0:i*w,vertical?i*h:0);return {canvas:out,name:file.name};
-    } else if(slug.includes('scale-up')||slug.includes('scale-down')) {
+    } else if(slug.includes('scale-up')||slug.includes('scale-down')||(slug==='image-size'&&['scale-up','scale-down'].includes(val('lab-size-mode')))) {
       const percent=Math.max(1,Math.min(800,num('lab-amount')||100))/100;
-      const requested=slug.includes('scale-down')?Math.min(1,percent):Math.max(1,percent),factor=Math.min(requested,8192/w,8192/h);
+      const down=slug.includes('scale-down')||(slug==='image-size'&&val('lab-size-mode')==='scale-down');const requested=down?Math.min(1,percent):Math.max(1,percent),factor=Math.min(requested,8192/w,8192/h);
       const out=document.createElement('canvas');out.width=Math.max(1,Math.round(w*factor));out.height=Math.max(1,Math.round(h*factor));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
-    } else if(slug.includes('resize')||slug.includes('icon')) {
+    } else if(slug.includes('resize')||slug.includes('icon')||(slug==='image-size'&&val('lab-size-mode')==='resize')) {
       const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
       const mode=fitMode(),out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
       if(!ratioLocked()||mode==='stretch')ox.drawImage(c,0,0,targetW,targetH);
@@ -206,11 +228,11 @@ if (root) {
       const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='saturate('+Math.max(0,amount)/100+')';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('vignette')) {
       x.putImageData(image,0,0);const g=x.createRadialGradient(w/2,h/2,Math.min(w,h)*.15,w/2,h/2,Math.max(w,h)*.72);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+Math.min(.95,amount/100)+')');x.fillStyle=g;x.fillRect(0,0,w,h);image=x.getImageData(0,0,w,h);d=image.data;
-    } else if(slug.includes('horizontal-flip')) {
+    } else if(slug.includes('horizontal-flip')||(slug==='image-transform'&&val('lab-transform-mode')==='horizontal')) {
       const out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d');ox.translate(w,0);ox.scale(-1,1);ox.drawImage(c,0,0);return {canvas:out,name:file.name};
-    } else if(slug.includes('vertical-flip')) {
+    } else if(slug.includes('vertical-flip')||(slug==='image-transform'&&val('lab-transform-mode')==='vertical')) {
       const out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d');ox.translate(0,h);ox.scale(1,-1);ox.drawImage(c,0,0);return {canvas:out,name:file.name};
-    } else if(slug.includes('rotate')) {
+    } else if(slug.includes('rotate')||(slug==='image-transform'&&val('lab-transform-mode')==='rotate')) {
       const angle=(Number(val('lab-angle'))||0)*Math.PI/180,sw=Math.abs(Math.cos(angle)),sh=Math.abs(Math.sin(angle));const out=document.createElement('canvas');out.width=Math.min(8192,Math.ceil(w*sw+h*sh));out.height=Math.min(8192,Math.ceil(h*sw+w*sh));const ox=out.getContext('2d');ox.translate(out.width/2,out.height/2);ox.rotate(angle);ox.drawImage(c,-w/2,-h/2);return {canvas:out,name:file.name};
     } else if(slug.includes('border')) {
       const size=Math.min(500,num('lab-radius')||20),out=document.createElement('canvas');out.width=w+size*2;out.height=h+size*2;const ox=out.getContext('2d');ox.fillStyle=val('lab-color');ox.fillRect(0,0,out.width,out.height);ox.drawImage(c,size,size);return {canvas:out,name:file.name};
