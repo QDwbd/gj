@@ -204,7 +204,7 @@ const { tool } = Astro.props;
           <p class="image-privacy-note">🔒 图片只在当前设备处理，不会主动上传。大图会限制在约 1600 万像素以内以避免浏览器内存不足。</p>
         </aside>
         <div class="image-lab-workspace">
-          <div class="image-preview-head"><div><strong>处理预览</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载全部结果</button></div>
+          <div class="image-preview-head"><div><strong>处理预览</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载首张结果</button></div>
           <div id="lab-status" class="image-lab-status" role="status">先添加图片，再调整参数并点击“应用处理”。</div>
           <div id="lab-preview" class="image-result-grid"><div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div></div>
           <canvas id="lab-canvas" hidden></canvas>
