@@ -1,3 +1,6 @@
+export type Tool = { slug: string; name: string; category: string; description: string; operation: string };
+
+export const tools: Tool[] = [
   {
     "slug": "text-workbench",
     "name": "综合文本工具箱",
@@ -5,9 +8,7 @@
     "description": "在一个工作台中完成文本统计、行处理、大小写转换、查找替换、正则过滤、列表整理和文本比较",
     "operation": "text-workbench"
   },
-export type Tool = { slug: string; name: string; category: string; description: string; operation: string };
 
-export const tools: Tool[] = [
   {
     "slug": "json-format",
     "name": "JSON 格式化",
