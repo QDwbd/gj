@@ -51,7 +51,7 @@ const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
 let passed=0; const failures=[];
 if(unmapped.length) failures.push({op:'catalog coverage',status:'FAIL',detail:`Missing handlers: ${unmapped.join(', ')}`});
-if (!pageSource.includes('id="json-operation"') || !pageSource.includes('id="json-workbench"')) failures.push({op:'JSON workbench UI coverage',status:'FAIL',detail:'Missing unified JSON selector or editor'});
+if (!pageSource.includes('id="json-operation"') || !toolText.includes('"operation": "json-workbench"')) failures.push({op:'JSON workbench UI coverage',status:'FAIL',detail:'Missing unified JSON selector or editor'});
 for (const op of operations) {
   const elements = new Map();
   for (const id of ['tool-input','tool-output','tool-status','tool-controls','output-meta','run-tool','clear-tool','copy-tool']) elements.set('#'+id,makeElement(id));
