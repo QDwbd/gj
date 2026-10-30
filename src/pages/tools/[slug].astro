@@ -211,7 +211,7 @@ const { tool } = Astro.props;
         <div class="image-lab-workspace">
           <div class="image-preview-head"><div><strong>处理结果</strong><span id="lab-preview-count">等待导入图片</span></div><button id="lab-download" class="primary-button" type="button" disabled>下载首张结果</button></div>
           <div id="lab-status" class="image-lab-status" role="status">先添加图片，再调整参数并点击“应用处理”。</div>
-          <div id="lab-preview" class="image-result-grid"><div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div></div>
+          <div id="lab-preview" class="image-result-grid"><div class="image-preview-placeholder"><span>▧</span><strong>结果列表</strong><small>处理完成后显示尺寸、文件大小和逐张下载入口</small></div></div>
           <canvas id="lab-canvas" hidden></canvas>
           <div class="image-output-note">导出提示：透明背景建议选择 PNG；照片可选择 JPEG 或 WebP。批量文件可逐张下载，避免浏览器拦截多个下载。</div>
         </div>
