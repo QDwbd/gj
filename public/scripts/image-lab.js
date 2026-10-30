@@ -316,7 +316,7 @@ if (root) {
   });
   root.querySelector('#lab-download').addEventListener('click',async()=>{
     if(!outputs.length)return;const type=mime(),item=outputs[0];
-    const blob=await blobOf(item.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));
+    const blob=await blobOf(item.canvas,type,exportQuality());
     if(blob)downloadBlob(blob,item.name.replace(/\.[^.]+$/,'')+'.'+ext(type));
     say('已下载第一张结果。其余图片请点击对应结果记录中的“下载”。');
   });
