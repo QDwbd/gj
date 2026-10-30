@@ -543,7 +543,7 @@ export const tools: Tool[] = [
     "category": "图片工具",
     "description": "在浏览器中裁剪、旋转、翻转、调色、像素化、添加水印并导出 PNG/JPEG/WebP",
     "operation": "image-editor"
-  }
+  },
 
   {
     "slug": "image-to-base64",
@@ -565,7 +565,7 @@ export const tools: Tool[] = [
     "category": "图片工具",
     "description": "将 SVG 标记渲染为可下载的 PNG 图片",
     "operation": "svg-to-png"
-  }
+  },
 
   {
     "slug": "content-type-lookup",
@@ -616,7 +616,7 @@ export const tools: Tool[] = [
     "category": "图片工具",
     "description": "生成 Code 128、EAN-13、EAN-8、UPC-A、ITF-14 等常见条码并导出 PNG",
     "operation": "barcode-generator"
-  }
+  },
 
   {
     "slug": "pdf-page-editor",
@@ -631,7 +631,7 @@ export const tools: Tool[] = [
     "category": "文件工具",
     "description": "在浏览器中合并多个 PDF 文件并下载结果",
     "operation": "pdf-merge"
-  }
+  },
 
   {
     "slug": "pdf-to-images",
@@ -639,7 +639,7 @@ export const tools: Tool[] = [
     "category": "文件工具",
     "description": "将 PDF 指定页面渲染为 PNG，支持缩放、背景颜色、预览和 ZIP 批量下载",
     "operation": "pdf-to-images"
-  }
+  },
 
   {
     "slug": "audio-player",
@@ -661,7 +661,7 @@ export const tools: Tool[] = [
     "category": "音视频工具",
     "description": "通过浏览器屏幕共享权限录制屏幕并下载 WebM 文件",
     "operation": "screen-recorder"
-  }
+  },
 
   {
     "slug": "sqlite-browser",
@@ -669,7 +669,7 @@ export const tools: Tool[] = [
     "category": "数据库工具",
     "description": "在浏览器中打开 SQLite 数据库、执行 SQL 查询与修改并导出数据库",
     "operation": "sqlite-browser"
-  }
+  },
 
   {
     "slug": "excel-to-json",
