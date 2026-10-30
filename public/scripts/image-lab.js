@@ -58,7 +58,7 @@ if (root) {
   amountInput.addEventListener('input',syncAmount); syncAmount();
   const formatSelect=root.querySelector('#lab-format');
   if(slug.includes('quality')&&formatSelect)formatSelect.value='image/jpeg';
-  if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')||slug.includes('crop')) {
+  if(slug.includes('resize')||slug.includes('icon')||slug.includes('background')||slug.includes('rectangle-fit')) {
     root.querySelector('#lab-width').value=1200; root.querySelector('#lab-height').value=800;
     root.querySelector('#lab-radius-label').textContent='边框 / 圆角宽度';
   }
@@ -119,18 +119,25 @@ if (root) {
     let image=x.getImageData(0,0,w,h), d=image.data;
     const color=val('lab-color'), threshold=num('lab-threshold'), amount=num('lab-amount');
     if(slug.includes('crop')){
-      const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w)));
-      const targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
+      // Crop percentages are measured against each source image. Empty output dimensions keep the crop at its natural pixel size.
       const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
-      const pw=Math.max(1,Math.min(100,num('lab-crop-width')||100))/100, ph=Math.max(1,Math.min(100,num('lab-crop-height')||100))/100;
-      let sx=Math.min(w-1,Math.floor(w*px)), sy=Math.min(h-1,Math.floor(h*py));
-      let sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))), sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
+      const sx=Math.min(w-1,Math.floor(w*px)), sy=Math.min(h-1,Math.floor(h*py));
+      const pw=Math.max(1,Math.min(100-px*100,num('lab-crop-width')||100))/100;
+      const ph=Math.max(1,Math.min(100-py*100,num('lab-crop-height')||100))/100;
+      const sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))), sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
+      const requestedW=Math.floor(Number(val('lab-width'))||0), requestedH=Math.floor(Number(val('lab-height'))||0);
+      let targetW=Math.max(1,Math.min(8192,requestedW||sw)), targetH=Math.max(1,Math.min(8192,requestedH||sh));
       if(ratioLocked()){
-        const targetRatio=targetW/targetH, regionRatio=sw/sh;
-        if(regionRatio>targetRatio){const nextW=Math.max(1,Math.round(sh*targetRatio));sx+=Math.floor((sw-nextW)/2);sw=nextW;}
-        else {const nextH=Math.max(1,Math.round(sw/targetRatio));sy+=Math.floor((sh-nextH)/2);sh=nextH;}
+        const cropRatio=sw/sh;
+        if(requestedW>0&&requestedH<=0)targetH=Math.max(1,Math.min(8192,Math.round(targetW/cropRatio)));
+        else if(requestedH>0&&requestedW<=0)targetW=Math.max(1,Math.min(8192,Math.round(targetH*cropRatio)));
+        else if(requestedW>0&&requestedH>0)targetH=Math.max(1,Math.min(8192,Math.round(targetW/cropRatio)));
+        else {targetW=sw;targetH=sh;}
       }
-      const out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);return {canvas:out,name:file.name};
+      const out=document.createElement('canvas');out.width=targetW;out.height=targetH;
+      const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
+      ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);
+      return {canvas:out,name:file.name};
     }
     const rgb=hex=>[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)];
     if(slug.includes('grayscale')||slug.includes('black-white')) {
