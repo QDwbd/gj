@@ -21,6 +21,7 @@ if (root) {
     'size-mode': slug==='image-size',
     radius: slug.includes('round') || slug.includes('border'),
     text: slug.includes('watermark'),
+    opacity: slug==='image-watermark-tile',
     count: slug.includes('copy') || slug.includes('duplicate'),
     dimensions: slug==='image-size' || ['resize','icon','background','rectangle-fit','crop'].some(k=>slug.includes(k)),
     'crop-region': slug.includes('crop') || slug==='image-size',
@@ -68,6 +69,8 @@ if (root) {
   const syncRangePair=(range,number,output)=>{if(!range||!number)return;const update=()=>{number.value=range.value;if(output)output.textContent=range.value;};range.addEventListener('input',update);number.addEventListener('input',()=>{if(number.value!=='' ){const n=Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value)));range.value=String(n);if(output)output.textContent=String(n);}});number.addEventListener('change',()=>{const n=Math.min(Number(range.max),Math.max(Number(range.min),Number(number.value)||0));number.value=String(n);range.value=String(n);if(output)output.textContent=String(n);});update();};
   syncRangePair(thresholdInput,thresholdNumber,root.querySelector('#lab-threshold-value'));
   syncRangePair(featherInput,featherNumber,root.querySelector('#lab-feather-value'));
+  const opacityInput=root.querySelector('#lab-opacity'),opacityNumber=root.querySelector('#lab-opacity-number');
+  syncRangePair(opacityInput,opacityNumber,root.querySelector('#lab-opacity-value'));
   const isPercent=()=>slug.includes('quality')||slug.includes('brightness')||slug.includes('contrast')||slug.includes('saturation')||slug.includes('scale-')||slug==='image-size'||slug.includes('vignette');
   const syncAmount=()=>{const suffix=isPercent()?'%':'';amountValue.textContent=amountInput.value+suffix;if(amountNumber)amountNumber.value=amountInput.value;if(amountUnit)amountUnit.textContent=suffix;};
   amountInput.addEventListener('input',syncAmount);
@@ -219,7 +222,7 @@ if (root) {
       x.putImageData(image,0,0);
       const text=val('lab-text')||'©',fontSize=Math.max(12,Math.min(160,amount));
       const stepX=Math.max(100,fontSize*3.6),stepY=Math.max(68,fontSize*2.35);
-      x.save();x.globalAlpha=.68;x.fillStyle=val('lab-color')||'#172033';x.strokeStyle='rgba(255,255,255,.72)';x.lineWidth=Math.max(1.5,fontSize*.055);x.lineJoin='round';x.font='800 '+fontSize+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
+      x.save();x.globalAlpha=Math.max(0,Math.min(100,num('lab-opacity')))/100;x.fillStyle=val('lab-color')||'#172033';x.strokeStyle='rgba(255,255,255,.72)';x.lineWidth=Math.max(1.5,fontSize*.055);x.lineJoin='round';x.font='800 '+fontSize+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
       for(let row=-3;row<Math.ceil(h/stepY)+4;row++)for(let col=-3;col<Math.ceil(w/stepX)+4;col++){
         const px=col*stepX+(row%2?stepX/2:0),py=row*stepY;
         x.save();x.translate(px,py);x.rotate(-Math.PI/6);x.strokeText(text,0,0);x.fillText(text,0,0);x.restore();
