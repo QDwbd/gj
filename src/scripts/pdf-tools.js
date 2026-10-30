@@ -67,6 +67,7 @@ if (root) {
   }
   if (op === 'pdf-merge') {
     const fileInput = document.querySelector('#pdf-files');
+    fileInput.addEventListener('change',()=>{outputBlob=null;download.disabled=true;setStatus('文件列表已更新，请重新执行合并。');});
     document.querySelector('#pdf-process').addEventListener('click', async () => {
       const files=Array.from(fileInput.files||[]);
       if(files.length<2) { setStatus('请至少选择 2 个 PDF 文件'); return; }
