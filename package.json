@@ -9,13 +9,18 @@
     "test": "node tests/smoke-tools.mjs"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.0.0",
-    "astro": "^5.0.0",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.4",
     "bwip-js": "^4.11.4",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.10.38",
     "jszip": "^3.10.1",
     "sql.js": "^1.15.2",
     "exceljs": "^4.4.0"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
   }
 }
