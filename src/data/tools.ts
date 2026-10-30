@@ -695,62 +695,6 @@ export const tools: Tool[] = [
     "operation": "json-unstringify"
   },
   {
-    "slug": "bmi",
-    "name": "BMI 计算器",
-    "category": "生活与实用",
-    "description": "根据身高体重计算 BMI（仅供参考）",
-    "operation": "bmi"
-  },
-  {
-    "slug": "calorie-estimate",
-    "name": "每日热量估算",
-    "category": "生活与实用",
-    "description": "用基础公式估算基础代谢（仅供参考）",
-    "operation": "calorie-estimate"
-  },
-  {
-    "slug": "tip-calculator",
-    "name": "小费计算器",
-    "category": "生活与实用",
-    "description": "计算小费和分摊金额",
-    "operation": "tip-calculator"
-  },
-  {
-    "slug": "loan-payment",
-    "name": "贷款月供计算",
-    "category": "生活与实用",
-    "description": "根据本金、年利率和期限估算月供",
-    "operation": "loan-payment"
-  },
-  {
-    "slug": "discount",
-    "name": "折扣计算器",
-    "category": "生活与实用",
-    "description": "计算折后价格与节省金额",
-    "operation": "discount"
-  },
-  {
-    "slug": "split-bill",
-    "name": "账单分摊",
-    "category": "生活与实用",
-    "description": "将总金额按人数平均分摊",
-    "operation": "split-bill"
-  },
-  {
-    "slug": "word-frequency",
-    "name": "词频统计",
-    "category": "生活与实用",
-    "description": "统计英文单词出现次数",
-    "operation": "word-frequency"
-  },
-  {
-    "slug": "reading-time",
-    "name": "阅读时间估算",
-    "category": "生活与实用",
-    "description": "按阅读速度估算阅读分钟数",
-    "operation": "reading-time"
-  },
-  {
     "slug": "json-to-js-object",
     "name": "JSON 转 JavaScript 对象",
     "category": "开发者工具",
