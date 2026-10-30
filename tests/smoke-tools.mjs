@@ -52,6 +52,7 @@ const catalogSlugs = [...toolText.matchAll(/"slug":\s*"([^"]+)"/g)].map(m => m[1
 const duplicateSlugs = catalogSlugs.filter((slug,index) => catalogSlugs.indexOf(slug) !== index);
 if (duplicateSlugs.length) failures.push({op:'duplicate tool slugs',status:'FAIL',detail:[...new Set(duplicateSlugs)].join(', ')});
 if (toolText.includes('image-remove-background') || toolText.includes('在线抠图工具')) failures.push({op:'removed tool catalog',status:'FAIL',detail:'在线抠图工具仍出现在工具目录中'});
+if (toolText.includes('image-sepia') || toolText.includes('棕褐色调滤镜')) failures.push({op:'removed sepia filter catalog',status:'FAIL',detail:'棕褐色调滤镜仍出现在工具目录中'});
 const declaredOps = [...new Set([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1]))].filter(op => !['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser','excel-to-json','excel-to-html','json-to-excel' ,'image-lab','json-workbench','color-workbench'].includes(op));
 const cases = new Set([...source.matchAll(/case '([^']+)'/g)].map(m => m[1]));
 const unmapped = declaredOps.filter(op => !cases.has(op));
