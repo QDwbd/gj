@@ -5,16 +5,16 @@ const categories = [...new Set(tools.map(t => t.category))];
 ---
 <BaseLayout title="工具箱 — 免费在线工具集合" description="集合文本、开发、编码、时间、数学、颜色等实用在线工具。">
   <section class="hero">
-    <div class="hero-badge"><span class="pulse"></span> 简洁 · 免费 · 即开即用</div>
-    <h1>让工具，<span>触手可及。</span></h1>
-    <p>一站式在线工具集合。无需安装软件，打开浏览器即可使用。</p>
-    <label class="search-wrap"><span>⌕</span><input id="tool-search" type="search" placeholder="搜索工具，例如 JSON、时间戳、Base64…" autocomplete="off" /><kbd>搜索</kbd></label>
+    <div class="hero-badge"><span class="pulse"></span> YOUR DAILY DIGITAL TOOLKIT</div>
+    <h1>让每一次处理，<span>简单而高效。</span></h1>
+    <p>精心整理的在线效率工具。无需安装，打开即用，让复杂操作回归简单。</p>
+    <label class="search-wrap"><span>⌕</span><input id="tool-search" type="search" placeholder="搜索工具，例如 JSON、时间戳、Base64…" autocomplete="off" /><kbd>⌕ 搜索工具</kbd></label>
     <div class="hero-stats"><span><b>{tools.length}+</b> 实用工具</span><span><b>{categories.length}</b> 个分类</span><span><b>0</b> 次安装</span></div>
   </section>
   <section class="section" id="categories">
     <div class="section-heading"><div><span class="eyebrow">BROWSE BY CATEGORY</span><h2>按分类探索</h2></div><span class="muted">找到合适的工具，从这里开始</span></div>
     <div class="category-grid">
-      {categories.map((category, i) => <a class="category-card" href={`/#cat-${i}`}><span class="category-icon">{['Aa','{}','⇄','◷','∑','◉','✳','⌘','▦','✦'][i % 10]}</span><span><strong>{category}</strong><small>{tools.filter(t => t.category === category).length} 个工具</small></span><span class="arrow">↗</span></a>)}
+      {categories.map((category, i) => <a class="category-card" href={`/#cat-${i}`}><span class="category-icon">{['Aa','{}','⇄','◷','∑','◉','✳','⌘','▦','✦','⌁','◇'][i % 12]}</span><span><strong>{category}</strong><small>{tools.filter(t => t.category === category).length} 个工具</small></span><span class="arrow">↗</span></a>)}
     </div>
   </section>
   <section class="section" id="all-tools">
