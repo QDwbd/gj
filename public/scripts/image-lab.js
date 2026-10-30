@@ -128,9 +128,9 @@ if (root) {
       const strength=Math.min(100,amount)/100;
       for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],sr=.393*r+.769*g+.189*b,sg=.349*r+.686*g+.168*b,sb=.272*r+.534*g+.131*b;d[i]=r+(sr-r)*strength;d[i+1]=g+(sg-g)*strength;d[i+2]=b+(sb-b)*strength;}
     } else if(slug.includes('contrast')) {
-      x.filter='contrast('+Math.max(0,Math.min(200,amount))+'%)';x.drawImage(c,0,0);x.filter='none';image=x.getImageData(0,0,w,h);d=image.data;
+      const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='contrast('+Math.max(0,Math.min(200,amount))+'%)';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('saturation')||slug.includes('vibrance')) {
-      x.filter='saturate('+Math.max(0,amount)/100+')';x.drawImage(c,0,0);x.filter='none';image=x.getImageData(0,0,w,h);d=image.data;
+      const filtered=document.createElement('canvas');filtered.width=w;filtered.height=h;const fx=filtered.getContext('2d');fx.filter='saturate('+Math.max(0,amount)/100+')';fx.drawImage(c,0,0);image=fx.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('vignette')) {
       x.putImageData(image,0,0);const g=x.createRadialGradient(w/2,h/2,Math.min(w,h)*.15,w/2,h/2,Math.max(w,h)*.72);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+Math.min(.95,amount/100)+')');x.fillStyle=g;x.fillRect(0,0,w,h);image=x.getImageData(0,0,w,h);d=image.data;
     } else if(slug.includes('horizontal-flip')) {
@@ -165,9 +165,10 @@ if (root) {
     else {countLabel.textContent='没有可预览的结果';say('处理失败，请确认文件格式受浏览器支持。');}
   });
   root.querySelector('#lab-download').addEventListener('click',async()=>{
-    if(!outputs.length)return;const type=mime();
-    for(let i=0;i<outputs.length;i++){const blob=await blobOf(outputs[i].canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));if(blob)downloadBlob(blob,outputs[i].name.replace(/\.[^.]+$/,'')+'.'+ext(type));}
-    say('已开始下载 '+outputs.length+' 个处理结果。');
+    if(!outputs.length)return;const type=mime(),item=outputs[0];
+    const blob=await blobOf(item.canvas,type,Math.min(1,Math.max(.05,num('lab-amount')/100||.92)));
+    if(blob)downloadBlob(blob,item.name.replace(/\.[^.]+$/,'')+'.'+ext(type));
+    say('已下载第一张结果。其余图片请点击对应预览卡片上的“下载”。');
   });
   root.querySelector('#lab-reset').addEventListener('click',()=>{filesInput.value='';selectedFiles=[];fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';preview.innerHTML='<div class="image-preview-placeholder"><span>▧</span><strong>预览区域</strong><small>处理结果会显示在这里，可逐张检查并下载</small></div>';canvas.hidden=true;outputs=[];download.disabled=true;countLabel.textContent='等待导入图片';say('已重置。请选择图片开始。');});
 }
