@@ -114,5 +114,5 @@ if (!mediaSource.includes("op === 'image-to-base64'") || !mediaSource.includes("
 console.log(`Smoke test: ${passed}/${operations.length} operations returned success.`);
 if(failures.length) { console.log(JSON.stringify(failures,null,2)); process.exitCode=1; }
 
-const mathCategory = toolText.split(/\\{\\s*"slug":\\s*"/).slice(1).map(block => ({slug:block.match(/^([^"]+)/)?.[1],category:block.match(/"category":\\s*"([^"]+)"/)?.[1]})).filter(tool => tool.category === '数学与数字').map(tool => tool.slug);
+const mathCategory = toolText.split(/\{\s*"slug":\s*"/).slice(1).map(block => ({slug:block.match(/^([^"]+)/)?.[1],category:block.match(/"category":\s*"([^"]+)"/)?.[1]})).filter(tool => tool.category === '数学与数字').map(tool => tool.slug);
 if (JSON.stringify(mathCategory) !== JSON.stringify(['date-diff','unit-convert','temperature'])) throw new Error('数学与数字分类必须且只能保留日期间隔、长度单位和温度换算');
