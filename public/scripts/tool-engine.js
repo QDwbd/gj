@@ -3,7 +3,9 @@ if (root) {
   let op = root.dataset.operation;
   const textOperation = document.querySelector('#text-operation');
   const jsonOperation = document.querySelector('#json-operation');
+  const colorOperation = document.querySelector('#color-operation');
   if (op === 'json-workbench') op = jsonOperation?.value || 'json-format';
+  if (op === 'color-workbench') op = colorOperation?.value || 'color-hex-rgb';
   if (op === 'text-workbench') op = textOperation?.value || 'text-count';
   const input = document.querySelector('#tool-input');
   const output = document.querySelector('#tool-output');
@@ -50,6 +52,27 @@ if (root) {
     input.placeholder = op.startsWith('xml-') ? '输入 XML 文档…' : op === 'yaml-to-json' ? '输入 YAML 文档…' : op === 'ini-to-json' ? '输入 INI 配置…' : op === 'csv-to-json' ? '输入 CSV 数据…' : '粘贴 JSON 或待转换的数据…';
   };
   if (jsonOperation) { jsonOperation.addEventListener('change',renderJsonControls); renderJsonControls(); }
+  const renderColorControls = () => {
+    if (!colorOperation) return;
+    op = colorOperation.value;
+    controls.innerHTML = '';
+    const label = colorOperation.options[colorOperation.selectedIndex]?.textContent || '颜色处理';
+    root.querySelector('.workbench-head strong').textContent = label + '工作台';
+    input.placeholder = ({
+      'color-hex-rgb':'输入 HEX 色值，例如 #4263EB',
+      'color-rgb-hex':'输入 RGB 值，例如 66, 99, 235',
+      'color-rgb-hsl':'输入 RGB 值，例如 255, 0, 0',
+      'color-hsl-rgb':'输入 HSL 值，例如 120, 100, 50',
+      'color-contrast':'输入两种 HEX 颜色，例如 #000000 #FFFFFF',
+      'color-luminance':'输入 HEX 色值，例如 #4263EB',
+      'color-invert':'输入 6 位 HEX 色值，例如 #4263EB',
+      'color-palette':'输入 6 位 HEX 主色，例如 #4263EB',
+      'color-random':'点击运行即可生成随机颜色'
+    })[op] || '输入颜色数据…';
+    if (op === 'color-random') input.value = '#4263eb';
+  };
+  if (colorOperation) { colorOperation.addEventListener('change',renderColorControls); renderColorControls(); }
+
   if (op === 'json-pick-fields') addInput('json-fields','要提取的字段（逗号分隔）','id,name');
   if (op === 'json-merge') addTextArea('json-second','第二份 JSON（合并到第一份）','{}');
   if (op === 'text-diff') addTextArea('diff-second','对比文本（第二份）','');
