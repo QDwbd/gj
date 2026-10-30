@@ -9,6 +9,7 @@ if (root) {
   const download = document.querySelector('#barcode-download');
   const setStatus = message => { status.textContent = message; };
   const render = () => {
+    canvas.hidden = true; download.disabled = true;
     const text = input.value;
     if (!text.trim()) { setStatus('请输入要编码的内容'); download.disabled = true; return; }
     if (text.length > 2048) { setStatus('内容过长，请限制在 2048 个字符以内'); download.disabled = true; return; }
@@ -35,9 +36,11 @@ if (root) {
       setStatus((bcid === 'qrcode' ? '二维码' : '条码') + '生成成功：' + canvas.width + ' × ' + canvas.height + ' px');
     } catch (error) {
       download.disabled = true;
+      canvas.hidden = true;
       setStatus('生成失败：' + (error?.message || String(error)) + '。请检查内容是否符合所选编码标准。');
     }
   };
+  input.addEventListener('input',()=>{canvas.hidden=true;download.disabled=true;});
   document.querySelector('#barcode-generate').addEventListener('click', render);
   document.querySelector('#barcode-reset').addEventListener('click', () => {
     input.value = op === 'qr-generator' ? 'https://example.com' : '5901234123457';
