@@ -25,6 +25,11 @@ if (root) {
   function render() {
     if (!original.naturalWidth) return;
     const s = settings();
+    root.querySelector('#image-brightness-value').textContent=s.brightness+'%';
+    root.querySelector('#image-contrast-value').textContent=s.contrast+'%';
+    root.querySelector('#image-pixelate-value').textContent=String(s.pixelate);
+    root.querySelector('#image-crop-width-value').textContent=s.cropWidth+'%';
+    root.querySelector('#image-crop-height-value').textContent=s.cropHeight+'%';
     const cw = Math.max(1, Math.round(original.naturalWidth * Math.min(100, Math.max(10, s.cropWidth)) / 100));
     const ch = Math.max(1, Math.round(original.naturalHeight * Math.min(100, Math.max(10, s.cropHeight)) / 100));
     const sx = Math.floor((original.naturalWidth - cw) / 2);
