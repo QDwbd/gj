@@ -513,13 +513,6 @@ export const tools: Tool[] = [
     "operation": "json-to-excel"
   },
   {
-    "slug": "image-remove-background",
-    "name": "在线抠图工具",
-    "category": "图片工具",
-    "description": "移除图片中的指定背景颜色并生成透明背景",
-    "operation": "image-lab"
-  },
-  {
     "slug": "image-transform",
     "name": "图片旋转与翻转",
     "category": "图片工具",
