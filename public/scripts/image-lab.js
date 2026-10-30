@@ -47,7 +47,7 @@ if (root) {
     if(slug==='image-transform'){
       root.querySelector('[data-setting="angle"]').hidden=transformMode.value!=='rotate';
     }
-    if(slug==='image-size'){
+    if(slug==='image-size'&&sizeMode){
       const mode=sizeMode.value;
       if(amountInput.dataset.sizeMode!==mode){amountInput.value=mode==='scale-up'?'150':mode==='scale-down'?'50':'100';amountInput.dataset.sizeMode=mode;}
       root.querySelector('[data-setting="crop-region"]').hidden=mode!=='crop';
@@ -59,6 +59,8 @@ if (root) {
       amountInput.min=mode==='scale-down'?'1':'100';amountInput.max=mode==='scale-down'?'100':'800';
       if(mode==='scale-up'&&Number(amountInput.value)<100)amountInput.value='150';
       if(mode==='scale-down'&&Number(amountInput.value)>100)amountInput.value='50';
+      if(mode==='crop'){widthField.value='';heightField.value='';}
+      else if(mode==='resize'&&sourceDimensions){widthField.value=sourceDimensions.width;heightField.value=sourceDimensions.height;}
       syncAmount();
     }
   };
@@ -94,7 +96,8 @@ if (root) {
     const dt=new DataTransfer(); selectedFiles.forEach(f=>dt.items.add(f)); filesInput.files=dt.files;
     fileList.innerHTML='';
     if(!selectedFiles.length){fileList.innerHTML='<span class="image-empty">尚未添加图片</span>';return;}
-    selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(2)+' MB · 读取尺寸…';row.append(name,size);fileList.appendChild(row);load(f).then(img=>{size.textContent=img.naturalWidth+' × '+img.naturalHeight+' px · '+(f.size/1024/1024).toFixed(2)+' MB';}).catch(()=>{size.textContent='无法读取尺寸';});});
+    sourceDimensions=null;
+    selectedFiles.forEach((f,i)=>{const row=document.createElement('div');row.className='image-file-row';const name=document.createElement('span');name.textContent=f.name;const size=document.createElement('small');size.textContent=(f.size/1024/1024).toFixed(2)+' MB · 读取尺寸…';row.append(name,size);fileList.appendChild(row);load(f).then(img=>{size.textContent=img.naturalWidth+' × '+img.naturalHeight+' px · '+(f.size/1024/1024).toFixed(2)+' MB';if(i===0){sourceDimensions={width:img.naturalWidth,height:img.naturalHeight};if(slug==='image-size'&&sizeMode?.value==='resize'){widthField.value=img.naturalWidth;heightField.value=img.naturalHeight;}}}).catch(()=>{size.textContent='无法读取尺寸';});});
     say('已添加 '+selectedFiles.length+' 张图片'+(oversized.length?'；已跳过 '+oversized.length+' 张超过 25 MB 的文件':''));countLabel.textContent=selectedFiles.length+' 张待处理';
     if(sourceInfo)sourceInfo.textContent='已为 '+selectedFiles.length+' 张图片分别检测尺寸与文件大小；处理时按每张原图独立计算。';
   };
@@ -112,6 +115,7 @@ if (root) {
     img.src = url;
   });
   let syncingDimensions=false;
+  let sourceDimensions=null;
   const sourceInfo=root.querySelector('#lab-source-info');
   const widthField=root.querySelector('#lab-width'), heightField=root.querySelector('#lab-height');
   const cropX=root.querySelector('#lab-crop-x'), cropY=root.querySelector('#lab-crop-y');
@@ -143,11 +147,15 @@ if (root) {
     const color=val('lab-color'), threshold=num('lab-threshold'), amount=num('lab-amount');
     if(slug.includes('crop')||(slug==='image-size'&&val('lab-size-mode')==='crop')){
       // Crop percentages are measured against each source image. Empty output dimensions keep the crop at its natural pixel size.
-      const px=Math.max(0,Math.min(99,num('lab-crop-x')))/100, py=Math.max(0,Math.min(99,num('lab-crop-y')))/100;
-      const sx=Math.min(w-1,Math.floor(w*px)), sy=Math.min(h-1,Math.floor(h*py));
-      const pw=Math.max(1,Math.min(100-px*100,num('lab-crop-width')||100))/100;
-      const ph=Math.max(1,Math.min(100-py*100,num('lab-crop-height')||100))/100;
-      const sw=Math.max(1,Math.min(w-sx,Math.round(w*pw))), sh=Math.max(1,Math.min(h-sy,Math.round(h*ph)));
+      const xPercent=Math.max(0,Math.min(99,Number(val('lab-crop-x'))||0));
+      const yPercent=Math.max(0,Math.min(99,Number(val('lab-crop-y'))||0));
+      const widthPercent=Math.max(1,Math.min(100-xPercent,Number(val('lab-crop-width'))||100));
+      const heightPercent=Math.max(1,Math.min(100-yPercent,Number(val('lab-crop-height'))||100));
+      const sx=Math.max(0,Math.min(w-1,Math.floor(w*xPercent/100)));
+      const sy=Math.max(0,Math.min(h-1,Math.floor(h*yPercent/100)));
+      const ex=Math.max(sx+1,Math.min(w,Math.round(w*(xPercent+widthPercent)/100)));
+      const ey=Math.max(sy+1,Math.min(h,Math.round(h*(yPercent+heightPercent)/100)));
+      const sw=ex-sx, sh=ey-sy;
       const requestedW=Math.floor(Number(val('lab-width'))||0), requestedH=Math.floor(Number(val('lab-height'))||0);
       let targetW=Math.max(1,Math.min(8192,requestedW||sw)), targetH=Math.max(1,Math.min(8192,requestedH||sh));
       if(ratioLocked()){
@@ -207,10 +215,15 @@ if (root) {
       const down=slug.includes('scale-down')||(slug==='image-size'&&val('lab-size-mode')==='scale-down');const requested=down?Math.min(1,percent):Math.max(1,percent),factor=Math.min(requested,8192/w,8192/h);
       const out=document.createElement('canvas');out.width=Math.max(1,Math.round(w*factor));out.height=Math.max(1,Math.round(h*factor));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
     } else if(slug.includes('resize')||slug.includes('icon')||(slug==='image-size'&&val('lab-size-mode')==='resize')) {
-      const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
+      const requestedW=Math.floor(Number(val('lab-width'))||0),requestedH=Math.floor(Number(val('lab-height'))||0);
+      let targetW,targetH;
+      if(requestedW>0&&requestedH>0){targetW=Math.min(8192,requestedW);targetH=Math.min(8192,requestedH);}
+      else if(requestedW>0){targetW=Math.min(8192,requestedW);targetH=Math.max(1,Math.min(8192,Math.round(targetW*h/w)));}
+      else if(requestedH>0){targetH=Math.min(8192,requestedH);targetW=Math.max(1,Math.min(8192,Math.round(targetH*w/h)));}
+      else {targetW=w;targetH=h;}
       const mode=fitMode(),out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
       if(!ratioLocked()||mode==='stretch')ox.drawImage(c,0,0,targetW,targetH);
-      else if(mode==='cover'){const scale=Math.max(targetW/w,targetH/h),sw=targetW/scale,sh=targetH/scale,sx=(w-sw)/2,sy=(h-sh)/2;ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);}
+      else if(mode==='cover'){const scale=Math.max(targetW/w,targetH/h),sw=w,sh=h,sx=(w-targetW/scale)/2,sy=(h-targetH/scale)/2;ox.drawImage(c,sx,sy,targetW/scale,targetH/scale,0,0,targetW,targetH);}
       else {const scale=Math.min(targetW/w,targetH/h),dw=w*scale,dh=h*scale;ox.drawImage(c,(targetW-dw)/2,(targetH-dh)/2,dw,dh);}
       return {canvas:out,name:file.name};
     } else if(slug.includes('color')||slug.includes('tint')) {
