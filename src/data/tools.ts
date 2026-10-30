@@ -604,13 +604,6 @@ export const tools: Tool[] = [
     "operation": "image-lab"
   },
   {
-    "slug": "image-mirror",
-    "name": "镜像图片生成器",
-    "category": "图片工具",
-    "description": "生成图片的左右镜像拼接效果",
-    "operation": "image-lab"
-  },
-  {
     "slug": "image-color-tint",
     "name": "图片调色工具",
     "category": "图片工具",
