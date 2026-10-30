@@ -84,11 +84,7 @@ if (root) {
   const cropW=root.querySelector('#lab-crop-width'), cropH=root.querySelector('#lab-crop-height');
   const ratioLocked=()=>root.querySelector('#lab-ratio-lock')?.checked!==false;
   const fitMode=()=>root.querySelector('#lab-fit-mode')?.value||'contain';
-  function syncOutputFromWidth(){if(syncingDimensions||!ratioLocked())return;const w=Math.max(1,Number(widthField.value)||1);syncingDimensions=true;heightField.value=Math.max(1,Math.round(w));syncingDimensions=false;}
-  function syncOutputFromHeight(){if(syncingDimensions||!ratioLocked())return;const h=Math.max(1,Number(heightField.value)||1);syncingDimensions=true;widthField.value=Math.max(1,Math.round(h));syncingDimensions=false;}
-  // Width/height are target bounds. The actual counterpart is calculated per source image inside process().
-  widthField?.addEventListener('input',()=>{if(ratioLocked())syncOutputFromWidth();});
-  heightField?.addEventListener('input',()=>{if(ratioLocked())syncOutputFromHeight();});
+  // Width and height are shared target dimensions; every source image keeps its own aspect ratio independently.
     const blobOf = (c, type='image/png', quality=.92) => new Promise(resolve => c.toBlob(resolve,type,quality));
   const mime = () => { if(slug.includes('png-to-jpg')||slug.includes('webp-to-jpg')) return 'image/jpeg'; if(slug.includes('jpg-to-webp')||slug.includes('png-to-webp')) return 'image/webp'; return val('lab-format'); };
   const ext = t => ({'image/jpeg':'jpg','image/webp':'webp','image/png':'png'}[t] || 'png');
@@ -155,13 +151,10 @@ if (root) {
       const out=document.createElement('canvas');out.width=Math.max(1,Math.min(8192,Math.round(w*factor)));out.height=Math.max(1,Math.min(8192,Math.round(h*factor)));out.getContext('2d').drawImage(c,0,0,out.width,out.height);return {canvas:out,name:file.name};
     } else if(slug.includes('resize')||slug.includes('icon')) {
       const targetW=Math.max(1,Math.min(8192,Math.floor(num('lab-width')||w))),targetH=Math.max(1,Math.min(8192,Math.floor(num('lab-height')||h)));
-      const mode=fitMode();let nw=targetW,nh=targetH;
-      if(ratioLocked()){
-        const scale=mode==='cover'?Math.max(targetW/w,targetH/h):Math.min(targetW/w,targetH/h);
-        nw=Math.max(1,Math.min(8192,Math.round(w*scale)));nh=Math.max(1,Math.min(8192,Math.round(h*scale)));
-      }
-      const out=document.createElement('canvas');out.width=nw;out.height=nh;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
-      if(!ratioLocked()||mode==='stretch')ox.drawImage(c,0,0,nw,nh);else ox.drawImage(c,0,0,nw,nh);
+      const mode=fitMode(),out=document.createElement('canvas');out.width=targetW;out.height=targetH;const ox=out.getContext('2d');ox.imageSmoothingEnabled=true;ox.imageSmoothingQuality='high';
+      if(!ratioLocked()||mode==='stretch')ox.drawImage(c,0,0,targetW,targetH);
+      else if(mode==='cover'){const scale=Math.max(targetW/w,targetH/h),sw=targetW/scale,sh=targetH/scale,sx=(w-sw)/2,sy=(h-sh)/2;ox.drawImage(c,sx,sy,sw,sh,0,0,targetW,targetH);}
+      else {const scale=Math.min(targetW/w,targetH/h),dw=w*scale,dh=h*scale;ox.drawImage(c,(targetW-dw)/2,(targetH-dh)/2,dw,dh);}
       return {canvas:out,name:file.name};
     } else if(slug.includes('color')||slug.includes('tint')) {
       const target=rgb(color);for(let i=0;i<d.length;i+=4){d[i]=Math.round(d[i]*target[0]/255);d[i+1]=Math.round(d[i+1]*target[1]/255);d[i+2]=Math.round(d[i+2]*target[2]/255);}
