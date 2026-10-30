@@ -4,9 +4,10 @@ import { webcrypto } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 
 const toolText = fs.readFileSync(new URL('../src/data/tools.ts', import.meta.url), 'utf8');
+const groupedColorOperations = ['color-hex-rgb','color-rgb-hex','color-rgb-hsl','color-hsl-rgb','color-contrast','color-random','color-palette','color-invert','color-luminance'];
 const groupedJsonOperations = ['json-format','json-minify','json-validate','json-to-yaml','yaml-to-json','csv-to-json','json-to-csv','json-key-sort','json-stringify','json-unstringify','json-to-js-object','json-to-csharp','json-to-java','json-to-php','json-pick-fields','json-merge','json-lines-merge','json-to-array','json-flatten','json-unflatten','json-to-xml','xml-to-json','xml-format','xml-minify','xml-escape','xml-unescape','url-params-to-json','json-to-typescript','ini-to-json','json-to-ini','cookie-to-json','json-array-dedupe','json-to-go','json-to-kotlin','json-to-sql-table','json-to-html-table','json-to-rust','json-to-cpp','list-to-json','json-to-list'];
-const excludedOps = ['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser','excel-to-json','excel-to-html','json-to-excel','image-lab','json-workbench'];
-const operations = [...new Set([...([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1])), ...groupedJsonOperations])].filter(op => !excludedOps.includes(op));
+const excludedOps = ['image-editor','image-to-base64','base64-to-image','svg-to-png','qr-generator','barcode-generator','pdf-page-editor','pdf-merge','pdf-to-images','audio-player','video-speed','screen-recorder','sqlite-browser','excel-to-json','excel-to-html','json-to-excel','image-lab','json-workbench','color-workbench'];
+const operations = [...new Set([...([...toolText.matchAll(/"operation": "([^"]+)"/g)].map(m => m[1])), ...groupedJsonOperations, ...groupedColorOperations])].filter(op => !excludedOps.includes(op));
 const source = fs.readFileSync(new URL('../public/scripts/tool-engine.js', import.meta.url), 'utf8');
 const mediaSource = fs.readFileSync(new URL('../public/scripts/media-tools.js', import.meta.url), 'utf8');
 const imageEditorSource = fs.readFileSync(new URL('../public/scripts/image-editor.js', import.meta.url), 'utf8');
