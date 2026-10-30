@@ -220,13 +220,27 @@ const { tool } = Astro.props;
 
     <section class="workbench" style={["image-editor", "image-to-base64", "base64-to-image", "svg-to-png", "qr-generator", "barcode-generator", "pdf-page-editor", "pdf-merge", "pdf-to-images", "audio-player", "video-speed", "screen-recorder", "sqlite-browser", "excel-to-json", "excel-to-html", "json-to-excel", "image-lab"].includes(tool.operation) ? "display:none" : undefined} data-operation={tool.operation} data-tool-name={tool.name}>
       <div class="workbench-head"><div><span class="status-dot"></span><strong>在线工作台</strong></div><span class="privacy-label">在浏览器中处理</span></div>
+      {tool.category === '文本工具' && <div class="text-tool-intro"><div><span class="text-tool-kicker">TEXT WORKSPACE</span><strong>简洁、高效的文本处理空间</strong><small>输入内容后运行工具，结果可直接复制或继续编辑</small></div><span class="text-local-badge">本地处理 · 不上传文本</span></div>}
       <div id="tool-controls" class="tool-controls"></div>
-      <label class="field-label" for="tool-input">输入内容</label>
+      {tool.category === '文本工具' ? <div class="text-tool-editor">
+        <div class="text-editor-panel">
+          <div class="text-editor-heading"><label class="field-label" for="tool-input">输入文本</label><span id="text-input-stats">0 字符 · 0 行</span></div>
+          <textarea id="tool-input" rows="14" spellcheck="false" placeholder="在这里输入或粘贴文本…"></textarea>
+          <div class="text-editor-footer"><span>支持直接粘贴，也可使用 Ctrl / ⌘ + Enter 运行</span><button id="clear-tool" class="text-quiet-button" type="button">清空输入</button></div>
+        </div>
+        <div class="text-editor-panel text-output-panel">
+          <div class="text-editor-heading"><label class="field-label output-label" for="tool-output">处理结果</label><span id="text-output-stats">等待处理</span></div>
+          <textarea id="tool-output" rows="14" readonly spellcheck="false" placeholder="处理结果会显示在这里…"></textarea>
+          <div class="text-editor-footer"><span id="output-meta">结果仅在本页显示</span><button id="copy-tool" class="text-quiet-button" type="button">复制结果</button></div>
+        </div>
+      </div>
+      <div class="text-tool-actions"><button id="run-tool" class="primary-button" type="button">运行工具 <span>→</span></button><span id="tool-status" role="status">等待输入</span></div>
+      : <><label class="field-label" for="tool-input">输入内容</label>
       <textarea id="tool-input" rows="9" spellcheck="false" placeholder="在这里输入或粘贴内容…"></textarea>
       <div class="action-row"><button id="run-tool" class="primary-button">运行工具 <span>→</span></button><button id="clear-tool" class="secondary-button">清空</button><span id="tool-status" role="status"></span></div>
       <label class="field-label output-label" for="tool-output">处理结果</label>
       <textarea id="tool-output" rows="9" readonly spellcheck="false" placeholder="结果将显示在这里…"></textarea>
-      <div class="action-row bottom-actions"><span id="output-meta">结果仅在本页显示</span><button id="copy-tool" class="secondary-button">复制结果</button></div>
+      <div class="action-row bottom-actions"><span id="output-meta">结果仅在本页显示</span><button id="copy-tool" class="secondary-button">复制结果</button></div></>}
     </section>
     <section class="info-panel"><h2>使用说明</h2><p>{tool.description} 本工具优先在你的浏览器本地处理输入内容。请注意，格式转换工具对复杂或非标准输入可能需要手动检查结果。</p><p class="muted">隐私提示：此工具页面不主动上传输入文本。请不要将密码、私钥或其他敏感数据粘贴到不可信的网页中。</p></section>
     <a class="more-link" href="/">← 浏览更多在线工具</a>
