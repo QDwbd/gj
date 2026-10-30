@@ -71,3 +71,13 @@
 .image-settings [data-setting="crop-region"]{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .image-settings [data-setting="crop-region"] label{display:grid;gap:5px;font-size:10px;color:#687386}
 .image-settings [data-setting="crop-region"] input{width:100%;min-width:0;border:1px solid #dfe4ec;border-radius:8px;padding:8px;background:#fff;font-size:11px}
+
+/* Compact image results: never render large result thumbnails. */
+.image-result-grid{display:flex;flex-direction:column;gap:8px;min-height:120px;background:#fff;padding:10px}
+.image-preview-placeholder{min-height:100px;gap:6px}
+.image-result-card{width:100%;box-shadow:none;border-radius:9px}
+.image-result-meta{grid-template-columns:minmax(0,1fr) auto;min-height:54px;padding:10px 12px}
+.image-result-meta strong{font-size:11px}
+.image-result-meta small{font-size:10px}
+.image-result-meta button{grid-column:2;grid-row:1/3}
+.image-settings [data-setting][hidden]{display:none!important}
