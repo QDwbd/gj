@@ -49,6 +49,7 @@ if (root) {
     }
     if(slug==='image-size'){
       const mode=sizeMode.value;
+      if(amountInput.dataset.sizeMode!==mode){amountInput.value=mode==='scale-up'?'150':mode==='scale-down'?'50':'100';amountInput.dataset.sizeMode=mode;}
       root.querySelector('[data-setting="crop-region"]').hidden=mode!=='crop';
       root.querySelector('[data-setting="ratio-lock"]').hidden=mode==='scale-up'||mode==='scale-down';
       root.querySelector('[data-setting="fit-mode"]').hidden=mode==='crop'||mode==='scale-up'||mode==='scale-down';
