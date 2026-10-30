@@ -222,3 +222,6 @@ footer{margin-top:25px;border-color:#e7ebf2;background:#fff;padding:32px 24px}
 .image-editor-range .image-range-control{width:100%}
 .image-workbench>div[style*="grid-template-columns"]{align-items:center}
 .image-workbench canvas{max-width:100%;height:auto;border-radius:10px}
+
+/* Checkerboard makes the transparent corners from the rounded-image tool visible. */
+.image-result-thumb{background-color:#eef1f6!important;background-image:linear-gradient(45deg,#dce2ec 25%,transparent 25%),linear-gradient(-45deg,#dce2ec 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dce2ec 75%),linear-gradient(-45deg,transparent 75%,#dce2ec 75%)!important;background-size:18px 18px!important;background-position:0 0,0 9px,9px -9px,-9px 0!important;object-fit:contain}
